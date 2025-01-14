@@ -4,14 +4,43 @@
 
 package frc.robot.Vision;
 
+import java.util.Optional;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.drive.Drive;
+
+
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToReef extends Command {
   /** Creates a new GoToReef. */
-  public GoToReef() {
-    // Use addRequirements() here to declare subsystem dependencies.
 
+  // reef ids
+  int[] ids = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
+  int[] blueIDs = { 17, 18, 19, 20, 21, 22 };
+  int[] redIDs = { 6, 7, 8, 9, 10, 11 };
+  boolean isInIDs = false;
+
+  double kP = 1.2;
+  double rotationalKP = -0.05;
+
+  boolean left;
+
+  int framesDropped = 0;
+
+  public GoToReef(boolean right) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    left = !right;
   }
 
   // Called when the command is initially scheduled.
@@ -19,19 +48,37 @@ public class GoToReef extends Command {
   public void initialize() {
     // find which april tag on the reef is closest
 
-    int[] ids = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
-    boolean isInIDs = false;
-
+    // which target we are looking at
     double targetID = LimelightHelpers.getFiducialID("");
 
-    for (int id : ids) {
-      if (id == ids[id]) {
-        isInIDs = true;
+    Optional<Alliance> ally = DriverStation.getAlliance();
+
+    // is the target we are looking at on the reef?
+    for (int id : blueIDs) {  
+      if (ally.isPresent()) {
+        // if we are on the red alliance, only look at the red ids
+        if (ally.get() == Alliance.Red) {
+          if (targetID == redIDs[id]) {
+            isInIDs = true;
+          }
+        }
+        // if we are on the blue alliance, only look at the blue ids
+        if (ally.get() == Alliance.Blue) {
+          if (targetID == blueIDs[id]) {
+            isInIDs = true;
+          }
+        }
+      } 
+      // if we don't know the alliance, we'll at least go to one of the reefs, we just might go to the wrong one
+      else {
+        if (targetID == ids[id]) {
+          isInIDs = true;
+        }
       }
     }
 
     if (isInIDs == false) {
-      isFinished();
+      this.cancel();
     }
   }
 
@@ -39,11 +86,58 @@ public class GoToReef extends Command {
   @Override
   public void execute() {
     // move to either left or right, based on input given by controller
+
+    double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
+
+    // converts the double array into Pose3d so we can use the values
+    Pose3d pose = new Pose3d(new Translation3d(tagPoseRobot[0], tagPoseRobot[1], tagPoseRobot[2]), new Rotation3d(Math.toRadians(tagPoseRobot[3]), Math.toRadians(tagPoseRobot[4]), Math.toRadians(tagPoseRobot[5])));
+
+    // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in which case we end the command
+    if (LimelightHelpers.getTV("")) {
+      framesDropped = 0;
+    } else {
+      framesDropped++;
+      if (framesDropped > 5) {
+        this.cancel();
+      }
+      return;
+    }
+
+    // makes a Translation 3d object with our desired location relative to the april tag
+    // then rotates and translates the translation so it is relative to the robot
+    // at least thats what I think we are doing, I might have it wrong
+
+    Translation3d translate;
+
+    double leftOffset = 0.1651;
+
+    if (left) {
+      translate = new Translation3d(leftOffset, 0, 0);
+    } else {
+      translate = new Translation3d(-leftOffset, 0, 0);
+    }
+    
+    translate = translate.rotateBy(pose.getRotation());
+    translate = translate.plus(pose.getTranslation());
+
+    double maxVelocity = 2; // TODO: When in large space set to 6
+    double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
+    double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getX()));
+
+    // TODO: Add the part that actually moves the robot
+    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xDriveSpeed, yDriveSpeed, LimelightHelpers.getTX("") * rotationalKP);
+    
+    Robot.robotContainer.drive.runVelocity(chassisSpeeds);
+
+    if (LimelightHelpers.getTX("") < 5 && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.25){
+      this.cancel();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
