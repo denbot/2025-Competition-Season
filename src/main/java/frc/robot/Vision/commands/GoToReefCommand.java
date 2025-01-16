@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.vision.commands;
+package frc.robot.Vision.commands;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -10,11 +10,17 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.vision.LimelightHelpers;
+import frc.robot.Vision.LimelightHelpers;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToReefCommand extends Command {
   /** Creates a new GoToReef. */
+
+  // enum for directions
+  public static enum directions {
+    LEFT,
+    RIGHT;
+  }
 
   // reef ids
   int[] ids = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
@@ -29,13 +35,13 @@ public class GoToReefCommand extends Command {
   double targetID;
   int differentTag = 0;
 
-  boolean left;
+  directions direction;
 
   int framesDropped = 0;
 
-  public GoToReefCommand(boolean right) {
+  public GoToReefCommand(directions direction) {
     // Use addRequirements() here to declare subsystem dependencies.
-    left = !right;
+    this.direction = direction;
   }
 
   // Called when the command is initially scheduled.
@@ -61,7 +67,7 @@ public class GoToReefCommand extends Command {
           isInIDs = true;
         }
       }
-
+    
       // if we don't know the alliance, we'll at least go to one of the reefs, we just might go to
       // the wrong one
       else {
@@ -88,7 +94,7 @@ public class GoToReefCommand extends Command {
       }
       return;
     }
-
+    
     // move to either left or right, based on input given by controller
 
     double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
@@ -120,18 +126,24 @@ public class GoToReefCommand extends Command {
 
     Translation3d translate;
 
-    double leftOffset = 0.1651;
+    double offset = 0.1651;
 
-    if (left) {
-      translate = new Translation3d(leftOffset, 0, 0);
-    } else {
-      translate = new Translation3d(-leftOffset, 0, 0);
+    switch(direction) {
+      case LEFT:
+        translate = new Translation3d(offset, 0, 0);
+        break;
+      case RIGHT:
+        translate = new Translation3d(-offset, 0, 0);
+        break;
+      default:
+        translate = new Translation3d(offset, 0, 0); // Only needed for code to compile
+        break;
     }
 
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 0.5; // TODO: When in large space set to 6
+    double maxVelocity = 2; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getX()));
 
