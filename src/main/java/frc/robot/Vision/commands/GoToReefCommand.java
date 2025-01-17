@@ -67,7 +67,7 @@ public class GoToReefCommand extends Command {
           isInIDs = true;
         }
       }
-    
+
       // if we don't know the alliance, we'll at least go to one of the reefs, we just might go to
       // the wrong one
       else {
@@ -94,7 +94,7 @@ public class GoToReefCommand extends Command {
       }
       return;
     }
-    
+
     // move to either left or right, based on input given by controller
 
     double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
@@ -128,7 +128,7 @@ public class GoToReefCommand extends Command {
 
     double offset = 0.1651;
 
-    switch(direction) {
+    switch (direction) {
       case LEFT:
         translate = new Translation3d(offset, 0, 0);
         break;
@@ -143,7 +143,7 @@ public class GoToReefCommand extends Command {
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 2; // TODO: When in large space set to 6
+    double maxVelocity = 0.5; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getX()));
 
