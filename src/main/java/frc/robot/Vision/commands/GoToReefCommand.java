@@ -15,88 +15,23 @@ import frc.robot.vision.LimelightHelpers;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToReefCommand extends Command {
   /** Creates a new GoToReef. */
+  double kP = 5;
 
-  // enum for directions
-  public static enum directions {
-    LEFT,
-    RIGHT;
-  }
-
-  // reef ids
-  int[] ids = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
-
-  int[] blueIDs = {17, 18, 19, 20, 21, 22};
-  int[] redIDs = {6, 7, 8, 9, 10, 11};
-  boolean isInIDs = false;
-
-  double kP = 1.2;
   double rotationalKP = -0.05;
-
-  double targetID;
-  int differentTag = 0;
-
-  directions direction;
-
+  boolean left = true;
   int framesDropped = 0;
 
-  public GoToReefCommand(directions direction) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.direction = direction;
+  public GoToReefCommand() {
+    this.left = Robot.left;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    differentTag = 0;
-    // find which april tag on the reef is closest
-
-    // which target we are looking at
-    targetID = LimelightHelpers.getFiducialID("");
-
-    // is the target we are looking at on the reef?
-    // for (int id : blueIDs) {
-    //   // if we are on the red alliance, only look at the red ids
-    //   if (Robot.getRed() && Robot.getTrust()) {
-    //     if (targetID == redIDs[id]) {
-    //       isInIDs = true;
-    //     }
-    //   }
-    //   // if we are on the blue alliance, only look at the blue ids
-    //   else if (Robot.getBlue() && Robot.getTrust()) {
-    //     if (targetID == blueIDs[id]) {
-    //       isInIDs = true;
-    //     }
-    //   }
-
-    //   // if we don't know the alliance, we'll at least go to one of the reefs, we just might go
-    // to
-    //   // the wrong one
-    //   else {
-    //     if (targetID == ids[id] || targetID == ids[id + 6]) {
-    //       isInIDs = true;
-    //     }
-    //   }
-    // }
-
-    // if (isInIDs == false) {
-    //   this.cancel();
-    // }
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if (LimelightHelpers.getFiducialID("") == targetID) {
-    //   differentTag = 0;
-    // } else {
-    //   differentTag++;
-    //   if (differentTag > 5) {
-    //     this.cancel();
-    //   }
-    //   return;
-    // }
-
-    // move to either left or right, based on input given by controller
 
     double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
 
@@ -127,27 +62,16 @@ public class GoToReefCommand extends Command {
 
     Translation3d translate;
 
-    double offset = 0.5;
-
-    switch (direction) {
-      case LEFT:
-        translate = new Translation3d(-offset, 0, -0.5);
-        break;
-      case RIGHT:
-        translate = new Translation3d(offset, 0, -0.5);
-        break;
-      default:
-        translate = new Translation3d(offset, 0, -0.5); // Only needed for code to compile
-        break;
-    }
+    double offset = left ? -0.5 : 0.5;
+    translate = new Translation3d(offset, 0, -0.5);
 
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 2; // TODO: When in large space set to 6
+    double maxVelocity = 3; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));
-    double rotationOffset = direction == directions.LEFT ? -20 : 20;
+    double rotationOffset = left ? -20 : 20;
 
     // TODO: Add the part that actually moves the robot
     ChassisSpeeds chassisSpeeds =
@@ -155,8 +79,8 @@ public class GoToReefCommand extends Command {
             xDriveSpeed, yDriveSpeed, (LimelightHelpers.getTX("") + rotationOffset) * rotationalKP);
 
     Robot.robotContainer.drive.runVelocity(chassisSpeeds);
-
-    if (LimelightHelpers.getTX("") < 5
+    System.out.println(LimelightHelpers.getTX(""));
+    if (Math.abs(LimelightHelpers.getTX("")) < 29
         && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.25) {
       this.cancel();
     }

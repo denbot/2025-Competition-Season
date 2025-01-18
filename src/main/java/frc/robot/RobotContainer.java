@@ -50,8 +50,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
-  private final GoToReefCommand leftReef = new GoToReefCommand(GoToReefCommand.directions.LEFT);
-  private final GoToReefCommand rightReef = new GoToReefCommand(GoToReefCommand.directions.RIGHT);
+  private final GoToReefCommand leftReef = new GoToReefCommand();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -153,7 +152,6 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.leftTrigger().onTrue(leftReef);
-    controller.rightTrigger().onTrue(rightReef);
   }
 
   /**

@@ -45,6 +45,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   public static RobotContainer robotContainer;
   private Matrix<N3, N1> matrix = new Matrix<>(Nat.N3(), Nat.N1());
+  public static boolean left = true;
 
   public static boolean red;
   public static boolean trust;
