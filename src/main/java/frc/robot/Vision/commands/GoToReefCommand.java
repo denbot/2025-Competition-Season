@@ -54,46 +54,47 @@ public class GoToReefCommand extends Command {
     targetID = LimelightHelpers.getFiducialID("");
 
     // is the target we are looking at on the reef?
-    for (int id : blueIDs) {
-      // if we are on the red alliance, only look at the red ids
-      if (Robot.getRed() && Robot.getTrust()) {
-        if (targetID == redIDs[id]) {
-          isInIDs = true;
-        }
-      }
-      // if we are on the blue alliance, only look at the blue ids
-      else if (Robot.getBlue() && Robot.getTrust()) {
-        if (targetID == blueIDs[id]) {
-          isInIDs = true;
-        }
-      }
+    // for (int id : blueIDs) {
+    //   // if we are on the red alliance, only look at the red ids
+    //   if (Robot.getRed() && Robot.getTrust()) {
+    //     if (targetID == redIDs[id]) {
+    //       isInIDs = true;
+    //     }
+    //   }
+    //   // if we are on the blue alliance, only look at the blue ids
+    //   else if (Robot.getBlue() && Robot.getTrust()) {
+    //     if (targetID == blueIDs[id]) {
+    //       isInIDs = true;
+    //     }
+    //   }
 
-      // if we don't know the alliance, we'll at least go to one of the reefs, we just might go to
-      // the wrong one
-      else {
-        if (targetID == ids[id] || targetID == ids[id + 6]) {
-          isInIDs = true;
-        }
-      }
-    }
+    //   // if we don't know the alliance, we'll at least go to one of the reefs, we just might go
+    // to
+    //   // the wrong one
+    //   else {
+    //     if (targetID == ids[id] || targetID == ids[id + 6]) {
+    //       isInIDs = true;
+    //     }
+    //   }
+    // }
 
-    if (isInIDs == false) {
-      this.cancel();
-    }
+    // if (isInIDs == false) {
+    //   this.cancel();
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (LimelightHelpers.getFiducialID("") == targetID) {
-      differentTag = 0;
-    } else {
-      differentTag++;
-      if (differentTag > 5) {
-        this.cancel();
-      }
-      return;
-    }
+    // if (LimelightHelpers.getFiducialID("") == targetID) {
+    //   differentTag = 0;
+    // } else {
+    //   differentTag++;
+    //   if (differentTag > 5) {
+    //     this.cancel();
+    //   }
+    //   return;
+    // }
 
     // move to either left or right, based on input given by controller
 
@@ -126,30 +127,32 @@ public class GoToReefCommand extends Command {
 
     Translation3d translate;
 
-    double offset = 0.1651;
+    double offset = 0.5;
 
     switch (direction) {
       case LEFT:
-        translate = new Translation3d(offset, 0, 0);
+        translate = new Translation3d(-offset, 0, -0.5);
         break;
       case RIGHT:
-        translate = new Translation3d(-offset, 0, 0);
+        translate = new Translation3d(offset, 0, -0.5);
         break;
       default:
-        translate = new Translation3d(offset, 0, 0); // Only needed for code to compile
+        translate = new Translation3d(offset, 0, -0.5); // Only needed for code to compile
         break;
     }
 
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 0.5; // TODO: When in large space set to 6
+    double maxVelocity = 2; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
-    double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getX()));
+    double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));
+    double rotationOffset = direction == directions.LEFT ? -20 : 20;
 
     // TODO: Add the part that actually moves the robot
     ChassisSpeeds chassisSpeeds =
-        new ChassisSpeeds(xDriveSpeed, yDriveSpeed, LimelightHelpers.getTX("") * rotationalKP);
+        new ChassisSpeeds(
+            xDriveSpeed, yDriveSpeed, (LimelightHelpers.getTX("") + rotationOffset) * rotationalKP);
 
     Robot.robotContainer.drive.runVelocity(chassisSpeeds);
 
