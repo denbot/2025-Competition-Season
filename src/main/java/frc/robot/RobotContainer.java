@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -31,6 +32,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.vision.commands.GoToReefCommand;
+import frc.robot.vision.commands.PipelineChange;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -45,12 +47,20 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandGenericHID controller1 = new CommandGenericHID(1);
+  private final CommandGenericHID controller2 = new CommandGenericHID(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
   private final GoToReefCommand leftReef = new GoToReefCommand();
+  private final PipelineChange button1 = new PipelineChange(1);
+  private final PipelineChange button2 = new PipelineChange(2);
+  private final PipelineChange button3 = new PipelineChange(3);
+  private final PipelineChange button4 = new PipelineChange(4);
+  private final PipelineChange button5 = new PipelineChange(5);
+  private final PipelineChange button6 = new PipelineChange(6);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -152,6 +162,12 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.leftTrigger().onTrue(leftReef);
+    controller1.button(1).onTrue(button1);
+    controller1.button(2).onTrue(button2);
+    controller1.button(3).onTrue(button3);
+    controller1.button(4).onTrue(button4);
+    controller1.button(5).onTrue(button5);
+    controller1.button(6).onTrue(button6);
   }
 
   /**

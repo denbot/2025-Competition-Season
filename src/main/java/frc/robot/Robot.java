@@ -48,7 +48,6 @@ public class Robot extends LoggedRobot {
   public static boolean left = true;
 
   public static boolean red;
-  public static boolean trust;
 
   public Robot() {
     // Record metadata
@@ -149,37 +148,24 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
-
+    getRed();
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+  }
 
+  public static boolean getRed() {
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
         red = true;
-        trust = true;
       }
       if (ally.get() == Alliance.Blue) {
         red = false;
-        trust = false;
       }
-    } else {
-      trust = false;
     }
-  }
-
-  public static boolean getRed() {
     return red;
-  }
-
-  public static boolean getBlue() {
-    return !red;
-  }
-
-  public static boolean getTrust() {
-    return trust;
   }
 
   /** This function is called periodically during autonomous. */
@@ -196,6 +182,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    getRed();
   }
 
   /** This function is called periodically during operator control. */
