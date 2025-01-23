@@ -8,9 +8,11 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
+import frc.robot.subsystems.drive.Drive;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToReefCommand extends Command {
@@ -21,18 +23,22 @@ public class GoToReefCommand extends Command {
   boolean left = true;
   int framesDropped = 0;
 
-  public GoToReefCommand() {
+  Drive drive;
+
+  public GoToReefCommand(Drive drive) {
     this.left = Robot.left;
+    this.drive = drive;
+    // addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
 
     // converts the double array into Pose3d so we can use the values
@@ -68,18 +74,19 @@ public class GoToReefCommand extends Command {
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 3; // TODO: When in large space set to 6
+    double maxVelocity = 0.5; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
+    SmartDashboard.putNumber("xDriveSpeed", xDriveSpeed);
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));
+    SmartDashboard.putNumber("yDriveSpeed", yDriveSpeed);
     double rotationOffset = left ? -20 : 20;
 
-    // TODO: Add the part that actually moves the robot
     ChassisSpeeds chassisSpeeds =
         new ChassisSpeeds(
             xDriveSpeed, yDriveSpeed, (LimelightHelpers.getTX("") + rotationOffset) * rotationalKP);
 
-    Robot.robotContainer.drive.runVelocity(chassisSpeeds);
-    System.out.println(LimelightHelpers.getTX(""));
+    drive.runVelocity(chassisSpeeds);
+    // System.out.println(LimelightHelpers.getTX(""));
     if (Math.abs(LimelightHelpers.getTX("")) < 29
         && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.25) {
       this.cancel();
@@ -88,7 +95,8 @@ public class GoToReefCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
++  }
 
   // Returns true when the command should end.
   @Override

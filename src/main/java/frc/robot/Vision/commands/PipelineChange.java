@@ -12,8 +12,6 @@ public class PipelineChange extends Command {
   /** Creates a new GoToReef. */
   int pipeline;
 
-  int i = 0;
-
   public PipelineChange(int pipeline) {
     this.pipeline = pipeline;
   }
@@ -26,7 +24,7 @@ public class PipelineChange extends Command {
   @Override
   public void execute() {
     LimelightHelpers.setPipelineIndex("", pipeline);
-    i++;
+    this.cancel();
   }
 
   // Called once the command ends or is interrupted.
@@ -38,6 +36,6 @@ public class PipelineChange extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return i > 5;
+    return false;
   }
 }

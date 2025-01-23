@@ -54,13 +54,13 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
-  private final GoToReefCommand leftReef = new GoToReefCommand();
-  private final PipelineChange button1 = new PipelineChange(1);
-  private final PipelineChange button2 = new PipelineChange(2);
-  private final PipelineChange button3 = new PipelineChange(3);
-  private final PipelineChange button4 = new PipelineChange(4);
-  private final PipelineChange button5 = new PipelineChange(5);
-  private final PipelineChange button6 = new PipelineChange(6);
+  private final GoToReefCommand leftReef;
+  private final PipelineChange red7blue18 = new PipelineChange(1);
+  private final PipelineChange red8blue17 = new PipelineChange(2);
+  private final PipelineChange red9blue22 = new PipelineChange(3);
+  private final PipelineChange red10blue21 = new PipelineChange(4);
+  private final PipelineChange red11blue20 = new PipelineChange(5);
+  private final PipelineChange red6blue19 = new PipelineChange(6);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -98,6 +98,8 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+
+    leftReef = new GoToReefCommand(drive);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -161,13 +163,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.leftTrigger().onTrue(leftReef);
-    controller1.button(1).onTrue(button1);
-    controller1.button(2).onTrue(button2);
-    controller1.button(3).onTrue(button3);
-    controller1.button(4).onTrue(button4);
-    controller1.button(5).onTrue(button5);
-    controller1.button(6).onTrue(button6);
+    controller.leftBumper().onTrue(leftReef);
+    controller1.button(1).onTrue(red7blue18);
+    controller1.button(2).onTrue(red8blue17);
+    controller1.button(3).onTrue(red9blue22);
+    controller1.button(4).onTrue(red10blue21);
+    controller1.button(5).onTrue(red11blue20);
+    controller1.button(6).onTrue(red6blue19);
   }
 
   /**
