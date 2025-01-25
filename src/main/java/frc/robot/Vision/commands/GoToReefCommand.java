@@ -20,7 +20,7 @@ public class GoToReefCommand extends Command {
   double kP = 5;
 
   double rotationalKP = -0.05;
-  boolean left = true;
+  boolean left;
   int framesDropped = 0;
 
   Drive drive;
@@ -33,22 +33,14 @@ public class GoToReefCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.left = Robot.left;
+    SmartDashboard.putBoolean("commandLeft", left);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
-
-    // converts the double array into Pose3d so we can use the values
-    Pose3d pose =
-        new Pose3d(
-            new Translation3d(tagPoseRobot[0], tagPoseRobot[1], tagPoseRobot[2]),
-            new Rotation3d(
-                Math.toRadians(tagPoseRobot[3]),
-                Math.toRadians(tagPoseRobot[4]),
-                Math.toRadians(tagPoseRobot[5])));
-
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
     if (LimelightHelpers.getTV("")) {
@@ -60,6 +52,21 @@ public class GoToReefCommand extends Command {
       }
       return;
     }
+
+    // if in simulation, comment out this line:
+    // double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
+
+    // comment this line out before actually running the robot:
+    double[] tagPoseRobot = {0, 0, 0};
+
+    // converts the double array into Pose3d so we can use the values
+    Pose3d pose =
+        new Pose3d(
+            new Translation3d(tagPoseRobot[0], tagPoseRobot[1], tagPoseRobot[2]),
+            new Rotation3d(
+                Math.toRadians(tagPoseRobot[3]),
+                Math.toRadians(tagPoseRobot[4]),
+                Math.toRadians(tagPoseRobot[5])));
 
     // makes a Translation 3d object with our desired location relative to the april tag
     // then rotates and translates the translation so it is relative to the robot
@@ -94,7 +101,10 @@ public class GoToReefCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drive.stopWithX();
+    SmartDashboard.putString("done", "done");
+  }
 
   // Returns true when the command should end.
   @Override

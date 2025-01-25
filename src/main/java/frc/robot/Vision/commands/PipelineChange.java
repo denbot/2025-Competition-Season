@@ -13,16 +13,19 @@ public class PipelineChange extends Command {
   /** Creates a new GoToReef. */
   int pipeline;
 
-  boolean right;
+  boolean left;
 
-  public PipelineChange(int pipeline, boolean right) {
+  public PipelineChange(int pipeline, boolean left) {
     this.pipeline = pipeline;
-    this.right = right;
+    this.left = left;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Robot.left = this.left;
+    System.out.println(left);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -32,7 +35,6 @@ public class PipelineChange extends Command {
     // each pipeline is set to only accept one side of the reef
 
     LimelightHelpers.setPipelineIndex("", pipeline);
-    Robot.left = !right;
     this.cancel();
   }
 
