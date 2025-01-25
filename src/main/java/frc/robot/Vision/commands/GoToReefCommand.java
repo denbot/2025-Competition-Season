@@ -33,8 +33,7 @@ public class GoToReefCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -74,7 +73,7 @@ public class GoToReefCommand extends Command {
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 0.5; // TODO: When in large space set to 6
+    double maxVelocity = 3; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
     SmartDashboard.putNumber("xDriveSpeed", xDriveSpeed);
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));
@@ -95,8 +94,7 @@ public class GoToReefCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-+  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.PauseCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -54,13 +55,29 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
-  private final GoToReefCommand leftReef;
-  private final PipelineChange red7blue18 = new PipelineChange(1);
-  private final PipelineChange red8blue17 = new PipelineChange(2);
-  private final PipelineChange red9blue22 = new PipelineChange(3);
-  private final PipelineChange red10blue21 = new PipelineChange(4);
-  private final PipelineChange red11blue20 = new PipelineChange(5);
-  private final PipelineChange red6blue19 = new PipelineChange(6);
+  private final GoToReefCommand reef;
+  private final PauseCommand pauseCommand;
+
+  // each of these corresponds to a different button on the button board
+  // these should set the pipeline to the side of the reef where the button is located
+  // numbers correspond to clock faces with twelve being the back face of the reef
+  private final PipelineChange twelveLeft = new PipelineChange(1, false);
+  private final PipelineChange twelveRight = new PipelineChange(1, true);
+
+  private final PipelineChange tenLeft = new PipelineChange(2, false);
+  private final PipelineChange tenRight = new PipelineChange(2, true);
+
+  private final PipelineChange eightLeft = new PipelineChange(3, false);
+  private final PipelineChange eightRight = new PipelineChange(3, true);
+
+  private final PipelineChange sixLeft = new PipelineChange(4, false);
+  private final PipelineChange sixRight = new PipelineChange(4, true);
+
+  private final PipelineChange fourLeft = new PipelineChange(5, false);
+  private final PipelineChange fourRight = new PipelineChange(5, true);
+
+  private final PipelineChange twoLeft = new PipelineChange(6, false);
+  private final PipelineChange twoRight = new PipelineChange(6, true);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -99,7 +116,8 @@ public class RobotContainer {
         break;
     }
 
-    leftReef = new GoToReefCommand(drive);
+    reef = new GoToReefCommand(drive);
+    pauseCommand = new PauseCommand(drive, 2);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -139,6 +157,8 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
+    controller.rightTrigger().onTrue(pauseCommand);
+
     // Lock to 0° when A button is held
     controller
         .a()
@@ -163,13 +183,29 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.leftBumper().onTrue(leftReef);
-    controller1.button(1).onTrue(red7blue18);
-    controller1.button(2).onTrue(red8blue17);
-    controller1.button(3).onTrue(red9blue22);
-    controller1.button(4).onTrue(red10blue21);
-    controller1.button(5).onTrue(red11blue20);
-    controller1.button(6).onTrue(red6blue19);
+    controller.rightBumper().onTrue(reef);
+
+    controller1.button(1).onTrue(twelveLeft);
+    controller1.button(2).onTrue(twoRight);
+    controller1.button(3).onTrue(twoLeft);
+    // controller1.button(4).onTrue(L4);
+    // controller1.button(5).onTrue(L3);
+    // controller1.button(6).onTrue(L2);
+    // controller1.button(7).onTrue(Trough);
+    controller1.button(8).onTrue(fourRight);
+    controller1.button(11).onTrue(fourRight);
+    controller1.button(12).onTrue(sixRight);
+
+    controller2.button(1).onTrue(twelveRight);
+    controller2.button(2).onTrue(tenLeft);
+    controller2.button(3).onTrue(tenRight);
+    // controller2.button(4).onTrue(TODO);
+    // controller2.button(5).onTrue(TODO);
+    // controller2.button(6).onTrue(TODO);
+    // controller2.button(7).onTrue(TODO);
+    controller2.button(8).onTrue(eightLeft);
+    controller2.button(11).onTrue(eightRight);
+    controller2.button(12).onTrue(sixLeft);
   }
 
   /**
