@@ -86,7 +86,7 @@ public class TunerConstantsSmolFry {
   // This may need to be tuned to your individual robot
   private static final double kCoupleRatio = 0;
 
-  private static final double kDriveGearRatio = 5.357142857142857;
+  private static final double kDriveGearRatio = 4.95;
   private static final double kSteerGearRatio = 21.428571428571427;
   private static final Distance kWheelRadius = Inches.of(2);
 
