@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Direction;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
@@ -19,14 +20,14 @@ public class GoToReefCommand extends Command {
   /** Creates a new GoToReef. */
   double kP = 5;
 
-  double rotationalKP = -0.05;
-  boolean left;
+  double rotationalKP = -0.3;
+  Direction direction = Direction.LEFT;
   int framesDropped = 0;
 
   Drive drive;
 
   public GoToReefCommand(Drive drive) {
-    this.left = Robot.left;
+    this.direction = Robot.direction;
     this.drive = drive;
     // addRequirements(drive);
   }
@@ -34,8 +35,8 @@ public class GoToReefCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.left = Robot.left;
-    SmartDashboard.putBoolean("commandLeft", left);
+    this.direction = Robot.direction;
+    SmartDashboard.putString("commandDirection", String.valueOf(direction));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,10 +55,10 @@ public class GoToReefCommand extends Command {
     }
 
     // if in simulation, comment out this line:
-    // double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
+    double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
 
     // comment this line out before actually running the robot:
-    double[] tagPoseRobot = {0, 0, 0};
+    // double[] tagPoseRobot = {0, 0, 0};
 
     // converts the double array into Pose3d so we can use the values
     Pose3d pose =
@@ -74,18 +75,18 @@ public class GoToReefCommand extends Command {
 
     Translation3d translate;
 
-    double offset = left ? -0.5 : 0.5;
+    double offset = (direction == Direction.LEFT) ? -0.2 : 0.2;
     translate = new Translation3d(offset, 0, -0.5);
 
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 3; // TODO: When in large space set to 6
+    double maxVelocity = 5; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
     SmartDashboard.putNumber("xDriveSpeed", xDriveSpeed);
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));
     SmartDashboard.putNumber("yDriveSpeed", yDriveSpeed);
-    double rotationOffset = left ? -20 : 20;
+    double rotationOffset = (direction == Direction.LEFT) ? -20 : 20;
 
     ChassisSpeeds chassisSpeeds =
         new ChassisSpeeds(
@@ -93,8 +94,8 @@ public class GoToReefCommand extends Command {
 
     drive.runVelocity(chassisSpeeds);
     // System.out.println(LimelightHelpers.getTX(""));
-    if (Math.abs(LimelightHelpers.getTX("")) < 29
-        && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.25) {
+    if (Math.abs(LimelightHelpers.getTX("")) < 21
+        && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.1) {
       this.cancel();
     }
   }

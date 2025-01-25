@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Direction;
 import frc.robot.generated.TunerConstants;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -45,7 +46,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   public static RobotContainer robotContainer;
   private Matrix<N3, N1> matrix = new Matrix<>(Nat.N3(), Nat.N1());
-  public static boolean left = true;
+  public static Direction direction = Direction.LEFT;
 
   public static boolean red;
 
@@ -188,7 +189,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("left", left);
+    SmartDashboard.putString("Direction", String.valueOf(direction));
   }
 
   /** This function is called once when test mode is enabled. */

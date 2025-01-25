@@ -5,6 +5,7 @@
 package frc.robot.vision.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Direction;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
@@ -13,18 +14,18 @@ public class PipelineChange extends Command {
   /** Creates a new GoToReef. */
   int pipeline;
 
-  boolean left;
+  Direction direction;
 
-  public PipelineChange(int pipeline, boolean left) {
+  public PipelineChange(int pipeline, Direction direction) {
     this.pipeline = pipeline;
-    this.left = left;
+    this.direction = direction;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.left = this.left;
-    System.out.println(left);
+    Robot.direction = this.direction;
+    System.out.println(String.valueOf(direction));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
