@@ -14,18 +14,20 @@ public class PipelineChange extends Command {
   /** Creates a new GoToReef. */
   int pipeline;
 
+  double angle;
   Direction direction;
 
-  public PipelineChange(int pipeline, Direction direction) {
+  public PipelineChange(int pipeline, Direction direction, double angle) {
     this.pipeline = pipeline;
     this.direction = direction;
+    this.angle = angle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     Robot.direction = this.direction;
-    System.out.println(String.valueOf(direction));
+    Robot.angle = this.angle;
   }
 
   // Called every time the scheduler runs while the command is scheduled.

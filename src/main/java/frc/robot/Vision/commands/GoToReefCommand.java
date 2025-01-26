@@ -86,15 +86,16 @@ public class GoToReefCommand extends Command {
     SmartDashboard.putNumber("xDriveSpeed", xDriveSpeed);
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));
     SmartDashboard.putNumber("yDriveSpeed", yDriveSpeed);
-    double rotationOffset = (direction == Direction.LEFT) ? -20 : 20;
 
     ChassisSpeeds chassisSpeeds =
         new ChassisSpeeds(
-            xDriveSpeed, yDriveSpeed, (LimelightHelpers.getTX("") + rotationOffset) * rotationalKP);
+            xDriveSpeed,
+            yDriveSpeed,
+            (drive.getRotation().getDegrees() - Robot.angle) * rotationalKP);
 
     drive.runVelocity(chassisSpeeds);
-    // System.out.println(LimelightHelpers.getTX(""));
-    if (Math.abs(LimelightHelpers.getTX("")) < 21
+    SmartDashboard.putNumber("error", drive.getRotation().getDegrees() - Robot.angle);
+    if ((drive.getRotation().getDegrees() - Robot.angle) < 3
         && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.1) {
       this.cancel();
     }

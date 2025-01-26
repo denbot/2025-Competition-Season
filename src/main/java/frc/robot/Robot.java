@@ -47,7 +47,7 @@ public class Robot extends LoggedRobot {
   public static RobotContainer robotContainer;
   private Matrix<N3, N1> matrix = new Matrix<>(Nat.N3(), Nat.N1());
   public static Direction direction = Direction.LEFT;
-
+  public static double angle;
   public static boolean red;
 
   public Robot() {
@@ -189,7 +189,9 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
     SmartDashboard.putString("Direction", String.valueOf(direction));
+    SmartDashboard.putNumber("Angle", angle);
   }
 
   /** This function is called once when test mode is enabled. */
