@@ -34,4 +34,9 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static enum Direction { // Implemented so that we don't have to do booleans and inverses
+    LEFT,
+    RIGHT
+  }
 }

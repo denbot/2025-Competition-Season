@@ -20,11 +20,15 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Direction;
 import frc.robot.generated.TunerConstants;
+import java.util.Optional;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -40,8 +44,11 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  private RobotContainer robotContainer;
+  public static RobotContainer robotContainer;
   private Matrix<N3, N1> matrix = new Matrix<>(Nat.N3(), Nat.N1());
+  public static Direction direction = Direction.LEFT;
+  public static double angle;
+  public static boolean red;
 
   public Robot() {
     // Record metadata
@@ -126,8 +133,8 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
-    robotContainer.drive.addVisionMeasurement(
-        LimelightHelpers.getBotPose2d(""), Timer.getFPGATimestamp(), matrix);
+    // robotContainer.drive.addVisionMeasurement(
+    // LimelightHelpers.getBotPose2d(""), Timer.getFPGATimestamp(), matrix);
   }
 
   /** This function is called once when the robot is disabled. */
@@ -142,11 +149,24 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
-
+    getRed();
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+  }
+
+  public static boolean getRed() {
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        red = true;
+      }
+      if (ally.get() == Alliance.Blue) {
+        red = false;
+      }
+    }
+    return red;
   }
 
   /** This function is called periodically during autonomous. */
@@ -163,11 +183,16 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    getRed();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
+    SmartDashboard.putString("Direction", String.valueOf(direction));
+    SmartDashboard.putNumber("Angle", angle);
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
