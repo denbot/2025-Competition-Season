@@ -340,11 +340,12 @@ public class Drive extends SubsystemBase {
 
   /** Adds a new timestamped vision measurement. */
   public void addVisionMeasurement(
+      String name,
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
 
-    if (LimelightHelpers.getTV("")) {
+    if (LimelightHelpers.getTV(name)) {
       poseEstimator.addVisionMeasurement(
           visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }

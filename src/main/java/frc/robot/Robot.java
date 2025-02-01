@@ -23,6 +23,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -133,8 +134,16 @@ public class Robot extends LoggedRobot {
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
 
-    // robotContainer.drive.addVisionMeasurement(
-    // LimelightHelpers.getBotPose2d(""), Timer.getFPGATimestamp(), matrix);
+    robotContainer.drive.addVisionMeasurement(
+        "limelight-left",
+        LimelightHelpers.getBotPose2d("limelight-left"),
+        Timer.getFPGATimestamp(),
+        matrix);
+    robotContainer.drive.addVisionMeasurement(
+        "limelight-right",
+        LimelightHelpers.getBotPose2d("limelight-right"),
+        Timer.getFPGATimestamp(),
+        matrix);
   }
 
   /** This function is called once when the robot is disabled. */

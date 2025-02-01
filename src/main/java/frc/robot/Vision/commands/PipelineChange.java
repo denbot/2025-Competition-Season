@@ -36,8 +36,8 @@ public class PipelineChange extends Command {
     // sets the limelight pipeline to the desired side of the reef
     // the pipeline (which can be found in the limelight web ui) changes the accepted limelights
     // each pipeline is set to only accept one side of the reef
-
-    LimelightHelpers.setPipelineIndex("", pipeline);
+    LimelightHelpers.setPipelineIndex("limelight-left", pipeline);
+    LimelightHelpers.setPipelineIndex("limelight-right", pipeline);
     this.cancel();
   }
 

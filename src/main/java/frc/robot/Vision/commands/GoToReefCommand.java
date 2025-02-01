@@ -44,7 +44,7 @@ public class GoToReefCommand extends Command {
   public void execute() {
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
-    if (LimelightHelpers.getTV("")) {
+    if (LimelightHelpers.getTV("limelight-left") || LimelightHelpers.getTV("limelight-right")) {
       framesDropped = 0;
     } else {
       framesDropped++;
@@ -53,9 +53,14 @@ public class GoToReefCommand extends Command {
       }
       return;
     }
-
+    double[] tagPoseRobot;
     // if in simulation, comment out this line:
-    double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
+    if (LimelightHelpers.getTV("limelight-left")) {
+      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-left");
+
+    } else {
+      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-right");
+    }
 
     // comment this line out before actually running the robot:
     // double[] tagPoseRobot = {0, 0, 0};
