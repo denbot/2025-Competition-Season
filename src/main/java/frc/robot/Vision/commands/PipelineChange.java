@@ -28,6 +28,7 @@ public class PipelineChange extends Command {
   public void initialize() {
     Robot.direction = this.direction;
     Robot.angle = this.angle;
+    System.out.println("Running");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,7 +39,6 @@ public class PipelineChange extends Command {
     // each pipeline is set to only accept one side of the reef
     LimelightHelpers.setPipelineIndex("limelight-left", pipeline);
     LimelightHelpers.setPipelineIndex("limelight-right", pipeline);
-    this.cancel();
   }
 
   // Called once the command ends or is interrupted.
@@ -50,6 +50,6 @@ public class PipelineChange extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

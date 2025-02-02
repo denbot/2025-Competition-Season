@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -47,10 +48,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.Direction;
 import frc.robot.Constants.Mode;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.vision.commands.GoToReefCommand;
+import frc.robot.vision.commands.PipelineChange;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -124,6 +128,20 @@ public class Drive extends SubsystemBase {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
+
+    NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
+    NamedCommands.registerCommand("12L", new PipelineChange(4, Direction.LEFT, 180));
+    NamedCommands.registerCommand("12R", new PipelineChange(4, Direction.RIGHT, 180));
+    NamedCommands.registerCommand("10L", new PipelineChange(5, Direction.LEFT, -120));
+    NamedCommands.registerCommand("10R", new PipelineChange(5, Direction.RIGHT, -120));
+    NamedCommands.registerCommand("8L", new PipelineChange(6, Direction.LEFT, -60));
+    NamedCommands.registerCommand("8R", new PipelineChange(6, Direction.RIGHT, -60));
+    NamedCommands.registerCommand("6L", new PipelineChange(1, Direction.LEFT, 0));
+    NamedCommands.registerCommand("6R", new PipelineChange(1, Direction.RIGHT, 0));
+    NamedCommands.registerCommand("4L", new PipelineChange(2, Direction.LEFT, 60));
+    NamedCommands.registerCommand("4R", new PipelineChange(2, Direction.RIGHT, 60));
+    NamedCommands.registerCommand("2L", new PipelineChange(3, Direction.LEFT, 120));
+    NamedCommands.registerCommand("2R", new PipelineChange(3, Direction.RIGHT, 120));
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(

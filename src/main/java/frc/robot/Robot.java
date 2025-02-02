@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -50,6 +51,7 @@ public class Robot extends LoggedRobot {
   public static Direction direction = Direction.LEFT;
   public static double angle;
   public static boolean red;
+  private Field2d field = new Field2d();
 
   public Robot() {
     // Record metadata
@@ -114,7 +116,7 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-
+    SmartDashboard.putData("Field", field);
     matrix.fill(1.0);
   }
 
@@ -133,17 +135,25 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-
+    SmartDashboard.putNumber("RX", LimelightHelpers.getBotPose2d_wpiBlue("limelight-right").getX());
+    SmartDashboard.putNumber("RY", LimelightHelpers.getBotPose2d_wpiBlue("limelight-right").getY());
+    SmartDashboard.putNumber(
+        "RZ", LimelightHelpers.getBotPose2d_wpiBlue("limelight-right").getRotation().getDegrees());
+    SmartDashboard.putNumber("LX", LimelightHelpers.getBotPose2d_wpiBlue("limelight-left").getX());
+    SmartDashboard.putNumber("LY", LimelightHelpers.getBotPose2d_wpiBlue("limelight-left").getY());
+    SmartDashboard.putNumber(
+        "LZ", LimelightHelpers.getBotPose2d_wpiBlue("limelight-left").getRotation().getDegrees());
     robotContainer.drive.addVisionMeasurement(
         "limelight-left",
-        LimelightHelpers.getBotPose2d("limelight-left"),
+        LimelightHelpers.getBotPose2d_wpiBlue("limelight-left"),
         Timer.getFPGATimestamp(),
         matrix);
     robotContainer.drive.addVisionMeasurement(
         "limelight-right",
-        LimelightHelpers.getBotPose2d("limelight-right"),
+        LimelightHelpers.getBotPose2d_wpiBlue("limelight-right"),
         Timer.getFPGATimestamp(),
         matrix);
+    field.setRobotPose(robotContainer.drive.getPose());
   }
 
   /** This function is called once when the robot is disabled. */
