@@ -13,16 +13,11 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always
- * "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
- * sim) and "replay"
+ * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
  * (log replay from a file).
  */
 public final class Constants {
@@ -52,18 +47,16 @@ public final class Constants {
 
   public static class BoathookConstants {
     public static final int EXTENDER_MOTOR_ID = 1;
-    public static final int ROTATION_MOTOR_ID = 2;
+    public static final int ROTATION_MOTOR_ID = 14;
 
-    public static final int ROTATION_ENCODER_ID = 3; 
+    public static final int ROTATION_ENCODER_ID = 3;
 
-    public static final double rotatorGearRatio = 1/25; 
+    public static final double rotatorGearRatio = 1 / 25;
 
-    public static final double fowardSoftLimit = 95/360; 
+    public static final double fowardSoftLimit = 95 / 360;
 
-    public static final double reverseSoftLimit = 0/360; 
+    public static final double reverseSoftLimit = 0 / 360;
 
-    
+    public static final int CANDI_ID = 3;
   }
-
-
 }
