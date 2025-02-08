@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3D start line"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3D reef-source 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3D source-reef 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3D reef-source 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3D source-reef 2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
