@@ -4,16 +4,21 @@
 
 package frc.robot.vision.commands;
 
+import com.fasterxml.jackson.databind.deser.impl.FieldProperty;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Direction;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
+import us.hebi.quickbuf.RepeatedFloat;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToReefCommand extends Command {
@@ -23,12 +28,21 @@ public class GoToReefCommand extends Command {
   double rotationalKP = -0.3;
   Direction direction = Direction.LEFT;
   int framesDropped = 0;
+  int fieldRotationFlip = 1;
+
 
   Drive drive;
-
+  
   public GoToReefCommand(Drive drive) {
     this.direction = Robot.direction;
     this.drive = drive;
+    // Used to "flip" the rotation of the application whenever the field is not blue
+    var currentAlliance = DriverStation.getAlliance();
+
+    if(currentAlliance.get() == Alliance.Red)
+    {
+      fieldRotationFlip = -1;
+    }
     // addRequirements(drive);
   }
 
@@ -65,9 +79,9 @@ public class GoToReefCommand extends Command {
         new Pose3d(
             new Translation3d(tagPoseRobot[0], tagPoseRobot[1], tagPoseRobot[2]),
             new Rotation3d(
-                Math.toRadians(tagPoseRobot[3]),
-                Math.toRadians(tagPoseRobot[4]),
-                Math.toRadians(tagPoseRobot[5])));
+                Math.toRadians(tagPoseRobot[3] * fieldRotationFlip),
+                Math.toRadians(tagPoseRobot[4] * fieldRotationFlip),
+                Math.toRadians(tagPoseRobot[5] * fieldRotationFlip)));
 
     // makes a Translation 3d object with our desired location relative to the april tag
     // then rotates and translates the translation so it is relative to the robot
@@ -78,6 +92,7 @@ public class GoToReefCommand extends Command {
     double offset = (direction == Direction.LEFT) ? -0.2 : 0.2;
     translate = new Translation3d(offset, 0, -0.5);
 
+    
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
