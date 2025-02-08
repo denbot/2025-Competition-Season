@@ -28,7 +28,6 @@ public class PipelineChange extends Command {
   public void initialize() {
     Robot.direction = this.direction;
     Robot.angle = this.angle;
-    System.out.println("Running");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
