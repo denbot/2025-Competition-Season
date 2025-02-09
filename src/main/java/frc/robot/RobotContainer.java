@@ -27,6 +27,7 @@ import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.PauseCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -46,6 +47,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
+  public final Boathook boathook;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -117,6 +119,7 @@ public class RobotContainer {
         break;
     }
 
+    boathook = new Boathook();
     reef = new GoToReefCommand(drive);
     pauseCommand = new PauseCommand(drive, 2);
 

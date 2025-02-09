@@ -51,7 +51,7 @@ public final class Constants {
 
     public static final int ROTATION_ENCODER_ID = 3;
 
-    public static final double rotatorGearRatio = 1 / 25;
+    public static final double rotatorGearRatio = 25;
 
     public static final double fowardSoftLimit = 95 / 360;
 

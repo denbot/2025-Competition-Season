@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.boathook;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -19,13 +20,14 @@ import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
-  private final TalonFX rotationMotor =
+  private static final TalonFX rotationMotor =
       new TalonFX(BoathookConstants.ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX extenderMotor =
@@ -40,24 +42,24 @@ public class Boathook extends SubsystemBase {
       new TalonFXConfiguration()
           .withFeedback(
               new FeedbackConfigs()
-                  .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_MOTOR_ID)
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                  .withRotorToSensorRatio(BoathookConstants.rotatorGearRatio))
+                  // .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_MOTOR_ID)
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withSensorToMechanismRatio(BoathookConstants.rotatorGearRatio))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
-                  .withForwardSoftLimitEnable(true)
+                  .withForwardSoftLimitEnable(false)
                   .withForwardSoftLimitThreshold(BoathookConstants.fowardSoftLimit)
-                  .withReverseSoftLimitEnable(true)
+                  .withReverseSoftLimitEnable(false)
                   .withReverseSoftLimitThreshold(BoathookConstants.reverseSoftLimit))
           .withMotionMagic(
               new MotionMagicConfigs()
-                  .withMotionMagicAcceleration(2)
+                  .withMotionMagicAcceleration(4)
                   .withMotionMagicCruiseVelocity(1))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(1)
-                  .withKD(1)
-                  .withKG(1)
+                  .withKP(15)
+                  .withKD(0)
+                  .withKG(0)
                   .withGravityType(GravityTypeValue.Arm_Cosine))
           .withHardwareLimitSwitch(
               new HardwareLimitSwitchConfigs()
@@ -82,6 +84,11 @@ public class Boathook extends SubsystemBase {
 
   public void setAngle(double angle) {
     rotationMotor.setControl(new PositionVoltage(angle / 360));
+  }
+
+  public static double getAngle() {
+    StatusSignal<Angle> angle = rotationMotor.getPosition();
+    return angle.getValueAsDouble() * 360;
   }
 
   @Override
