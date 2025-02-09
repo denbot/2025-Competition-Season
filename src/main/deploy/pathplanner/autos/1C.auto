@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1C reef-source1"
+            "pathName": "ReefToSource8"
           }
         },
         {
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "1C source-reef1"
+                  "pathName": "SourceToReef8"
                 }
               },
               {
@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1C reef-source2"
+            "pathName": "ReefToSource8"
           }
         },
         {
@@ -73,7 +73,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "1C source-reef2"
+                  "pathName": "SourceToReef6Top"
                 }
               },
               {
@@ -95,6 +95,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Position1",
   "choreoAuto": false
 }

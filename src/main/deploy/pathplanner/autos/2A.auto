@@ -5,39 +5,96 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "2A start line"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2 start line"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "12L"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2A reef-source 1"
+            "pathName": "ReefToSource12Top"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SourceToReef10"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "10R"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2A source-reef 1"
+            "pathName": "ReefToSource10"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "2A reef-source 2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SourceToReef10"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "10L"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "2A source-reef 2"
+            "name": "autoAlign"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Position2",
   "choreoAuto": false
 }

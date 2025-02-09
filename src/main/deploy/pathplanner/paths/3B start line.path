@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.4093543046357615,
-        "y": 0.6907905629139066
+        "x": 7.129687499999999,
+        "y": 0.465142045454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.908133278145695,
-        "y": 1.9184188741721857
+        "x": 6.628466473509933,
+        "y": 1.6927703567128236
       },
       "isLocked": false,
       "linkedName": "3 start"
     },
     {
       "anchor": {
-        "x": 6.4577607615894035,
-        "y": 3.857926324503311
+        "x": 5.3746875,
+        "y": 2.6489204545454537
       },
       "prevControl": {
-        "x": 6.908133278145695,
-        "y": 3.16783940397351
+        "x": 5.825060016556292,
+        "y": 1.9588335340156529
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B top reef"
+      "linkedName": "Reef2"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -178.84266693187055
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Starts",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -179.77706034880248

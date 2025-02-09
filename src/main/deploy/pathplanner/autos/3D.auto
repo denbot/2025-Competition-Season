@@ -5,39 +5,96 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "3D start line"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "3D start line"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "4R"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3D reef-source 1"
+            "pathName": "ReefToSource4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SourceToReef4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "4L"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3D source-reef 1"
+            "pathName": "ReefToSource4"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "3D reef-source 2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SourceToReef6Bottom"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "6R"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "3D source-reef 2"
+            "name": "autoAlign"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Position3",
   "choreoAuto": false
 }
