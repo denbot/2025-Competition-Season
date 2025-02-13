@@ -63,7 +63,7 @@ public class RobotContainer {
   private final GoToReefCommand reef;
   private final PauseCommand pauseCommand;
 
-  private final BoathookMotionPath moveBoathook; 
+  private final BoathookMotionPath moveBoathook;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -132,7 +132,7 @@ public class RobotContainer {
     reef = new GoToReefCommand(drive);
     pauseCommand = new PauseCommand(drive, 2);
 
-    moveBoathook = new BoathookMotionPath(boathook); 
+    moveBoathook = new BoathookMotionPath(boathook);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -200,7 +200,7 @@ public class RobotContainer {
 
     controller.rightBumper().onTrue(reef);
 
-    controller.leftBumper().onTrue(moveBoathook); 
+    controller.leftBumper().onTrue(moveBoathook);
 
     controller1.button(1).onTrue(twelveLeft);
     controller1.button(2).onTrue(twoRight);

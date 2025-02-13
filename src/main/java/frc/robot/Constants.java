@@ -50,8 +50,8 @@ public final class Constants {
     public static final int ROTATION_MOTOR_ID = 14;
 
     public static final int ROTATION_ENCODER_ID = 4;
-    
-    public static final int EXTENDER_ENCODER_ID = 5; 
+
+    public static final int EXTENDER_ENCODER_ID = 5;
 
     public static final double rotatorGearRatio = 25;
 
@@ -63,14 +63,10 @@ public final class Constants {
 
     public static final int ROTATOR_CANDI_ID = 3;
 
-    public static final int EXTENDER_CANDI_ID = 6; 
+    public static final int EXTENDER_CANDI_ID = 6;
 
-    public static final double EXTENDER_FOWARD_LIMIT = 72; //in inches 
+    public static final double EXTENDER_FOWARD_LIMIT = 72; // in inches
 
-    public static final double EXTENDER_REVERSE_LIMIT = 0; 
-
-
-
-    
+    public static final double EXTENDER_REVERSE_LIMIT = 0;
   }
 }

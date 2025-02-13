@@ -5,20 +5,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.boathook.Boathook;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AngleBoathookCommand extends Command {
-  Boathook boathook; 
-  double angle; 
+  Boathook boathook;
+  double angle;
   /** Creates a new AngleBoathookCommand. */
   public AngleBoathookCommand(double angle, Boathook boathook) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.boathook = boathook; 
-    this.angle = angle; 
-    addRequirements(boathook); 
+    this.boathook = boathook;
+    this.angle = angle;
+    addRequirements(boathook);
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +27,6 @@ public class AngleBoathookCommand extends Command {
   @Override
   public void execute() {
     boathook.setAngle(angle);
-    
   }
 
   // Called once the command ends or is interrupted.
@@ -39,6 +36,6 @@ public class AngleBoathookCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(boathook.getAngle()-angle)<1;
+    return Math.abs(boathook.getAngle() - angle) < 1;
   }
 }

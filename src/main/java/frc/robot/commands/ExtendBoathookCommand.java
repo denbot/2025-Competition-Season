@@ -10,13 +10,14 @@ import frc.robot.subsystems.boathook.Boathook;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ExtendBoathookCommand extends Command {
   /** Creates a new ExtendBoathookCommand. */
-  Boathook boathook; 
+  Boathook boathook;
+
   double length;
 
   public ExtendBoathookCommand(double length, Boathook boathook) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.length = length; 
-    this.boathook = boathook; 
+    this.length = length;
+    this.boathook = boathook;
     addRequirements(boathook);
   }
 
@@ -27,7 +28,7 @@ public class ExtendBoathookCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boathook.setLength(length); 
+    boathook.setLength(length);
   }
 
   // Called once the command ends or is interrupted.
@@ -37,6 +38,6 @@ public class ExtendBoathookCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(boathook.getLength()-length)<1;
+    return Math.abs(boathook.getLength() - length) < 1;
   }
 }
