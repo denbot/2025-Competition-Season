@@ -24,8 +24,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Direction;
+import frc.robot.commands.BoathookMotionPath;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.PauseCommand;
+import frc.robot.commands.SetSetPointsCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
@@ -61,6 +63,8 @@ public class RobotContainer {
   private final GoToReefCommand reef;
   private final PauseCommand pauseCommand;
 
+  private final BoathookMotionPath moveBoathook; 
+
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
@@ -81,6 +85,11 @@ public class RobotContainer {
 
   private final PipelineChange twoLeft = new PipelineChange(3, Direction.LEFT, 120);
   private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
+
+  private final SetSetPointsCommand L1 = new SetSetPointsCommand(1, 0, 0, 0, 0, 0);
+  private final SetSetPointsCommand L2 = new SetSetPointsCommand(2, 0, 0, 0, 0, 0);
+  private final SetSetPointsCommand L3 = new SetSetPointsCommand(3, 0, 0, 0, 0, 0);
+  private final SetSetPointsCommand L4 = new SetSetPointsCommand(4, 0, 0, 0, 0, 0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -122,6 +131,8 @@ public class RobotContainer {
     boathook = new Boathook();
     reef = new GoToReefCommand(drive);
     pauseCommand = new PauseCommand(drive, 2);
+
+    moveBoathook = new BoathookMotionPath(boathook); 
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -189,13 +200,15 @@ public class RobotContainer {
 
     controller.rightBumper().onTrue(reef);
 
+    controller.leftBumper().onTrue(moveBoathook); 
+
     controller1.button(1).onTrue(twelveLeft);
     controller1.button(2).onTrue(twoRight);
     controller1.button(3).onTrue(twoLeft);
-    // controller1.button(4).onTrue(L4);
-    // controller1.button(5).onTrue(L3);
-    // controller1.button(6).onTrue(L2);
-    // controller1.button(7).onTrue(Trough);
+    controller1.button(4).onTrue(L4);
+    controller1.button(5).onTrue(L3);
+    controller1.button(6).onTrue(L2);
+    controller1.button(7).onTrue(L1);
     controller1.button(8).onTrue(fourRight);
     controller1.button(11).onTrue(fourLeft);
     controller1.button(12).onTrue(sixRight);

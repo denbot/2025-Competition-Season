@@ -194,7 +194,7 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putString("Direction", String.valueOf(direction));
     SmartDashboard.putNumber("Angle", angle);
 
-    SmartDashboard.putNumber("angle", Boathook.getAngle());
+    SmartDashboard.putNumber("angle", robotContainer.boathook.getAngle());
   }
 
   /** This function is called once when test mode is enabled. */
