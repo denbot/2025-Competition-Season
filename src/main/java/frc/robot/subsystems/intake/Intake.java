@@ -6,6 +6,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,8 +47,34 @@ public class Intake extends SubsystemBase {
   private final TalonFX indexerRight =
       new TalonFX(IntakeConstants.INDEXER_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
 
-  public static final TalonFXConfiguration rotationConfig =
+  public static final TalonFXConfiguration leftRotationConfig =
       new TalonFXConfiguration()
+          .withFeedback(
+              new FeedbackConfigs()
+                  // .withFeedbackRemoteSensorID(IntakeConstants.EXTENDER_MOTOR_ID)
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withSensorToMechanismRatio(IntakeConstants.rotatorGearRatio))
+          .withSoftwareLimitSwitch(
+              new SoftwareLimitSwitchConfigs()
+                  .withForwardSoftLimitEnable(false)
+                  .withForwardSoftLimitThreshold(IntakeConstants.forwardSoftLimit)
+                  .withReverseSoftLimitEnable(false)
+                  .withReverseSoftLimitThreshold(IntakeConstants.reverseSoftLimit))
+          .withMotionMagic(
+              new MotionMagicConfigs()
+                  .withMotionMagicAcceleration(4)
+                  .withMotionMagicCruiseVelocity(1))
+          .withSlot0(
+              new Slot0Configs()
+                  .withKP(1)
+                  .withKD(0)
+                  .withKG(0)
+                  .withGravityType(GravityTypeValue.Arm_Cosine));
+
+  public static final TalonFXConfiguration rightRotationConfig =
+      new TalonFXConfiguration()
+        .withMotorOutput(new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive))
           .withFeedback(
               new FeedbackConfigs()
                   // .withFeedbackRemoteSensorID(IntakeConstants.EXTENDER_MOTOR_ID)
@@ -78,8 +106,8 @@ public class Intake extends SubsystemBase {
     indexerLeft.setNeutralMode(NeutralModeValue.Coast);
     indexerRight.setNeutralMode(NeutralModeValue.Coast);
 
-    rotationLeft.getConfigurator().apply(rotationConfig);
-    rotationRight.getConfigurator().apply(rotationConfig);
+    rotationLeft.getConfigurator().apply(leftRotationConfig);
+    rotationRight.getConfigurator().apply(rightRotationConfig);
   }
 
   public double getLeftRotationAngle() {

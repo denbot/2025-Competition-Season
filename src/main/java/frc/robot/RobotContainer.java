@@ -65,6 +65,7 @@ public class RobotContainer {
   private final StartIntakeRight rejectIntakeRight;
   private final StartIntakeLeft startIntakeLeft;
   private final StartIntakeLeft rejectIntakeLeft;
+  private final FunnelIntake funnelIntake;
   private final StopIntake stopIntake;
 
   // each of these corresponds to a different button on the button board
@@ -131,6 +132,7 @@ public class RobotContainer {
     startIntakeRight = new StartIntakeRight(intake, 3);
     rejectIntakeLeft = new StartIntakeLeft(intake, -3);
     rejectIntakeRight = new StartIntakeRight(intake, -3);
+    funnelIntake = new FunnelIntake(intake, 3);
     stopIntake = new StopIntake(intake);
 
     // Set up auto routines
@@ -176,6 +178,8 @@ public class RobotContainer {
     controller.leftTrigger().onTrue(rejectIntakeLeft);
     controller.rightTrigger().onTrue(rejectIntakeRight);
     controller.y().onTrue(stopIntake);
+
+    controller.rightBumper().and(controller.leftBumper()).onTrue(funnelIntake);
 
     // Lock to 0° when A button is held
     controller
