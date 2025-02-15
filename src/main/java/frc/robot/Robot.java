@@ -211,6 +211,7 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
     SmartDashboard.putString("Direction", String.valueOf(direction));
     SmartDashboard.putNumber("Angle", angle);
+    SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
   }
 
   /** This function is called once when test mode is enabled. */

@@ -39,4 +39,30 @@ public final class Constants {
     LEFT,
     RIGHT
   }
+
+  public static class OperatorConstants {
+    public static final int kDriverControllerPort = 0;
+    public static final String canivoreSerial = "33ED01F9463847532020204B451D0DFF";
+  }
+
+  public static class IntakeConstants {
+    public static final double rotatorGearRatio = 25;
+    public static final double forwardSoftLimit = 90;
+    public static final double reverseSoftLimit = 0;
+
+    public static final int INTAKER_LEFT_MOTOR_ID = 18;
+    public static final int INTAKER_RIGHT_MOTOR_ID = 19;
+
+    public static final int ROTATION_LEFT_MOTOR_ID = 20;
+    public static final int ROTATION_LEFT_ENCODER_ID = 24;
+    public static final int ROTATION_RIGHT_MOTOR_ID = 21;
+    public static final int ROTATION_RIGHT_ENCODER_ID = 25;
+
+    public static final int INDEXER_LEFT_MOTOR_ID = 22;
+    public static final int INDEXER_RIGHT_MOTOR_ID = 23;
+
+    public static final double intakeDownAngle = 0;
+    public static final double intakeUpoAngle = 90;
+    public static final double intakeFunnelAngle = 45;
+  }
 }

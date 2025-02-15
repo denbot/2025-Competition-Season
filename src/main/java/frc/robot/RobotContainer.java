@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.PauseCommand;
+import frc.robot.commands.intakeCommands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.vision.commands.GoToReefCommand;
 import frc.robot.vision.commands.PipelineChange;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -46,6 +48,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
+  public final Intake intake = new Intake();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -58,6 +61,11 @@ public class RobotContainer {
   // Commands
   private final GoToReefCommand reef;
   private final PauseCommand pauseCommand;
+  private final StartIntakeRight startIntakeRight;
+  private final StartIntakeRight rejectIntakeRight;
+  private final StartIntakeLeft startIntakeLeft;
+  private final StartIntakeLeft rejectIntakeLeft;
+  private final StopIntake stopIntake;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -119,6 +127,11 @@ public class RobotContainer {
 
     reef = new GoToReefCommand(drive);
     pauseCommand = new PauseCommand(drive, 2);
+    startIntakeLeft = new StartIntakeLeft(intake, 3);
+    startIntakeRight = new StartIntakeRight(intake, 3);
+    rejectIntakeLeft = new StartIntakeLeft(intake, -3);
+    rejectIntakeRight = new StartIntakeRight(intake, -3);
+    stopIntake = new StopIntake(intake);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -158,7 +171,11 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    controller.rightTrigger().onTrue(pauseCommand);
+    controller.leftBumper().onTrue(startIntakeLeft);
+    controller.rightBumper().onTrue(startIntakeRight);
+    controller.leftTrigger().onTrue(rejectIntakeLeft);
+    controller.rightTrigger().onTrue(rejectIntakeRight);
+    controller.y().onTrue(stopIntake);
 
     // Lock to 0° when A button is held
     controller
@@ -175,7 +192,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -184,7 +201,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.rightBumper().onTrue(reef);
+    controller.b().onTrue(reef);
 
     controller1.button(1).onTrue(twelveLeft);
     controller1.button(2).onTrue(twoRight);
