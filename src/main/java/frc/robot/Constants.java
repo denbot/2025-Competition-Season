@@ -46,12 +46,12 @@ public final class Constants {
   }
 
   public static class BoathookConstants {
-    public static final int EXTENDER_MOTOR_ID = 1;
+    public static final int EXTENDER_MOTOR_ID = 13;
     public static final int ROTATION_MOTOR_ID = 14;
 
-    public static final int ROTATION_ENCODER_ID = 4;
+    public static final int ROTATION_ENCODER_ID = 15;
 
-    public static final int EXTENDER_ENCODER_ID = 5;
+    public static final int EXTENDER_ENCODER_ID = 16;
 
     public static final double rotatorGearRatio = 25;
 
@@ -61,9 +61,9 @@ public final class Constants {
 
     public static final double reverseSoftLimit = 0 / 360;
 
-    public static final int ROTATOR_CANDI_ID = 3;
+    public static final int ROTATOR_CANDI_ID = 17;
 
-    public static final int EXTENDER_CANDI_ID = 6;
+    public static final int EXTENDER_CANDI_ID = 18;
 
     public static final double EXTENDER_FOWARD_LIMIT = 72; // in inches
 
