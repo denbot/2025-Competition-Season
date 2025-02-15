@@ -1,0 +1,100 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1C Start line"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "8L"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReefToSource8"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SourceToReef8"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "8R"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReefToSource8"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SourceToReef6Top"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "6L"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlign"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Position1",
+  "choreoAuto": false
+}
