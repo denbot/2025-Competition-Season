@@ -50,16 +50,16 @@ public final class Constants {
     public static final double forwardSoftLimit = 90;
     public static final double reverseSoftLimit = 0;
 
-    public static final int INTAKER_LEFT_MOTOR_ID = 18;
-    public static final int INTAKER_RIGHT_MOTOR_ID = 19;
+    public static final int INTAKER_LEFT_MOTOR_ID = 17;
+    public static final int INTAKER_RIGHT_MOTOR_ID = 18;
 
-    public static final int ROTATION_LEFT_MOTOR_ID = 20;
-    public static final int ROTATION_LEFT_ENCODER_ID = 24;
-    public static final int ROTATION_RIGHT_MOTOR_ID = 21;
-    public static final int ROTATION_RIGHT_ENCODER_ID = 25;
+    public static final int ROTATION_LEFT_MOTOR_ID = 19;
+    public static final int ROTATION_LEFT_ENCODER_ID = 23;
+    public static final int ROTATION_RIGHT_MOTOR_ID = 20;
+    public static final int ROTATION_RIGHT_ENCODER_ID = 24;
 
-    public static final int INDEXER_LEFT_MOTOR_ID = 22;
-    public static final int INDEXER_RIGHT_MOTOR_ID = 23;
+    public static final int INDEXER_LEFT_MOTOR_ID = 21;
+    public static final int INDEXER_RIGHT_MOTOR_ID = 22;
 
     public static final double intakeDownAngle = 0;
     public static final double intakeUpoAngle = 90;
