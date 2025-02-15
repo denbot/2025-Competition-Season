@@ -23,6 +23,7 @@ public class GoToReefCommand extends Command {
   double rotationalKP = -0.3;
   Direction direction = Direction.LEFT;
   int framesDropped = 0;
+  Translation3d translate;
 
   Drive drive;
 
@@ -44,18 +45,20 @@ public class GoToReefCommand extends Command {
   public void execute() {
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
-    if (LimelightHelpers.getTV("")) {
+    if (LimelightHelpers.getTV("limelight-left") || LimelightHelpers.getTV("limelight-right")) {
       framesDropped = 0;
     } else {
       framesDropped++;
-      if (framesDropped > 5) {
-        this.cancel();
-      }
       return;
     }
-
+    double[] tagPoseRobot;
     // if in simulation, comment out this line:
-    double[] tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("");
+    if (LimelightHelpers.getTV("limelight-left")) {
+      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-left");
+
+    } else {
+      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-right");
+    }
 
     // comment this line out before actually running the robot:
     // double[] tagPoseRobot = {0, 0, 0};
@@ -72,8 +75,6 @@ public class GoToReefCommand extends Command {
     // makes a Translation 3d object with our desired location relative to the april tag
     // then rotates and translates the translation so it is relative to the robot
     // at least thats what I think we are doing, I might have it wrong
-
-    Translation3d translate;
 
     double offset = (direction == Direction.LEFT) ? -0.2 : 0.2;
     translate = new Translation3d(offset, 0, -0.5);
@@ -95,10 +96,6 @@ public class GoToReefCommand extends Command {
 
     drive.runVelocity(chassisSpeeds);
     SmartDashboard.putNumber("error", drive.getRotation().getDegrees() - Robot.angle);
-    if ((drive.getRotation().getDegrees() - Robot.angle) < 3
-        && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.1) {
-      this.cancel();
-    }
   }
 
   // Called once the command ends or is interrupted.
@@ -111,6 +108,8 @@ public class GoToReefCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return ((drive.getRotation().getDegrees() - Robot.angle) < 3
+            && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.1)
+        || (framesDropped > 5);
   }
 }
