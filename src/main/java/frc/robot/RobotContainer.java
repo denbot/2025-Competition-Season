@@ -128,10 +128,10 @@ public class RobotContainer {
 
     reef = new GoToReefCommand(drive);
     pauseCommand = new PauseCommand(drive, 2);
-    startIntakeLeft = new StartIntakeLeft(intake, 3);
-    startIntakeRight = new StartIntakeRight(intake, 3);
-    rejectIntakeLeft = new StartIntakeLeft(intake, -3);
-    rejectIntakeRight = new StartIntakeRight(intake, -3);
+    startIntakeLeft = new StartIntakeLeft(intake, -4);
+    startIntakeRight = new StartIntakeRight(intake, 4);
+    rejectIntakeLeft = new StartIntakeLeft(intake, 4);
+    rejectIntakeRight = new StartIntakeRight(intake, -4);
     funnelIntake = new FunnelIntake(intake, 3);
     stopIntake = new StopIntake(intake);
 

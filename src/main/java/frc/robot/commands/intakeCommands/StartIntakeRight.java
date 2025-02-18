@@ -30,8 +30,8 @@ public class StartIntakeRight extends Command {
   @Override
   public void execute() {
     intake.setRightIntakerSpeed(speed);
-    intake.setLeftIndexerSpeed(speed);
-    intake.setRightIndexerSpeed(speed);
+    intake.setLeftIndexerSpeed(0.5 * speed);
+    intake.setRightIndexerSpeed(-0.5 * speed);
     intake.setRightAngle(IntakeConstants.intakeDownAngle);
   }
 

@@ -73,8 +73,8 @@ public class Intake extends SubsystemBase {
 
   public static final TalonFXConfiguration rightRotationConfig =
       new TalonFXConfiguration()
-        .withMotorOutput(new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive))
+          .withMotorOutput(
+              new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive))
           .withFeedback(
               new FeedbackConfigs()
                   // .withFeedbackRemoteSensorID(IntakeConstants.EXTENDER_MOTOR_ID)
