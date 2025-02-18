@@ -14,12 +14,12 @@ public class StartIntakeRight extends Command {
   /** Creates a new StartIntakeRight. */
   Intake intake;
 
-  double speed;
+  double direction;
 
-  public StartIntakeRight(Intake intake, double speed) {
+  public StartIntakeRight(Intake intake, double direction) {
     addRequirements(intake);
     this.intake = intake;
-    this.speed = speed;
+    this.direction = direction;
   }
 
   // Called when the command is initially scheduled.
@@ -29,10 +29,11 @@ public class StartIntakeRight extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setRightIntakerSpeed(speed);
-    intake.setLeftIndexerSpeed(0.5 * speed);
-    intake.setRightIndexerSpeed(-0.5 * speed);
+    intake.setRightIntakerSpeed(IntakeConstants.intakeSpeed * direction);
+    intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed * direction);
+    intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
     intake.setRightAngle(IntakeConstants.intakeDownAngle);
+    intake.setLeftAngle(IntakeConstants.intakeFunnelAngle);
   }
 
   // Called once the command ends or is interrupted.

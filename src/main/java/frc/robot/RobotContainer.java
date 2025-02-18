@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PauseCommand;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -60,7 +59,6 @@ public class RobotContainer {
 
   // Commands
   private final GoToReefCommand reef;
-  private final PauseCommand pauseCommand;
   private final StartIntakeRight startIntakeRight;
   private final StartIntakeRight rejectIntakeRight;
   private final StartIntakeLeft startIntakeLeft;
@@ -127,12 +125,11 @@ public class RobotContainer {
     }
 
     reef = new GoToReefCommand(drive);
-    pauseCommand = new PauseCommand(drive, 2);
-    startIntakeLeft = new StartIntakeLeft(intake, -4);
-    startIntakeRight = new StartIntakeRight(intake, 4);
-    rejectIntakeLeft = new StartIntakeLeft(intake, 4);
-    rejectIntakeRight = new StartIntakeRight(intake, -4);
-    funnelIntake = new FunnelIntake(intake, 3);
+    startIntakeLeft = new StartIntakeLeft(intake, -1);
+    startIntakeRight = new StartIntakeRight(intake, 1);
+    rejectIntakeLeft = new StartIntakeLeft(intake, 1);
+    rejectIntakeRight = new StartIntakeRight(intake, -1);
+    funnelIntake = new FunnelIntake(intake, 1);
     stopIntake = new StopIntake(intake);
 
     // Set up auto routines

@@ -64,5 +64,8 @@ public final class Constants {
     public static final double intakeDownAngle = 0;
     public static final double intakeUpoAngle = 90;
     public static final double intakeFunnelAngle = 45;
+
+    public static final double intakeSpeed = 4;
+    public static final double indexerSpeed = 2;
   }
 }

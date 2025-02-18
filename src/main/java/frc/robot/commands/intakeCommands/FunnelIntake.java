@@ -14,12 +14,12 @@ public class FunnelIntake extends Command {
   /** Creates a new FunnelIntake. */
   Intake intake;
 
-  double speed;
+  double direction;
 
-  public FunnelIntake(Intake intake, double speed) {
+  public FunnelIntake(Intake intake, double direction) {
     addRequirements(intake);
     this.intake = intake;
-    this.speed = speed;
+    this.direction = direction;
   }
 
   // Called when the command is initially scheduled.
@@ -27,8 +27,8 @@ public class FunnelIntake extends Command {
   public void initialize() {
     intake.setLeftAngle(IntakeConstants.intakeFunnelAngle);
     intake.setRightAngle(IntakeConstants.intakeFunnelAngle);
-    intake.setLeftIntakerSpeed(-speed);
-    intake.setRightIntakerSpeed(-speed);
+    intake.setLeftIntakerSpeed(-IntakeConstants.intakeSpeed * direction);
+    intake.setRightIntakerSpeed(IntakeConstants.intakeSpeed * direction);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
