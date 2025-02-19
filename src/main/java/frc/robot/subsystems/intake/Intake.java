@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
       new TalonFX(IntakeConstants.INTAKER_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX rotationLeft =
-      new TalonFX(IntakeConstants.ROTATION_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
+      new TalonFX(IntakeConstants.ROTATION_LEFT_MOTOR_ID, OperatorConstants.canivoreSerial);
   private final CANcoder rotationLeftEncoder =
       new CANcoder(IntakeConstants.ROTATION_LEFT_ENCODER_ID, OperatorConstants.canivoreSerial);
 
