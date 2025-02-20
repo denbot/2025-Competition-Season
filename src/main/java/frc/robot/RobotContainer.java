@@ -87,9 +87,9 @@ public class RobotContainer {
   private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
 
   private final SetSetPointsCommand L1 = new SetSetPointsCommand(1, 0, 0, 0, 0, 0);
-  private final SetSetPointsCommand L2 = new SetSetPointsCommand(2, 0, 0, 0, 0, 0);
-  private final SetSetPointsCommand L3 = new SetSetPointsCommand(3, 0, 0, 0, 0, 0);
-  private final SetSetPointsCommand L4 = new SetSetPointsCommand(4, 0, 0, 0, 0, 0);
+  private final SetSetPointsCommand L2 = new SetSetPointsCommand(2, 0, 0, 0, 0, 20);
+  private final SetSetPointsCommand L3 = new SetSetPointsCommand(3, 0, 0, 0, 0, 36);
+  private final SetSetPointsCommand L4 = new SetSetPointsCommand(4, 0, 0, 0, 0, 52);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
