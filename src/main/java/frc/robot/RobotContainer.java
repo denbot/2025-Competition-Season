@@ -171,12 +171,12 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     controller.leftBumper().onTrue(startIntakeLeft);
-    controller.rightBumper().onTrue(startIntakeRight);
+    //controller.rightBumper().onTrue(startIntakeRight);
     controller.leftTrigger().onTrue(rejectIntakeLeft);
-    controller.rightTrigger().onTrue(rejectIntakeRight);
+    //controller.rightTrigger().onTrue(rejectIntakeRight);
     controller.y().onTrue(stopIntake);
 
-    controller.rightBumper().and(controller.leftBumper()).onTrue(funnelIntake);
+    //controller.rightBumper().and(controller.leftBumper()).onTrue(funnelIntake);
 
     // Lock to 0° when A button is held
     controller

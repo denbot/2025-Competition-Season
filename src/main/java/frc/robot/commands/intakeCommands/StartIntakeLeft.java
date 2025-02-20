@@ -32,8 +32,8 @@ public class StartIntakeLeft extends Command {
     intake.setLeftIntakerSpeed(IntakeConstants.intakeSpeed * direction);
     intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed * direction);
     intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
-    intake.setLeftAngle(IntakeConstants.intakeDownAngle);
-    intake.setRightAngle(IntakeConstants.intakeFunnelAngle);
+    // intake.setLeftAngle(IntakeConstants.intakeDownAngle);
+    // intake.setRightAngle(IntakeConstants.intakeFunnelAngle);
   }
 
   // Called once the command ends or is interrupted.

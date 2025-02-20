@@ -30,8 +30,8 @@ public class StopIntake extends Command {
     intake.setRightIntakerSpeed(0);
     intake.setLeftIndexerSpeed(0);
     intake.setRightIndexerSpeed(0);
-    intake.setRightAngle(IntakeConstants.intakeDownAngle);
-    intake.setLeftAngle(IntakeConstants.intakeDownAngle);
+    // intake.setRightAngle(IntakeConstants.intakeDownAngle);
+    // intake.setLeftAngle(IntakeConstants.intakeDownAngle);
   }
 
   // Called once the command ends or is interrupted.

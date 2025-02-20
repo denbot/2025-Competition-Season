@@ -25,8 +25,8 @@ public class FunnelIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setLeftAngle(IntakeConstants.intakeFunnelAngle);
-    intake.setRightAngle(IntakeConstants.intakeFunnelAngle);
+    // intake.setLeftAngle(IntakeConstants.intakeFunnelAngle);
+    // intake.setRightAngle(IntakeConstants.intakeFunnelAngle);
     intake.setLeftIntakerSpeed(-IntakeConstants.intakeSpeed * direction);
     intake.setRightIntakerSpeed(IntakeConstants.intakeSpeed * direction);
   }
