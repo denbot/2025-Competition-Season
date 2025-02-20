@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Direction;
-import frc.robot.commands.BoathookMotionPath;
+import frc.robot.commands.BoathookExtendMotionPath;
+import frc.robot.commands.BoathookRetractMotionPath;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PauseCommand;
 import frc.robot.commands.SetSetPointsCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.boathook.Boathook;
@@ -61,10 +61,9 @@ public class RobotContainer {
 
   // Commands
   private final GoToReefCommand reef;
-  private final PauseCommand pauseCommand;
-
-  private final BoathookMotionPath moveBoathook;
-
+  private final BoathookExtendMotionPath extendBoathook;
+  private final BoathookRetractMotionPath retractBoathook;
+  
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
@@ -86,10 +85,10 @@ public class RobotContainer {
   private final PipelineChange twoLeft = new PipelineChange(3, Direction.LEFT, 120);
   private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
 
-  private final SetSetPointsCommand L1 = new SetSetPointsCommand(1, 0, 0, 0, 0, 0);
-  private final SetSetPointsCommand L2 = new SetSetPointsCommand(2, 0, 0, 0, 0, 20);
-  private final SetSetPointsCommand L3 = new SetSetPointsCommand(3, 0, 0, 0, 0, 36);
-  private final SetSetPointsCommand L4 = new SetSetPointsCommand(4, 0, 0, 0, 0, 52);
+  private final SetSetPointsCommand L1 = new SetSetPointsCommand(90, 12, 120, 12, 120, 0);
+  private final SetSetPointsCommand L2 = new SetSetPointsCommand(90, 20, 120, 20, 120, 12);
+  private final SetSetPointsCommand L3 = new SetSetPointsCommand(90, 33.5, 100, 36, 100, 12);
+  private final SetSetPointsCommand L4 = new SetSetPointsCommand(90, 50, 95, 50, 95, 12);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -130,9 +129,8 @@ public class RobotContainer {
 
     boathook = new Boathook();
     reef = new GoToReefCommand(drive);
-    pauseCommand = new PauseCommand(drive, 2);
-
-    moveBoathook = new BoathookMotionPath(boathook);
+    extendBoathook = new BoathookExtendMotionPath(boathook);
+    retractBoathook = new BoathookRetractMotionPath(boathook);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -172,8 +170,6 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    controller.rightTrigger().onTrue(pauseCommand);
-
     // Lock to 0° when A button is held
     controller
         .a()
@@ -200,8 +196,8 @@ public class RobotContainer {
 
     controller.rightBumper().onTrue(reef);
 
-    controller.leftBumper().onTrue(moveBoathook);
-
+    controller.leftBumper().onTrue(extendBoathook);
+    controller.leftTrigger().onTrue(retractBoathook);
     controller1.button(1).onTrue(twelveLeft);
     controller1.button(2).onTrue(twoRight);
     controller1.button(3).onTrue(twoLeft);

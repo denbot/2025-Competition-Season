@@ -58,13 +58,13 @@ public class Boathook extends SubsystemBase {
           new FeedbackConfigs()
               // .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_MOTOR_ID)
               .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-              .withSensorToMechanismRatio(BoathookConstants.rotatorGearRatio))
+              .withSensorToMechanismRatio(BoathookConstants.ROTATOR_GEAR_RATIO))
       .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
-              .withForwardSoftLimitEnable(false)
-              .withForwardSoftLimitThreshold(BoathookConstants.fowardSoftLimit)
-              .withReverseSoftLimitEnable(false)
-              .withReverseSoftLimitThreshold(BoathookConstants.reverseSoftLimit))
+              .withForwardSoftLimitEnable(true)
+              .withForwardSoftLimitThreshold(BoathookConstants.ROTATOR_FORWARD_LIMIT)
+              .withReverseSoftLimitEnable(true)
+              .withReverseSoftLimitThreshold(BoathookConstants.ROTATOR_REVERSE_LIMIT))
       .withMotionMagic(
           new MotionMagicConfigs()
               .withMotionMagicAcceleration(4)
@@ -80,7 +80,7 @@ public class Boathook extends SubsystemBase {
               .withForwardLimitEnable(true)
               .withForwardLimitAutosetPositionEnable(true)
               .withForwardLimitAutosetPositionValue(0)
-              .withForwardLimitRemoteSensorID(BoathookConstants.ROTATOR_CANDI_ID)
+              .withForwardLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
               .withForwardLimitSource(ForwardLimitSourceValue.RemoteCANdiS1)
               .withForwardLimitType(ForwardLimitTypeValue.NormallyClosed));
 
@@ -89,11 +89,12 @@ public class Boathook extends SubsystemBase {
           new FeedbackConfigs()
               .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_ENCODER_ID)
               .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-              .withSensorToMechanismRatio(BoathookConstants.rotatorGearRatio))
+              .withRotorToSensorRatio(BoathookConstants.EXTENDER_GEAR_RATIO)
+              .withSensorToMechanismRatio(BoathookConstants.EXTENDER_CANCODER_RATIO))
       .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
               .withForwardSoftLimitEnable(false)
-              .withForwardSoftLimitThreshold(BoathookConstants.EXTENDER_FOWARD_LIMIT)
+              .withForwardSoftLimitThreshold(BoathookConstants.EXTENDER_FORWARD_LIMIT)
               .withReverseSoftLimitEnable(false)
               .withReverseSoftLimitThreshold(BoathookConstants.EXTENDER_REVERSE_LIMIT))
       .withMotionMagic(
@@ -105,20 +106,21 @@ public class Boathook extends SubsystemBase {
           new HardwareLimitSwitchConfigs()
               .withForwardLimitEnable(true)
               .withForwardLimitAutosetPositionEnable(true)
-              .withForwardLimitAutosetPositionValue(0)
-              .withForwardLimitRemoteSensorID(BoathookConstants.EXTENDER_CANDI_ID)
-              .withForwardLimitSource(ForwardLimitSourceValue.RemoteCANdiS1)
+              .withForwardLimitAutosetPositionValue(4)
+              .withForwardLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
+              .withForwardLimitSource(ForwardLimitSourceValue.RemoteCANdiS2)
               .withForwardLimitType(ForwardLimitTypeValue.NormallyClosed));
 
-  CANcoderConfiguration extentionCANcoderConfig = new CANcoderConfiguration().withMagnetSensor(new MagnetSensorConfigs().withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+  CANcoderConfiguration extentionCANcoderConfig = new CANcoderConfiguration()
+    .withMagnetSensor(
+      new MagnetSensorConfigs()
+      .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public Boathook() {
     rotationMotor.setNeutralMode(NeutralModeValue.Brake);
-
     extenderMotor.setNeutralMode(NeutralModeValue.Brake);
-
     rotationMotor.getConfigurator().apply(rotationConfig);
-
+    extenderMotor.getConfigurator().apply(extenderConfig);
     extentionEncoder.getConfigurator().apply(extentionCANcoderConfig); 
   }
 

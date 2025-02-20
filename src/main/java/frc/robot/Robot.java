@@ -135,14 +135,6 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-    SmartDashboard.putNumber("RX", LimelightHelpers.getBotPose2d_wpiBlue("limelight-right").getX());
-    SmartDashboard.putNumber("RY", LimelightHelpers.getBotPose2d_wpiBlue("limelight-right").getY());
-    SmartDashboard.putNumber(
-        "RZ", LimelightHelpers.getBotPose2d_wpiBlue("limelight-right").getRotation().getDegrees());
-    SmartDashboard.putNumber("LX", LimelightHelpers.getBotPose2d_wpiBlue("limelight-left").getX());
-    SmartDashboard.putNumber("LY", LimelightHelpers.getBotPose2d_wpiBlue("limelight-left").getY());
-    SmartDashboard.putNumber(
-        "LZ", LimelightHelpers.getBotPose2d_wpiBlue("limelight-left").getRotation().getDegrees());
     robotContainer.drive.addVisionMeasurement(
         "limelight-left",
         LimelightHelpers.getBotPose2d_wpiBlue("limelight-left"),
@@ -211,8 +203,6 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
     SmartDashboard.putString("Direction", String.valueOf(direction));
     SmartDashboard.putNumber("Angle", angle);
-
-    SmartDashboard.putNumber("angle", robotContainer.boathook.getAngle());
   }
 
   /** This function is called once when test mode is enabled. */
