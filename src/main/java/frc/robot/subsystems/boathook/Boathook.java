@@ -5,25 +5,11 @@
 package frc.robot.subsystems.boathook;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
-import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,7 +29,7 @@ public class Boathook extends SubsystemBase {
   //   private final CANcoder rotationEncoder =
   //       new CANcoder(BoathookConstants.ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
 
-  private final CANcoder extentionEncoder =
+  private final CANcoder extensionCancoder =
       new CANcoder(BoathookConstants.EXTENDER_ENCODER_ID, OperatorConstants.canivoreSerial);
 
   public double angle1;
@@ -92,28 +78,39 @@ public class Boathook extends SubsystemBase {
           .withFeedback(
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_ENCODER_ID)
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-                  .withRotorToSensorRatio(BoathookConstants.EXTENDER_GEAR_RATIO)
-                  .withSensorToMechanismRatio(BoathookConstants.EXTENDER_CANCODER_RATIO))
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                  .withRotorToSensorRatio(25 * (34.0 / 24.0))
+                  .withSensorToMechanismRatio(1.8))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(false)
                   .withForwardSoftLimitThreshold(BoathookConstants.EXTENDER_FORWARD_LIMIT)
                   .withReverseSoftLimitEnable(false)
                   .withReverseSoftLimitThreshold(BoathookConstants.EXTENDER_REVERSE_LIMIT))
-          .withMotionMagic(
-              new MotionMagicConfigs()
-                  .withMotionMagicAcceleration(2)
-                  .withMotionMagicCruiseVelocity(1))
-          .withSlot0(new Slot0Configs().withKP(.2).withKD(0).withKG(0))
-          .withHardwareLimitSwitch(
-              new HardwareLimitSwitchConfigs()
-                  .withReverseLimitEnable(true)
-                  .withReverseLimitAutosetPositionEnable(true)
-                  .withReverseLimitAutosetPositionValue(4)
-                  .withReverseLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
-                  .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
-                  .withReverseLimitType(ReverseLimitTypeValue.NormallyClosed));
+//          .withMotionMagic(
+//              new MotionMagicConfigs()
+//                  .withMotionMagicAcceleration(2)
+//                  .withMotionMagicCruiseVelocity(1))
+          .withSlot0(new Slot0Configs().withKP(28).withKD(0).withKG(0))
+            .withMotorOutput(
+                    new MotorOutputConfigs()
+                            .withInverted(InvertedValue.Clockwise_Positive)
+            )
+              .withSoftwareLimitSwitch(
+                      new SoftwareLimitSwitchConfigs()
+                              .withReverseSoftLimitEnable(true)
+                              .withReverseSoftLimitThreshold(0)
+                              .withForwardSoftLimitEnable(true)
+                              .withForwardSoftLimitThreshold(4.5)
+              )
+//          .withHardwareLimitSwitch(
+//              new HardwareLimitSwitchConfigs()
+//                  .withReverseLimitEnable(true)
+//                  .withReverseLimitAutosetPositionEnable(true)
+//                  .withReverseLimitAutosetPositionValue(4)
+//                  .withReverseLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
+//                  .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
+//                  .withReverseLimitType(ReverseLimitTypeValue.NormallyClosed));
 
   CANcoderConfiguration extentionCANcoderConfig =
       new CANcoderConfiguration()
@@ -126,7 +123,7 @@ public class Boathook extends SubsystemBase {
     extenderMotor.setNeutralMode(NeutralModeValue.Brake);
     rotationMotor.getConfigurator().apply(rotationConfig);
     extenderMotor.getConfigurator().apply(extenderConfig);
-    extentionEncoder.getConfigurator().apply(extentionCANcoderConfig);
+    extensionCancoder.getConfigurator().apply(extentionCANcoderConfig);
 
     NamedCommands.registerCommand("BoathookExtend", new BoathookExtendMotionPathCommand(this));
     NamedCommands.registerCommand("BoathookRetract", new BoathookRetractMotionPathCommand(this));
@@ -150,7 +147,7 @@ public class Boathook extends SubsystemBase {
   }
 
   public double getLength() {
-    return extentionEncoder.getPosition().getValueAsDouble();
+    return extensionCancoder.getPosition().getValueAsDouble();
     // might have to multiple by something
   }
 
