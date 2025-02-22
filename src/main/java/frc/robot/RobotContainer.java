@@ -239,7 +239,7 @@ public class RobotContainer {
     controller.y().onTrue(stopIntake);
     controller.x().onTrue(funnelIntake);
 
-    boathook.setDefaultCommand(idleBoathook);
+    // boathook.setDefaultCommand(idleBoathook);
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 

@@ -70,7 +70,7 @@ public final class Constants {
     public static final int ROTATION_MOTOR_ID = 14;
     public static final int ROTATION_ENCODER_ID = 15;
     public static final int EXTENDER_ENCODER_ID = 16;
-    public static final int BOATHOOK_CANDI_ID = 17;
+    public static final int BOATHOOK_CANDI_ID = 18;
     public static final double ROTATOR_GEAR_RATIO = 25;
     public static final double ROTATOR_FORWARD_LIMIT = 120.0 / 360;
     public static final double ROTATOR_REVERSE_LIMIT = 0.0 / 360;

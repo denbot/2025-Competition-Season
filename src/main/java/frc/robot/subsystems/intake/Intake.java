@@ -11,7 +11,6 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -31,8 +30,8 @@ public class Intake extends SubsystemBase {
 
   private final TalonFX rotation =
       new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
-  private final CANcoder rotationEncoder =
-      new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
+  // private final CANcoder rotationEncoder =
+  //     new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX indexerLeft =
       new TalonFX(IntakeConstants.INDEXER_LEFT_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -76,9 +75,9 @@ public class Intake extends SubsystemBase {
     NamedCommands.registerCommand("Funnel", new FunnelIntake(this));
   }
 
-  public double getRotationAngle() {
-    return rotationEncoder.getAbsolutePosition().getValueAsDouble() * 360;
-  }
+  // public double getRotationAngle() {
+  //   return rotationEncoder.getAbsolutePosition().getValueAsDouble() * 360;
+  // }
 
   public void setAngle(double angle) {
     rotation.setControl(new PositionVoltage(angle / 360));
@@ -98,7 +97,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
+    // SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
     SmartDashboard.putNumber("Intake Velocity", intake.getRotorVelocity().getValueAsDouble());
     SmartDashboard.putNumber(
         "Left Indexer Velocity", indexerLeft.getRotorVelocity().getValueAsDouble());
