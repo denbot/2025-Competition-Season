@@ -16,10 +16,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.intakeCommands.FunnelIntake;
+import frc.robot.commands.intakeCommands.StopIntake;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -68,6 +71,9 @@ public class Intake extends SubsystemBase {
     indexerRight.setNeutralMode(NeutralModeValue.Coast);
 
     rotation.getConfigurator().apply(intakeRotationConfig);
+
+    NamedCommands.registerCommand("IntakeDown", new StopIntake(this));
+    NamedCommands.registerCommand("Funnel", new FunnelIntake(this));
   }
 
   public double getRotationAngle() {

@@ -78,5 +78,19 @@ public final class Constants {
     public static final double EXTENDER_CANCODER_RATIO = 1 / 5.98;
     public static final double EXTENDER_FORWARD_LIMIT = 72; // in inches
     public static final double EXTENDER_REVERSE_LIMIT = 0;
+
+    public static final double STAB_ANGLE = 0.05 * 360;
+    public static final double IDLE_ANGLE = 108;
+    public static final double L2_SETUP_ANGLE = 0.4 * 360;
+    public static final double L3_SETUP_ANGLE = 0.35 * 360;
+    public static final double L4_SETUP_ANGLE = 0.32 * 360;
+    public static final double L2_SCORE_ANGLE = 0.4 * 360;
+    public static final double L3_SCORE_ANGLE = 0.35 * 360;
+    public static final double L4_SCORE_ANGLE = 0.32 * 360;
+    public static final double STAB_EXTENSION = 9.5;
+    public static final double IDLE_EXTENSION = 5.5;
+    public static final double L2_EXTENSION = 22;
+    public static final double L3_EXTENSION = 31;
+    public static final double L4_EXTENSION = 50;
   }
 }

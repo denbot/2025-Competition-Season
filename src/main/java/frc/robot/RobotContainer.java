@@ -23,12 +23,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.Direction;
-import frc.robot.commands.BoathookExtendMotionPath;
-import frc.robot.commands.BoathookRetractMotionPath;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookIdleCommand;
+import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookStabCommand;
+import frc.robot.commands.boathookCommands.SetSetPointsCommand;
 import frc.robot.commands.intakeCommands.*;
-import frc.robot.commands.SetSetPointsCommand;
+import frc.robot.commands.visionCommands.GoToReefCommand;
+import frc.robot.commands.visionCommands.PipelineChange;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
@@ -38,8 +43,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.vision.commands.GoToReefCommand;
-import frc.robot.vision.commands.PipelineChange;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -51,7 +54,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
-  public final Intake intake = new Intake();
+  public final Intake intake;
   public final Boathook boathook;
 
   // Controller
@@ -64,9 +67,12 @@ public class RobotContainer {
 
   // Commands
   private final GoToReefCommand reef;
-  private final BoathookExtendMotionPath extendBoathook;
-  private final BoathookRetractMotionPath retractBoathook;
-  
+
+  private final BoathookIdleCommand idleBoathook;
+  private final BoathookExtendMotionPathCommand extendBoathook;
+  private final BoathookRetractMotionPathCommand retractBoathook;
+  private final BoathookStabCommand stabBoathook;
+
   private final StartIntake startIntake;
   private final StartIntake rejectIntake;
   private final FunnelIntake funnelIntake;
@@ -93,10 +99,26 @@ public class RobotContainer {
   private final PipelineChange twoLeft = new PipelineChange(3, Direction.LEFT, 120);
   private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
 
-  private final SetSetPointsCommand L1 = new SetSetPointsCommand(90, 12, 120, 12, 120, 0);
-  private final SetSetPointsCommand L2 = new SetSetPointsCommand(90, 20, 120, 20, 120, 12);
-  private final SetSetPointsCommand L3 = new SetSetPointsCommand(90, 33.5, 100, 36, 100, 12);
-  private final SetSetPointsCommand L4 = new SetSetPointsCommand(90, 50, 95, 50, 95, 12);
+  private final SetSetPointsCommand L1 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+          BoathookConstants.L2_SCORE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
+  private final SetSetPointsCommand L2 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.L2_EXTENSION,
+          BoathookConstants.L2_SETUP_ANGLE, BoathookConstants.L2_EXTENSION,
+          BoathookConstants.L2_SCORE_ANGLE, BoathookConstants.IDLE_EXTENSION);
+  private final SetSetPointsCommand L3 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.L3_EXTENSION,
+          BoathookConstants.L3_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
+          BoathookConstants.L3_SCORE_ANGLE, BoathookConstants.L2_EXTENSION);
+  private final SetSetPointsCommand L4 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.L4_EXTENSION,
+          BoathookConstants.L4_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -135,13 +157,17 @@ public class RobotContainer {
         break;
     }
 
+    intake = new Intake();
     boathook = new Boathook();
+
     reef = new GoToReefCommand(drive);
-    extendBoathook = new BoathookExtendMotionPath(boathook);
-    retractBoathook = new BoathookRetractMotionPath(boathook);
+    idleBoathook = new BoathookIdleCommand(boathook);
+    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
+    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
+    stabBoathook = new BoathookStabCommand(boathook, intake);
     startIntake = new StartIntake(intake, -1);
     rejectIntake = new StartIntake(intake, 1);
-    funnelIntake = new FunnelIntake(intake, 1);
+    funnelIntake = new FunnelIntake(intake);
     stopIntake = new StopIntake(intake);
 
     // Set up auto routines
@@ -182,11 +208,6 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    controller.leftBumper().onTrue(startIntake);
-    controller.leftTrigger().onTrue(rejectIntake);
-    controller.y().onTrue(stopIntake);
-    controller.x().onTrue(funnelIntake);
-
     // Lock to 0° when A button is held
     controller
         .a()
@@ -213,29 +234,36 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
+    controller.leftBumper().onTrue(startIntake);
+    controller.leftTrigger().onTrue(rejectIntake);
+    controller.y().onTrue(stopIntake);
+    controller.x().onTrue(funnelIntake);
+
+    boathook.setDefaultCommand(idleBoathook);
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
-    operatorController1.button(1).onTrue(twelveLeft);
-    operatorController1.button(2).onTrue(twoRight);
-    operatorController1.button(3).onTrue(twoLeft);
-    // operatorController1.button(4).onTrue(L4);
-    // operatorController1.button(5).onTrue(L3);
-    // operatorController1.button(6).onTrue(L2);
-    // operatorController1.button(7).onTrue(L1);
-    operatorController1.button(8).onTrue(fourRight);
-    operatorController1.button(11).onTrue(fourLeft);
-    operatorController1.button(12).onTrue(sixRight);
 
-    operatorController2.button(1).onTrue(twelveRight);
-    operatorController2.button(2).onTrue(tenLeft);
-    operatorController2.button(3).onTrue(tenRight);
-    // operatorController2.button(4).onTrue(TODO);
+    operatorController1.button(1).onTrue(twelveLeft.ignoringDisable(true));
+    operatorController1.button(2).onTrue(twoRight.ignoringDisable(true));
+    operatorController1.button(3).onTrue(twoLeft.ignoringDisable(true));
+    operatorController1.button(4).onTrue(L4.ignoringDisable(true));
+    operatorController1.button(5).onTrue(L3.ignoringDisable(true));
+    operatorController1.button(6).onTrue(L2.ignoringDisable(true));
+    operatorController1.button(7).onTrue(L1.ignoringDisable(true));
+    operatorController1.button(8).onTrue(fourRight.ignoringDisable(true));
+    operatorController1.button(11).onTrue(fourLeft.ignoringDisable(true));
+    operatorController1.button(12).onTrue(sixRight.ignoringDisable(true));
+
+    operatorController2.button(1).onTrue(twelveRight.ignoringDisable(true));
+    operatorController2.button(2).onTrue(tenLeft.ignoringDisable(true));
+    operatorController2.button(3).onTrue(tenRight.ignoringDisable(true));
+    operatorController2.button(4).onTrue(stabBoathook);
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(eightLeft);
-    operatorController2.button(11).onTrue(eightRight);
-    operatorController2.button(12).onTrue(sixLeft);
+    operatorController2.button(8).onTrue(eightLeft.ignoringDisable(true));
+    operatorController2.button(11).onTrue(eightRight.ignoringDisable(true));
+    operatorController2.button(12).onTrue(sixLeft.ignoringDisable(true));
   }
 
   /**
