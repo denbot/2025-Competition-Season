@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PauseCommand;
+import frc.robot.commands.intakeCommands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -33,6 +33,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.vision.commands.GoToReefCommand;
 import frc.robot.vision.commands.PipelineChange;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -46,18 +47,22 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
+  public final Intake intake = new Intake();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandGenericHID controller1 = new CommandGenericHID(1);
-  private final CommandGenericHID controller2 = new CommandGenericHID(2);
+  private final CommandGenericHID operatorController1 = new CommandGenericHID(1);
+  private final CommandGenericHID operatorController2 = new CommandGenericHID(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
   private final GoToReefCommand reef;
-  private final PauseCommand pauseCommand;
+  private final StartIntake startIntake;
+  private final StartIntake rejectIntake;
+  private final FunnelIntake funnelIntake;
+  private final StopIntake stopIntake;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -118,7 +123,10 @@ public class RobotContainer {
     }
 
     reef = new GoToReefCommand(drive);
-    pauseCommand = new PauseCommand(drive, 2);
+    startIntake = new StartIntake(intake, -1);
+    rejectIntake = new StartIntake(intake, 1);
+    funnelIntake = new FunnelIntake(intake, 1);
+    stopIntake = new StopIntake(intake);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -158,7 +166,10 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    controller.rightTrigger().onTrue(pauseCommand);
+    controller.leftBumper().onTrue(startIntake);
+    controller.leftTrigger().onTrue(rejectIntake);
+    controller.y().onTrue(stopIntake);
+    controller.x().onTrue(funnelIntake);
 
     // Lock to 0° when A button is held
     controller
@@ -171,11 +182,11 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -184,29 +195,29 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.rightBumper().onTrue(reef);
+    controller.b().onTrue(reef);
 
-    controller1.button(1).onTrue(twelveLeft);
-    controller1.button(2).onTrue(twoRight);
-    controller1.button(3).onTrue(twoLeft);
-    // controller1.button(4).onTrue(L4);
-    // controller1.button(5).onTrue(L3);
-    // controller1.button(6).onTrue(L2);
-    // controller1.button(7).onTrue(Trough);
-    controller1.button(8).onTrue(fourRight);
-    controller1.button(11).onTrue(fourLeft);
-    controller1.button(12).onTrue(sixRight);
+    operatorController1.button(1).onTrue(twelveLeft);
+    operatorController1.button(2).onTrue(twoRight);
+    operatorController1.button(3).onTrue(twoLeft);
+    // operatorController1.button(4).onTrue(L4);
+    // operatorController1.button(5).onTrue(L3);
+    // operatorController1.button(6).onTrue(L2);
+    // operatorController1.button(7).onTrue(L1);
+    operatorController1.button(8).onTrue(fourRight);
+    operatorController1.button(11).onTrue(fourLeft);
+    operatorController1.button(12).onTrue(sixRight);
 
-    controller2.button(1).onTrue(twelveRight);
-    controller2.button(2).onTrue(tenLeft);
-    controller2.button(3).onTrue(tenRight);
-    // controller2.button(4).onTrue(TODO);
-    // controller2.button(5).onTrue(TODO);
-    // controller2.button(6).onTrue(TODO);
-    // controller2.button(7).onTrue(TODO);
-    controller2.button(8).onTrue(eightLeft);
-    controller2.button(11).onTrue(eightRight);
-    controller2.button(12).onTrue(sixLeft);
+    operatorController2.button(1).onTrue(twelveRight);
+    operatorController2.button(2).onTrue(tenLeft);
+    operatorController2.button(3).onTrue(tenRight);
+    // operatorController2.button(4).onTrue(TODO);
+    // operatorController2.button(5).onTrue(TODO);
+    // operatorController2.button(6).onTrue(TODO);
+    // operatorController2.button(7).onTrue(TODO);
+    operatorController2.button(8).onTrue(eightLeft);
+    operatorController2.button(11).onTrue(eightRight);
+    operatorController2.button(12).onTrue(sixLeft);
   }
 
   /**
