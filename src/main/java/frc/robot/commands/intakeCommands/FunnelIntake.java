@@ -25,10 +25,10 @@ public class FunnelIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // intake.setLeftAngle(IntakeConstants.intakeFunnelAngle);
-    // intake.setRightAngle(IntakeConstants.intakeFunnelAngle);
-    intake.setLeftIntakerSpeed(-IntakeConstants.intakeSpeed * direction);
-    intake.setRightIntakerSpeed(IntakeConstants.intakeSpeed * direction);
+    intake.setAngle(IntakeConstants.intakeFunnelAngle);
+    intake.setIntakeSpeed(0);
+    intake.setLeftIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
+    intake.setRightIndexerSpeed(IntakeConstants.indexerSpeed * direction);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,6 +39,7 @@ public class FunnelIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     SmartDashboard.putString("IntakeStatus", "Funneling");
+    System.out.println("FUNNEL");
   }
 
   // Returns true when the command should end.

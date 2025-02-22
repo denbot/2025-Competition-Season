@@ -6,7 +6,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -16,7 +15,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,21 +23,13 @@ import frc.robot.Constants.OperatorConstants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-  private final TalonFX intakerLeft =
-      new TalonFX(IntakeConstants.INTAKER_LEFT_MOTOR_ID, OperatorConstants.canivoreSerial);
+  private final TalonFX intake =
+      new TalonFX(IntakeConstants.INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
-  private final TalonFX intakerRight =
-      new TalonFX(IntakeConstants.INTAKER_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
-
-  private final TalonFX rotationLeft =
-      new TalonFX(IntakeConstants.ROTATION_LEFT_MOTOR_ID, OperatorConstants.canivoreSerial);
-  private final CANcoder rotationLeftEncoder =
-      new CANcoder(IntakeConstants.ROTATION_LEFT_ENCODER_ID, OperatorConstants.canivoreSerial);
-
-  private final TalonFX rotationRight =
-      new TalonFX(IntakeConstants.ROTATION_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
-  private final CANcoder rotationRightEncoder =
-      new CANcoder(IntakeConstants.ROTATION_RIGHT_ENCODER_ID, OperatorConstants.canivoreSerial);
+  private final TalonFX rotation =
+      new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
+  private final CANcoder rotationEncoder =
+      new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX indexerLeft =
       new TalonFX(IntakeConstants.INDEXER_LEFT_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -47,7 +37,7 @@ public class Intake extends SubsystemBase {
   private final TalonFX indexerRight =
       new TalonFX(IntakeConstants.INDEXER_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
 
-  public static final TalonFXConfiguration leftRotationConfig =
+  public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
           .withFeedback(
               new FeedbackConfigs()
@@ -63,80 +53,37 @@ public class Intake extends SubsystemBase {
           .withMotionMagic(
               new MotionMagicConfigs()
                   .withMotionMagicAcceleration(4)
-                  .withMotionMagicCruiseVelocity(1))
+                  .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(1)
-                  .withKD(0)
-                  .withKG(0)
-                  .withGravityType(GravityTypeValue.Arm_Cosine));
-
-  public static final TalonFXConfiguration rightRotationConfig =
-      new TalonFXConfiguration()
-          .withMotorOutput(
-              new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive))
-          .withFeedback(
-              new FeedbackConfigs()
-                  // .withFeedbackRemoteSensorID(IntakeConstants.EXTENDER_MOTOR_ID)
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                  .withSensorToMechanismRatio(IntakeConstants.rotatorGearRatio))
-          .withSoftwareLimitSwitch(
-              new SoftwareLimitSwitchConfigs()
-                  .withForwardSoftLimitEnable(false)
-                  .withForwardSoftLimitThreshold(IntakeConstants.forwardSoftLimit)
-                  .withReverseSoftLimitEnable(false)
-                  .withReverseSoftLimitThreshold(IntakeConstants.reverseSoftLimit))
-          .withMotionMagic(
-              new MotionMagicConfigs()
-                  .withMotionMagicAcceleration(4)
-                  .withMotionMagicCruiseVelocity(1))
-          .withSlot0(
-              new Slot0Configs()
-                  .withKP(1)
+                  .withKP(16)
                   .withKD(0)
                   .withKG(0)
                   .withGravityType(GravityTypeValue.Arm_Cosine));
 
   public Intake() {
-    rotationLeft.setNeutralMode(NeutralModeValue.Brake);
-    rotationRight.setNeutralMode(NeutralModeValue.Brake);
-
-    intakerLeft.setNeutralMode(NeutralModeValue.Coast);
-    intakerRight.setNeutralMode(NeutralModeValue.Coast);
+    rotation.setNeutralMode(NeutralModeValue.Brake);
+    intake.setNeutralMode(NeutralModeValue.Coast);
     indexerLeft.setNeutralMode(NeutralModeValue.Coast);
     indexerRight.setNeutralMode(NeutralModeValue.Coast);
 
-    rotationLeft.getConfigurator().apply(leftRotationConfig);
-    rotationRight.getConfigurator().apply(rightRotationConfig);
+    rotation.getConfigurator().apply(intakeRotationConfig);
   }
 
-  public double getLeftRotationAngle() {
-    return rotationLeftEncoder.getAbsolutePosition().getValueAsDouble() * 360;
+  public double getRotationAngle() {
+    return rotationEncoder.getAbsolutePosition().getValueAsDouble() * 360;
   }
 
-  public double getRightRotationAngle() {
-    return rotationRightEncoder.getAbsolutePosition().getValueAsDouble() * 360;
+  public void setAngle(double angle) {
+    rotation.setControl(new PositionVoltage(angle / 360));
   }
 
-  public void setLeftAngle(double angle) {
-    rotationLeft.setControl(new PositionVoltage(angle / 360));
-  }
-
-  public void setRightAngle(double angle) {
-    rotationRight.setControl(new PositionVoltage(angle / 360));
-  }
-
-  public void setLeftIntakerSpeed(double speed) {
-    intakerLeft.setControl(new VoltageOut(speed));
-  }
-
-  public void setRightIntakerSpeed(double speed) {
-    intakerRight.setControl(new VoltageOut(speed));
+  public void setIntakeSpeed(double speed) {
+    intake.setControl(new VoltageOut(speed));
   }
 
   public void setLeftIndexerSpeed(double speed) {
     indexerLeft.setControl(new VoltageOut(speed));
-    ;
   }
 
   public void setRightIndexerSpeed(double speed) {
@@ -145,12 +92,8 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left Rotation Angle", getLeftRotationAngle());
-    SmartDashboard.putNumber("Right Rotation Angle", getRightRotationAngle());
-    SmartDashboard.putNumber(
-        "Left Intaker Velocity", intakerLeft.getRotorVelocity().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Right Intaker Velocity", intakerRight.getRotorVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
+    SmartDashboard.putNumber("Intake Velocity", intake.getRotorVelocity().getValueAsDouble());
     SmartDashboard.putNumber(
         "Left Indexer Velocity", indexerLeft.getRotorVelocity().getValueAsDouble());
     SmartDashboard.putNumber(

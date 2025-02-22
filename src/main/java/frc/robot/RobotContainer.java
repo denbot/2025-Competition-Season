@@ -51,18 +51,16 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandGenericHID controller1 = new CommandGenericHID(1);
-  private final CommandGenericHID controller2 = new CommandGenericHID(2);
+  private final CommandGenericHID operatorController1 = new CommandGenericHID(1);
+  private final CommandGenericHID operatorController2 = new CommandGenericHID(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
   private final GoToReefCommand reef;
-  private final StartIntakeRight startIntakeRight;
-  private final StartIntakeRight rejectIntakeRight;
-  private final StartIntakeLeft startIntakeLeft;
-  private final StartIntakeLeft rejectIntakeLeft;
+  private final StartIntake startIntake;
+  private final StartIntake rejectIntake;
   private final FunnelIntake funnelIntake;
   private final StopIntake stopIntake;
 
@@ -125,10 +123,8 @@ public class RobotContainer {
     }
 
     reef = new GoToReefCommand(drive);
-    startIntakeLeft = new StartIntakeLeft(intake, -1);
-    startIntakeRight = new StartIntakeRight(intake, 1);
-    rejectIntakeLeft = new StartIntakeLeft(intake, 1);
-    rejectIntakeRight = new StartIntakeRight(intake, -1);
+    startIntake = new StartIntake(intake, -1);
+    rejectIntake = new StartIntake(intake, 1);
     funnelIntake = new FunnelIntake(intake, 1);
     stopIntake = new StopIntake(intake);
 
@@ -170,13 +166,10 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    controller.leftBumper().onTrue(startIntakeLeft);
-    //controller.rightBumper().onTrue(startIntakeRight);
-    controller.leftTrigger().onTrue(rejectIntakeLeft);
-    //controller.rightTrigger().onTrue(rejectIntakeRight);
+    controller.leftBumper().onTrue(startIntake);
+    controller.leftTrigger().onTrue(rejectIntake);
     controller.y().onTrue(stopIntake);
-
-    //controller.rightBumper().and(controller.leftBumper()).onTrue(funnelIntake);
+    controller.x().onTrue(funnelIntake);
 
     // Lock to 0° when A button is held
     controller
@@ -189,7 +182,7 @@ public class RobotContainer {
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -204,27 +197,27 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
-    controller1.button(1).onTrue(twelveLeft);
-    controller1.button(2).onTrue(twoRight);
-    controller1.button(3).onTrue(twoLeft);
-    // controller1.button(4).onTrue(L4);
-    // controller1.button(5).onTrue(L3);
-    // controller1.button(6).onTrue(L2);
-    // controller1.button(7).onTrue(Trough);
-    controller1.button(8).onTrue(fourRight);
-    controller1.button(11).onTrue(fourLeft);
-    controller1.button(12).onTrue(sixRight);
+    operatorController1.button(1).onTrue(twelveLeft);
+    operatorController1.button(2).onTrue(twoRight);
+    operatorController1.button(3).onTrue(twoLeft);
+    // operatorController1.button(4).onTrue(L4);
+    // operatorController1.button(5).onTrue(L3);
+    // operatorController1.button(6).onTrue(L2);
+    // operatorController1.button(7).onTrue(L1);
+    operatorController1.button(8).onTrue(fourRight);
+    operatorController1.button(11).onTrue(fourLeft);
+    operatorController1.button(12).onTrue(sixRight);
 
-    controller2.button(1).onTrue(twelveRight);
-    controller2.button(2).onTrue(tenLeft);
-    controller2.button(3).onTrue(tenRight);
-    // controller2.button(4).onTrue(TODO);
-    // controller2.button(5).onTrue(TODO);
-    // controller2.button(6).onTrue(TODO);
-    // controller2.button(7).onTrue(TODO);
-    controller2.button(8).onTrue(eightLeft);
-    controller2.button(11).onTrue(eightRight);
-    controller2.button(12).onTrue(sixLeft);
+    operatorController2.button(1).onTrue(twelveRight);
+    operatorController2.button(2).onTrue(tenLeft);
+    operatorController2.button(3).onTrue(tenRight);
+    // operatorController2.button(4).onTrue(TODO);
+    // operatorController2.button(5).onTrue(TODO);
+    // operatorController2.button(6).onTrue(TODO);
+    // operatorController2.button(7).onTrue(TODO);
+    operatorController2.button(8).onTrue(eightLeft);
+    operatorController2.button(11).onTrue(eightRight);
+    operatorController2.button(12).onTrue(sixLeft);
   }
 
   /**

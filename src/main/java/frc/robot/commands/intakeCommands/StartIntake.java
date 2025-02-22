@@ -10,13 +10,13 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.intake.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class StartIntakeRight extends Command {
-  /** Creates a new StartIntakeRight. */
+public class StartIntake extends Command {
+  /** Creates a new StartIntake. */
   Intake intake;
 
   double direction;
 
-  public StartIntakeRight(Intake intake, double direction) {
+  public StartIntake(Intake intake, double direction) {
     addRequirements(intake);
     this.intake = intake;
     this.direction = direction;
@@ -29,17 +29,16 @@ public class StartIntakeRight extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setRightIntakerSpeed(IntakeConstants.intakeSpeed * direction);
+    intake.setIntakeSpeed(IntakeConstants.intakeSpeed * direction);
     intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed * direction);
     intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
-    // intake.setRightAngle(IntakeConstants.intakeDownAngle);
-    // intake.setLeftAngle(IntakeConstants.intakeFunnelAngle);
+    intake.setAngle(IntakeConstants.intakeDownAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("IntakeStatus", "RightRunning");
+    SmartDashboard.putString("IntakeStatus", "Running");
   }
 
   // Returns true when the command should end.
