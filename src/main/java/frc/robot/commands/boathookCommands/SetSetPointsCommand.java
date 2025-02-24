@@ -41,7 +41,12 @@ public class SetSetPointsCommand extends Command {
     Robot.robotContainer.boathook.angle3 = angle3;
     Robot.robotContainer.boathook.length3 = length3;
 
-    System.out.println(angle1);
+    System.out.println(Robot.robotContainer.boathook.angle1);
+    System.out.println(Robot.robotContainer.boathook.length1);
+    System.out.println(Robot.robotContainer.boathook.angle2);
+    System.out.println(Robot.robotContainer.boathook.length2);
+    System.out.println(Robot.robotContainer.boathook.angle3);
+    System.out.println(Robot.robotContainer.boathook.length3);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

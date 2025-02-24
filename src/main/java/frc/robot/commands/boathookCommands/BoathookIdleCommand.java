@@ -5,7 +5,7 @@
 package frc.robot.commands.boathookCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.BoathookConstants;
+import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 import frc.robot.subsystems.boathook.Boathook;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -17,7 +17,7 @@ public class BoathookIdleCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new ExtendBoathookCommand(BoathookConstants.IDLE_EXTENSION, boathook),
-        new AngleBoathookCommand(BoathookConstants.IDLE_ANGLE, boathook));
+        // new ExtendBoathookCommand(BoathookConstants.IDLE_EXTENSION, boathook),
+        new AngleIdleBoathookCommand(boathook));
   }
 }

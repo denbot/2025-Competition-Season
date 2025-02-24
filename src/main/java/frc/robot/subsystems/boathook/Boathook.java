@@ -54,27 +54,32 @@ public class Boathook extends SubsystemBase {
                   .withForwardSoftLimitThreshold(BoathookConstants.ROTATOR_FORWARD_LIMIT)
                   .withReverseSoftLimitEnable(true)
                   .withReverseSoftLimitThreshold(BoathookConstants.ROTATOR_REVERSE_LIMIT))
-          .withMotionMagic(
-              new MotionMagicConfigs()
-                  .withMotionMagicAcceleration(4)
-                  .withMotionMagicCruiseVelocity(1))
+          // .withMotionMagic(
+          //     new MotionMagicConfigs()
+          //         .withMotionMagicAcceleration(4)
+          //         .withMotionMagicCruiseVelocity(1))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(15)
+                  .withKP(18)
                   .withKD(0)
-                  .withKG(0)
-                  .withGravityType(GravityTypeValue.Arm_Cosine))
-          .withHardwareLimitSwitch(
-              new HardwareLimitSwitchConfigs()
-                  .withForwardLimitEnable(true)
-                  .withForwardLimitAutosetPositionEnable(true)
-                  .withForwardLimitAutosetPositionValue(0)
-                  .withForwardLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
-                  .withForwardLimitSource(ForwardLimitSourceValue.RemoteCANdiS1)
-                  .withForwardLimitType(ForwardLimitTypeValue.NormallyClosed));
+                  .withKS(0.2)
+                  .withKG(0.35)
+                  .withGravityType(GravityTypeValue.Arm_Cosine));
+  // .withHardwareLimitSwitch(
+  //     new HardwareLimitSwitchConfigs()
+  //         .withForwardLimitEnable(true)
+  //         .withForwardLimitAutosetPositionEnable(true)
+  //         .withForwardLimitAutosetPositionValue(0)
+  //         .withForwardLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
+  //         .withForwardLimitSource(ForwardLimitSourceValue.RemoteCANdiS1)
+  //         .withForwardLimitType(ForwardLimitTypeValue.NormallyClosed));
 
   public static final TalonFXConfiguration extenderConfig =
       new TalonFXConfiguration()
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimit(40)
+                  .withStatorCurrentLimitEnable(true))
           .withFeedback(
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_ENCODER_ID)
@@ -83,39 +88,36 @@ public class Boathook extends SubsystemBase {
                   .withSensorToMechanismRatio(1.8))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
-                  .withForwardSoftLimitEnable(false)
+                  .withForwardSoftLimitEnable(true)
                   .withForwardSoftLimitThreshold(BoathookConstants.EXTENDER_FORWARD_LIMIT)
-                  .withReverseSoftLimitEnable(false)
+                  .withReverseSoftLimitEnable(true)
                   .withReverseSoftLimitThreshold(BoathookConstants.EXTENDER_REVERSE_LIMIT))
-//          .withMotionMagic(
-//              new MotionMagicConfigs()
-//                  .withMotionMagicAcceleration(2)
-//                  .withMotionMagicCruiseVelocity(1))
+          //          .withMotionMagic(
+          //              new MotionMagicConfigs()
+          //                  .withMotionMagicAcceleration(2)
+          //                  .withMotionMagicCruiseVelocity(1))
           .withSlot0(new Slot0Configs().withKP(28).withKD(0).withKG(0))
-            .withMotorOutput(
-                    new MotorOutputConfigs()
-                            .withInverted(InvertedValue.Clockwise_Positive)
-            )
-              .withSoftwareLimitSwitch(
-                      new SoftwareLimitSwitchConfigs()
-                              .withReverseSoftLimitEnable(true)
-                              .withReverseSoftLimitThreshold(0)
-                              .withForwardSoftLimitEnable(true)
-                              .withForwardSoftLimitThreshold(4.5)
-              )
-//          .withHardwareLimitSwitch(
-//              new HardwareLimitSwitchConfigs()
-//                  .withReverseLimitEnable(true)
-//                  .withReverseLimitAutosetPositionEnable(true)
-//                  .withReverseLimitAutosetPositionValue(4)
-//                  .withReverseLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
-//                  .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
-//                  .withReverseLimitType(ReverseLimitTypeValue.NormallyClosed));
+          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
+          .withSoftwareLimitSwitch(
+              new SoftwareLimitSwitchConfigs()
+                  .withReverseSoftLimitEnable(true)
+                  .withReverseSoftLimitThreshold(-0.15)
+                  .withForwardSoftLimitEnable(true)
+                  .withForwardSoftLimitThreshold(4.5));
+  // .withHardwareLimitSwitch(
+  //     new HardwareLimitSwitchConfigs()
+  //         .withReverseLimitEnable(false)
+  //         .withReverseLimitAutosetPositionEnable(false)
+  //         .withReverseLimitAutosetPositionValue(4)
+  //         .withReverseLimitRemoteSensorID(BoathookConstants.BOATHOOK_CANDI_ID)
+  //         .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
+  //         .withReverseLimitType(ReverseLimitTypeValue.NormallyClosed));
 
   CANcoderConfiguration extentionCANcoderConfig =
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
+                  .withMagnetOffset(0.6)
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   public Boathook() {
@@ -134,21 +136,21 @@ public class Boathook extends SubsystemBase {
   //   }
 
   public void setAngle(double angle) {
-    rotationMotor.setControl(new PositionVoltage(angle / 360));
+    rotationMotor.setControl(new PositionVoltage(angle / 360.0));
   }
 
   public double getAngle() {
     StatusSignal<Angle> angle = rotationMotor.getPosition();
-    return angle.getValueAsDouble() * 360;
+    return angle.getValueAsDouble() * 360.0;
   }
 
   public void setLength(double length) {
-    rotationMotor.setControl(new PositionVoltage(length));
+    extenderMotor.setControl(new PositionVoltage(length));
   }
 
   public double getLength() {
-    return extensionCancoder.getPosition().getValueAsDouble();
-    // might have to multiple by something
+    StatusSignal<Angle> length = extenderMotor.getPosition();
+    return length.getValueAsDouble();
   }
 
   @Override

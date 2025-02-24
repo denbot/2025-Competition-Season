@@ -2,49 +2,40 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.intakeCommands;
+package frc.robot.commands.boathookCommands.setpointCommands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.Constants.BoathookConstants;
+import frc.robot.subsystems.boathook.Boathook;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IndexReleaseCommand extends Command {
-  /** Creates a new IndexReleaseCommand. */
-  Intake intake;
-
-  Timer timer = new Timer();
-
-  public IndexReleaseCommand(Intake intake) {
-    addRequirements(intake);
-    this.intake = intake;
+public class AngleStabBoathookCommand extends Command {
+  Boathook boathook;
+  /** Creates a new AngleBoathookCommand. */
+  public AngleStabBoathookCommand(Boathook boathook) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.boathook = boathook;
+    addRequirements(boathook);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    timer.reset();
-    timer.start();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed);
-    intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed);
+    boathook.setAngle(BoathookConstants.IDLE_ANGLE);
+    System.out.println("CURRENT ANGLE: " + boathook.getAngle());
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    intake.setLeftIndexerSpeed(0);
-    intake.setRightIndexerSpeed(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() > 0.5;
+    return Math.abs(boathook.getAngle() - BoathookConstants.IDLE_ANGLE) < 1;
   }
 }
