@@ -61,11 +61,12 @@ public class Boathook extends SubsystemBase {
           //         .withMotionMagicCruiseVelocity(1))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(18)
+                  .withKP(32)
                   .withKD(0)
-                  .withKS(0.2)
-                  .withKG(0.35)
-                  .withGravityType(GravityTypeValue.Arm_Cosine));
+                  .withKS(0)
+                  .withKG(0)
+                  .withGravityType(GravityTypeValue.Arm_Cosine)
+                  .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign));
   // .withHardwareLimitSwitch(
   //     new HardwareLimitSwitchConfigs()
   //         .withForwardLimitEnable(true)
@@ -100,9 +101,7 @@ public class Boathook extends SubsystemBase {
           .withSlot0(new Slot0Configs()
             .withKP(32)
             .withKD(0)
-            .withKG(0)
-            .withGravityType(GravityTypeValue.Arm_Cosine)
-            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign))
+            .withKG(0))
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
