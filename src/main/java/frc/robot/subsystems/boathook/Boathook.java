@@ -97,7 +97,12 @@ public class Boathook extends SubsystemBase {
           //              new MotionMagicConfigs()
           //                  .withMotionMagicAcceleration(2)
           //                  .withMotionMagicCruiseVelocity(1))
-          .withSlot0(new Slot0Configs().withKP(32).withKD(0).withKG(0))
+          .withSlot0(new Slot0Configs()
+            .withKP(32)
+            .withKD(0)
+            .withKG(0)
+            .withGravityType(GravityTypeValue.Arm_Cosine)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign))
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
