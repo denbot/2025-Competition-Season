@@ -14,11 +14,13 @@ public class IndexReleaseCommand extends Command {
   /** Creates a new IndexReleaseCommand. */
   Intake intake;
 
+  double time;
   Timer timer = new Timer();
 
-  public IndexReleaseCommand(Intake intake) {
+  public IndexReleaseCommand(Intake intake, double time) {
     addRequirements(intake);
     this.intake = intake;
+    this.time = time;
   }
 
   // Called when the command is initially scheduled.
@@ -45,6 +47,6 @@ public class IndexReleaseCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() > 0.5;
+    return timer.get() > time;
   }
 }

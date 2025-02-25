@@ -23,10 +23,13 @@ public class BoathookStabCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+        new AngleIdleBoathookCommand(boathook),
+        new ExtendBoathookCommandIdle(boathook),
         new AngleStabBoathookCommand(boathook),
         new ExtendBoathookCommandStab(boathook),
+        new IndexReleaseCommand(intake, 0.1),
         new ParallelCommandGroup(
-            new AngleIdleBoathookCommand(boathook), new IndexReleaseCommand(intake)));
+            new AngleIdleBoathookCommand(boathook), new IndexReleaseCommand(intake, 0.5)));
     new ExtendBoathookCommandIdle(boathook);
   }
 }

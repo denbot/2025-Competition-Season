@@ -25,17 +25,20 @@ public class AngleStabBoathookCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boathook.setAngle(BoathookConstants.IDLE_ANGLE);
+    boathook.setAngle(BoathookConstants.STAB_ANGLE);
     System.out.println("CURRENT ANGLE: " + boathook.getAngle());
+    System.out.println(boathook.getAngle());
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("END");
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(boathook.getAngle() - BoathookConstants.IDLE_ANGLE) < 1;
+    return Math.abs(boathook.getAngle() - BoathookConstants.STAB_ANGLE) < 5;
   }
 }

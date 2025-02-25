@@ -26,7 +26,7 @@ public class AngleIdleBoathookCommand extends Command {
   @Override
   public void execute() {
     boathook.setAngle(BoathookConstants.IDLE_ANGLE);
-    System.out.println("CURRENT ANGLE: " + boathook.getAngle());
+    System.out.println("IDLE COMMAND CURRENT ANGLE: " + boathook.getAngle());
   }
 
   // Called once the command ends or is interrupted.

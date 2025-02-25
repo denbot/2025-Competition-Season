@@ -7,6 +7,7 @@ package frc.robot.subsystems.boathook;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
@@ -96,7 +97,7 @@ public class Boathook extends SubsystemBase {
           //              new MotionMagicConfigs()
           //                  .withMotionMagicAcceleration(2)
           //                  .withMotionMagicCruiseVelocity(1))
-          .withSlot0(new Slot0Configs().withKP(28).withKD(0).withKG(0))
+          .withSlot0(new Slot0Configs().withKP(32).withKD(0).withKG(0))
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
@@ -151,6 +152,10 @@ public class Boathook extends SubsystemBase {
   public double getLength() {
     StatusSignal<Angle> length = extenderMotor.getPosition();
     return length.getValueAsDouble();
+  }
+
+  public void setBrakeExtender() {
+    extenderMotor.setControl(new StaticBrake());
   }
 
   @Override
