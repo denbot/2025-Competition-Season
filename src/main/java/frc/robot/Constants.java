@@ -87,8 +87,8 @@ public final class Constants {
     public static final double L3_SETUP_ANGLE = 0.33 * 360;
     public static final double L4_SETUP_ANGLE = 0.3 * 360;
     public static final double L2_SCORE_ANGLE = 0.36 * 360;
-    public static final double L3_SCORE_ANGLE = 0.33 * 360;
-    public static final double L4_SCORE_ANGLE = 0.3 * 360;
+    public static final double L3_SCORE_ANGLE = 0.35 * 360;
+    public static final double L4_SCORE_ANGLE = 0.305 * 360;
     public static final double STAB_EXTENSION = 0.19;
     public static final double IDLE_EXTENSION = -0.15;
     public static final double L2_EXTENSION = 0.58;

@@ -43,8 +43,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.util.FieldUtil;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -206,11 +204,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY() * (FieldUtil.isAllianceBlue() ? 1 : -1),
-            () -> -controller.getLeftX() * (FieldUtil.isAllianceBlue() ? 1 : -1),
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-
-            
 
     // Lock to 0° when A button is held
     controller
@@ -218,8 +214,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY() * (FieldUtil.isAllianceBlue() ? 1 : -1),
-                () -> -controller.getLeftX() * (FieldUtil.isAllianceBlue() ? 1 : -1),
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
@@ -268,10 +264,7 @@ public class RobotContainer {
     operatorController2.button(8).onTrue(eightLeft.ignoringDisable(true));
     operatorController2.button(11).onTrue(eightRight.ignoringDisable(true));
     operatorController2.button(12).onTrue(sixLeft.ignoringDisable(true));
-
-    
-}
-  
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
