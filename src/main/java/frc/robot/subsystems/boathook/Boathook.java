@@ -13,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
@@ -98,10 +99,7 @@ public class Boathook extends SubsystemBase {
           //              new MotionMagicConfigs()
           //                  .withMotionMagicAcceleration(2)
           //                  .withMotionMagicCruiseVelocity(1))
-          .withSlot0(new Slot0Configs()
-            .withKP(32)
-            .withKD(0)
-            .withKG(0))
+          .withSlot0(new Slot0Configs().withKP(32).withKD(0).withKG(0))
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
@@ -165,5 +163,7 @@ public class Boathook extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Boathook Angle", getAngle());
+    SmartDashboard.putNumber("Boathook Extension", getLength());
   }
 }
