@@ -64,4 +64,35 @@ public final class Constants {
     public static final double intakeSpeed = 4;
     public static final double indexerSpeed = 3;
   }
+
+  public static class BoathookConstants {
+    public static final int EXTENDER_MOTOR_ID = 13;
+    public static final int ROTATION_MOTOR_ID = 14;
+    public static final int ROTATION_ENCODER_ID = 15;
+    public static final int EXTENDER_ENCODER_ID = 16;
+    public static final int BOATHOOK_CANDI_ID = 18;
+    public static final double ROTATOR_GEAR_RATIO = 25;
+    public static final double ROTATOR_FORWARD_LIMIT = 0.4;
+    public static final double ROTATOR_REVERSE_LIMIT = 0.0;
+    //    public static final double EXTENDER_CANCODER_RATIO = 101.6 / 40;
+    //    public static final double EXTENDER_GEAR_RATIO = 25;
+    // 4 inch mechanism drum
+    // 40 mm sensor
+    public static final double EXTENDER_FORWARD_LIMIT = 4.5; // not in inches (rotations)
+    public static final double EXTENDER_REVERSE_LIMIT = -0.15;
+
+    public static final double STAB_ANGLE = 12;
+    public static final double IDLE_ANGLE = 90;
+    public static final double L2_SETUP_ANGLE = 0.35 * 360;
+    public static final double L3_SETUP_ANGLE = 0.33 * 360;
+    public static final double L4_SETUP_ANGLE = 0.3 * 360;
+    public static final double L2_SCORE_ANGLE = 0.36 * 360;
+    public static final double L3_SCORE_ANGLE = 0.35 * 360;
+    public static final double L4_SCORE_ANGLE = 0.305 * 360;
+    public static final double STAB_EXTENSION = 0.19;
+    public static final double IDLE_EXTENSION = -0.15;
+    public static final double L2_EXTENSION = 0.58;
+    public static final double L3_EXTENSION = 1.85;
+    public static final double L4_EXTENSION = 4;
+  }
 }
