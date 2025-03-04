@@ -16,6 +16,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -216,19 +217,24 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+                    Rotation2d::new));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when Start button is pressed
     controller
         .start()
         .onTrue(
             Commands.runOnce(
-                    () ->
+                    () -> {
+                        boolean isFlipped =
+                                DriverStation.getAlliance().isPresent()
+                                        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+                        Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
                         drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                                new Pose2d(drive.getPose().getTranslation(), rotation));
+                    },
                     drive)
                 .ignoringDisable(true));
 
