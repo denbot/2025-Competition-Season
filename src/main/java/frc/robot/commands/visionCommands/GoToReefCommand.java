@@ -22,7 +22,7 @@ public class GoToReefCommand extends Command {
   /** Creates a new GoToReef. */
   double kP = 5;
 
-  double rotationalKP = -0.3;
+  double rotationalKP = 0.3;
   Direction direction = Direction.LEFT;
   int framesDropped = 0;
   Translation3d translate;
@@ -58,21 +58,23 @@ public class GoToReefCommand extends Command {
     // Used to "flip" the rotation of the application whenever the field is not blue
     var currentAlliance = DriverStation.getAlliance();
     double targetAngle = Robot.angle;
-    if(currentAlliance.get() == Alliance.Red) {
+    if (currentAlliance.get() == Alliance.Red) {
       targetAngle += 180;
-      if(targetAngle > 180) {
+      if (targetAngle > 180) {
         targetAngle -= 360;
       }
     }
 
-    //Determines the shortest angle error direction to correct for the angle wrap.
+    // Determines the shortest angle error direction to correct for the angle wrap.
     lastAngleError = targetAngle - drive.getRotation().getDegrees();
-    if(lastAngleError > 180) {
+    if (lastAngleError > 180) {
       lastAngleError -= 360;
-    } else if(lastAngleError < -180) {
+    } else if (lastAngleError < -180) {
       lastAngleError += 360;
     }
-    
+
+    System.out.println(lastAngleError);
+
     double[] tagPoseRobot;
     // if in simulation, comment out this line:
     if (LimelightHelpers.getTV("limelight-left")) {
@@ -111,10 +113,7 @@ public class GoToReefCommand extends Command {
     SmartDashboard.putNumber("yDriveSpeed", yDriveSpeed);
 
     ChassisSpeeds chassisSpeeds =
-        new ChassisSpeeds(
-            xDriveSpeed,
-            yDriveSpeed,
-            lastAngleError * rotationalKP);
+        new ChassisSpeeds(xDriveSpeed, yDriveSpeed, lastAngleError * rotationalKP);
 
     drive.runVelocity(chassisSpeeds);
     SmartDashboard.putNumber("error", lastAngleError);

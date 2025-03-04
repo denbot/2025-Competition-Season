@@ -111,6 +111,9 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  @AutoLogOutput private Pose2d leftPose;
+  @AutoLogOutput public Pose2d rightPose;
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -343,6 +346,8 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
+    rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
+    leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
     return poseEstimator.getEstimatedPosition();
   }
 
