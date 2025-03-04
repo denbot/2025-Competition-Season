@@ -146,6 +146,11 @@ public class Robot extends LoggedRobot {
     LimelightHelpers.PoseEstimate botPoseEstimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
 
+    if(botPoseEstimate == null) {
+      return;  // No limelight connection just yet
+      // TODO Maybe alert if this happens for too long
+    }
+
     if (botPoseEstimate.tagCount == 0) {
       return; // Don't add vision when we can't see a tag
     }
