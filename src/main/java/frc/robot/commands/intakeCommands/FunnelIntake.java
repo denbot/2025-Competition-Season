@@ -24,8 +24,6 @@ public class FunnelIntake extends Command {
   public void initialize() {
     intake.setAngle(IntakeConstants.intakeFunnelAngle);
     intake.setIntakeSpeed(0);
-    intake.setLeftIndexerSpeed(-IntakeConstants.indexerSpeed);
-    intake.setRightIndexerSpeed(IntakeConstants.indexerSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

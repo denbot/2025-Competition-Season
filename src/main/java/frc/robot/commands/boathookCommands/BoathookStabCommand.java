@@ -10,7 +10,7 @@ import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCom
 import frc.robot.commands.boathookCommands.setpointCommands.AngleStabBoathookCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommandIdle;
 import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommandStab;
-import frc.robot.commands.intakeCommands.IndexReleaseCommand;
+import frc.robot.commands.intakeCommands.IntakeReleaseCommand;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.intake.Intake;
 
@@ -27,9 +27,9 @@ public class BoathookStabCommand extends SequentialCommandGroup {
         new ExtendBoathookCommandIdle(boathook),
         new AngleStabBoathookCommand(boathook),
         new ExtendBoathookCommandStab(boathook),
-        new IndexReleaseCommand(intake, 0.1),
+        new IntakeReleaseCommand(intake, 0.1),
         new ParallelCommandGroup(
-            new AngleIdleBoathookCommand(boathook), new IndexReleaseCommand(intake, 0.5)));
+            new AngleIdleBoathookCommand(boathook), new IntakeReleaseCommand(intake, 0.5)));
     new ExtendBoathookCommandIdle(boathook);
   }
 }

@@ -10,14 +10,14 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.intake.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IndexReleaseCommand extends Command {
+public class IntakeReleaseCommand extends Command {
   /** Creates a new IndexReleaseCommand. */
   Intake intake;
 
   double time;
   Timer timer = new Timer();
 
-  public IndexReleaseCommand(Intake intake, double time) {
+  public IntakeReleaseCommand(Intake intake, double time) {
     addRequirements(intake);
     this.intake = intake;
     this.time = time;
@@ -33,15 +33,13 @@ public class IndexReleaseCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed);
-    intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed);
+    intake.setIntakeSpeed(IntakeConstants.intakeSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setLeftIndexerSpeed(0);
-    intake.setRightIndexerSpeed(0);
+    intake.setIntakeSpeed(0);
   }
 
   // Returns true when the command should end.

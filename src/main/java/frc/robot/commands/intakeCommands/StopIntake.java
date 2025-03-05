@@ -27,8 +27,6 @@ public class StopIntake extends Command {
   @Override
   public void execute() {
     intake.setIntakeSpeed(0);
-    intake.setLeftIndexerSpeed(0);
-    intake.setRightIndexerSpeed(0);
     intake.setAngle(IntakeConstants.intakeDownAngle);
   }
 
