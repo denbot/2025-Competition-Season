@@ -25,19 +25,16 @@ import frc.robot.commands.intakeCommands.StopIntake;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-  private final TalonFX intake =
-      new TalonFX(IntakeConstants.INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
+  private final TalonFX intakeLeft =
+      new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
+
+  private final TalonFX intakeRight =
+  new TalonFX(IntakeConstants.RIGHT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX rotation =
       new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
   // private final CANcoder rotationEncoder =
   //     new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
-
-  private final TalonFX indexerLeft =
-      new TalonFX(IntakeConstants.INDEXER_LEFT_MOTOR_ID, OperatorConstants.canivoreSerial);
-
-  private final TalonFX indexerRight =
-      new TalonFX(IntakeConstants.INDEXER_RIGHT_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
@@ -65,9 +62,8 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
-    intake.setNeutralMode(NeutralModeValue.Coast);
-    indexerLeft.setNeutralMode(NeutralModeValue.Coast);
-    indexerRight.setNeutralMode(NeutralModeValue.Coast);
+    intakeLeft.setNeutralMode(NeutralModeValue.Coast);
+    intakeRight.setNeutralMode(NeutralModeValue.Coast);
 
     rotation.getConfigurator().apply(intakeRotationConfig);
 
@@ -75,33 +71,21 @@ public class Intake extends SubsystemBase {
     NamedCommands.registerCommand("Funnel", new FunnelIntake(this));
   }
 
-  // public double getRotationAngle() {
-  //   return rotationEncoder.getAbsolutePosition().getValueAsDouble() * 360;
-  // }
+  public double getRotationAngle() {
+    return rotation.getRotorPosition().getValueAsDouble() * 360.0;
+  }
 
   public void setAngle(double angle) {
     rotation.setControl(new PositionVoltage(angle / 360));
   }
 
   public void setIntakeSpeed(double speed) {
-    intake.setControl(new VoltageOut(speed));
-  }
-
-  public void setLeftIndexerSpeed(double speed) {
-    indexerLeft.setControl(new VoltageOut(speed));
-  }
-
-  public void setRightIndexerSpeed(double speed) {
-    indexerRight.setControl(new VoltageOut(speed));
+    intakeLeft.setControl(new VoltageOut(speed));
+    intakeRight.setControl(new VoltageOut(-speed));
   }
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
-    SmartDashboard.putNumber("Intake Velocity", intake.getRotorVelocity().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Left Indexer Velocity", indexerLeft.getRotorVelocity().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Right Indexer Velocity", indexerRight.getRotorVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
   }
 }

@@ -50,19 +50,16 @@ public final class Constants {
     public static final double forwardSoftLimit = 0.25;
     public static final double reverseSoftLimit = 0;
 
-    public static final int INTAKE_MOTOR_ID = 21;
+    public static final int LEFT_INTAKE_MOTOR_ID = 19;
+    public static final int RIGHT_INTAKE_MOTOR_ID = 20;
 
     public static final int INTAKE_ROTATION_MOTOR_ID = 23;
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
-
-    public static final int INDEXER_LEFT_MOTOR_ID = 19;
-    public static final int INDEXER_RIGHT_MOTOR_ID = 20;
 
     public static final double intakeDownAngle = 5;
     public static final double intakeFunnelAngle = 90;
 
     public static final double intakeSpeed = 4;
-    public static final double indexerSpeed = 3;
   }
 
   public static class BoathookConstants {
