@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Direction;
@@ -20,10 +22,11 @@ public class GoToReefCommand extends Command {
   /** Creates a new GoToReef. */
   double kP = 5;
 
-  double rotationalKP = -0.3;
+  double rotationalKP = 0.3;
   Direction direction = Direction.LEFT;
   int framesDropped = 0;
   Translation3d translate;
+  double lastAngleError = 0;
 
   Drive drive;
 
@@ -51,6 +54,27 @@ public class GoToReefCommand extends Command {
       framesDropped++;
       return;
     }
+
+    // Used to "flip" the rotation of the application whenever the field is not blue
+    var currentAlliance = DriverStation.getAlliance();
+    double targetAngle = Robot.angle;
+    if (currentAlliance.get() == Alliance.Red) {
+      targetAngle += 180;
+      if (targetAngle > 180) {
+        targetAngle -= 360;
+      }
+    }
+
+    // Determines the shortest angle error direction to correct for the angle wrap.
+    lastAngleError = targetAngle - drive.getRotation().getDegrees();
+    if (lastAngleError > 180) {
+      lastAngleError -= 360;
+    } else if (lastAngleError < -180) {
+      lastAngleError += 360;
+    }
+
+    System.out.println(lastAngleError);
+
     double[] tagPoseRobot;
     // if in simulation, comment out this line:
     if (LimelightHelpers.getTV("limelight-left")) {
@@ -89,13 +113,10 @@ public class GoToReefCommand extends Command {
     SmartDashboard.putNumber("yDriveSpeed", yDriveSpeed);
 
     ChassisSpeeds chassisSpeeds =
-        new ChassisSpeeds(
-            xDriveSpeed,
-            yDriveSpeed,
-            (drive.getRotation().getDegrees() - Robot.angle) * rotationalKP);
+        new ChassisSpeeds(xDriveSpeed, yDriveSpeed, lastAngleError * rotationalKP);
 
     drive.runVelocity(chassisSpeeds);
-    SmartDashboard.putNumber("error", drive.getRotation().getDegrees() - Robot.angle);
+    SmartDashboard.putNumber("error", lastAngleError);
   }
 
   // Called once the command ends or is interrupted.
@@ -108,7 +129,7 @@ public class GoToReefCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((drive.getRotation().getDegrees() - Robot.angle) < 3
+    return (Math.abs(lastAngleError) < 3
             && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.1)
         || (framesDropped > 5);
   }

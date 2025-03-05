@@ -47,11 +47,12 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   public static RobotContainer robotContainer;
-  private Matrix<N3, N1> matrix = new Matrix<>(Nat.N3(), Nat.N1());
+  private final Matrix<N3, N1> visionMatrix = new Matrix<>(Nat.N3(), Nat.N1());
   public static Direction direction = Direction.LEFT;
   public static double angle;
   public static boolean red;
   private Field2d field = new Field2d();
+  private final Timer timer = new Timer();
 
   public Robot() {
     // Record metadata
@@ -117,7 +118,10 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     SmartDashboard.putData("Field", field);
-    matrix.fill(1.0);
+    // From
+    // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
+    visionMatrix.fill(0.5); // X/Y location to 0.5
+    visionMatrix.set(2, 0, 9999999); // Vision rotation is not to be trusted, apparently
   }
 
   /** This function is called periodically during all modes. */
@@ -135,17 +139,43 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-    robotContainer.drive.addVisionMeasurement(
-        "limelight-left",
-        LimelightHelpers.getBotPose2d_wpiBlue("limelight-left"),
-        Timer.getFPGATimestamp(),
-        matrix);
-    robotContainer.drive.addVisionMeasurement(
-        "limelight-right",
-        LimelightHelpers.getBotPose2d_wpiBlue("limelight-right"),
-        Timer.getFPGATimestamp(),
-        matrix);
+    maybeAddVisionMeasurement("limelight-left");
+    maybeAddVisionMeasurement("limelight-right");
     field.setRobotPose(robotContainer.drive.getPose());
+  }
+
+  protected void maybeAddVisionMeasurement(String limelightName) {
+    SmartDashboard.putNumber("Time Since Last ", timer.get());
+
+    LimelightHelpers.PoseEstimate botPoseEstimate =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+
+    if (botPoseEstimate == null) {
+      return; // No limelight connection just yet
+      // TODO Maybe alert if this happens for too long
+    }
+
+    if (botPoseEstimate.tagCount == 0) {
+      return; // Don't add vision when we can't see a tag
+    }
+
+    // If we only have one tag and one fiducial, we might need to bail
+    if (botPoseEstimate.tagCount == 1 && botPoseEstimate.rawFiducials.length == 1) {
+      // Highly ambiguous for direction/location? Reject it.
+      if (botPoseEstimate.rawFiducials[0].ambiguity > .7) // TODO Tune this for our case
+      {
+        return;
+      }
+
+      // More than 3 meters away? Reject it.
+      if (botPoseEstimate.rawFiducials[0].distToCamera > 3) {
+        return;
+      }
+    }
+
+    timer.restart();
+    robotContainer.drive.addVisionMeasurement(
+        limelightName, botPoseEstimate.pose, botPoseEstimate.timestampSeconds, visionMatrix);
   }
 
   /** This function is called once when the robot is disabled. */
