@@ -23,6 +23,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +52,7 @@ public class Robot extends LoggedRobot {
   public static double angle;
   public static boolean red;
   private Field2d field = new Field2d();
+  private final Timer timer = new Timer();
 
   public Robot() {
     // Record metadata
@@ -143,11 +145,13 @@ public class Robot extends LoggedRobot {
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {
+    SmartDashboard.putNumber("Time Since Last ", timer.get());
+
     LimelightHelpers.PoseEstimate botPoseEstimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
 
-    if(botPoseEstimate == null) {
-      return;  // No limelight connection just yet
+    if (botPoseEstimate == null) {
+      return; // No limelight connection just yet
       // TODO Maybe alert if this happens for too long
     }
 
@@ -169,6 +173,7 @@ public class Robot extends LoggedRobot {
       }
     }
 
+    timer.restart();
     robotContainer.drive.addVisionMeasurement(
         limelightName, botPoseEstimate.pose, botPoseEstimate.timestampSeconds, visionMatrix);
   }

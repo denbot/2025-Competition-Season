@@ -217,7 +217,7 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                    Rotation2d::new));
+                Rotation2d::new));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -228,12 +228,11 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                     () -> {
-                        boolean isFlipped =
-                                DriverStation.getAlliance().isPresent()
-                                        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-                        Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
-                        drive.setPose(
-                                new Pose2d(drive.getPose().getTranslation(), rotation));
+                      boolean isFlipped =
+                          DriverStation.getAlliance().isPresent()
+                              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+                      Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
+                      drive.setPose(new Pose2d(drive.getPose().getTranslation(), rotation));
                     },
                     drive)
                 .ignoringDisable(true));
