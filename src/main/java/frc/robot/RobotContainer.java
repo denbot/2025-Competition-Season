@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,7 +29,6 @@ import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookIdleCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookStabCommand;
 import frc.robot.commands.boathookCommands.SetSetPointsCommand;
@@ -65,11 +65,10 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  public Orchestra m_orchestra = new Orchestra();
 
   // Commands
   private final GoToReefCommand reef;
-
-  private final BoathookIdleCommand idleBoathook;
   private final BoathookExtendMotionPathCommand extendBoathook;
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final BoathookStabCommand stabBoathook;
@@ -102,7 +101,7 @@ public class RobotContainer {
   private final SetSetPointsCommand L1 =
       new SetSetPointsCommand(
           BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
-          BoathookConstants.L2_SCORE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
           BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
   private final SetSetPointsCommand L2 =
       new SetSetPointsCommand(
@@ -161,7 +160,6 @@ public class RobotContainer {
     boathook = new Boathook();
 
     reef = new GoToReefCommand(drive);
-    idleBoathook = new BoathookIdleCommand(boathook);
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new BoathookStabCommand(boathook, intake);
@@ -190,6 +188,13 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Attempt to load the chrp
+    var status = m_orchestra.loadMusic("OceanMan.chrp");
+
+    if (!status.isOK()) {
+      // log error
+    }
   }
 
   /**
@@ -245,6 +250,11 @@ public class RobotContainer {
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 
+    controller
+        .rightStick()
+        .onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
+    controller.leftStick().onTrue(Commands.runOnce(() -> m_orchestra.stop()).ignoringDisable(true));
+
     operatorController1.button(1).onTrue(twelveLeft.ignoringDisable(true));
     operatorController1.button(2).onTrue(twoRight.ignoringDisable(true));
     operatorController1.button(3).onTrue(twoLeft.ignoringDisable(true));
@@ -260,9 +270,9 @@ public class RobotContainer {
     operatorController2.button(2).onTrue(tenLeft.ignoringDisable(true));
     operatorController2.button(3).onTrue(tenRight.ignoringDisable(true));
     operatorController2.button(4).onTrue(stabBoathook);
-    // operatorController2.button(5).onTrue(TODO);
-    // operatorController2.button(6).onTrue(TODO);
-    // operatorController2.button(7).onTrue(TODO);
+    // operatorController2.button(5).onTrue(TODO); <- Remove High Algae
+    // operatorController2.button(6).onTrue(TODO); <- Remove Low Algae
+    // operatorController2.button(7).onTrue(TODO); <- Superstructure Stop Command
     operatorController2.button(8).onTrue(eightLeft.ignoringDisable(true));
     operatorController2.button(11).onTrue(eightRight.ignoringDisable(true));
     operatorController2.button(12).onTrue(sixLeft.ignoringDisable(true));

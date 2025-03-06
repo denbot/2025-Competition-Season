@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Robot;
 import frc.robot.commands.intakeCommands.IntakeMoveCommand;
 
 public class Intake extends SubsystemBase {
@@ -94,6 +95,13 @@ public class Intake extends SubsystemBase {
 
   public void flipUp() {
     up = !up;
+  }
+
+  public void addInstruments() {
+    // Add a single device to the orchestra
+    Robot.robotContainer.m_orchestra.addInstrument(rotation);
+    Robot.robotContainer.m_orchestra.addInstrument(intakeLeft);
+    Robot.robotContainer.m_orchestra.addInstrument(intakeRight);
   }
 
   @Override

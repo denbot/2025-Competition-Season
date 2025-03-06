@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 
@@ -158,6 +159,11 @@ public class Boathook extends SubsystemBase {
 
   public void setBrakeExtender() {
     extenderMotor.setControl(new StaticBrake());
+  }
+
+  public void addInstruments() {
+    Robot.robotContainer.m_orchestra.addInstrument(rotationMotor);
+    Robot.robotContainer.m_orchestra.addInstrument(extenderMotor);
   }
 
   @Override
