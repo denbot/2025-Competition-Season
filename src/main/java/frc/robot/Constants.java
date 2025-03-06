@@ -46,7 +46,7 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final double rotatorGearRatio = 90;
+    public static final double rotatorGearRatio = 120;
     public static final double forwardSoftLimit = 0.25;
     public static final double reverseSoftLimit = 0;
 
@@ -56,8 +56,9 @@ public final class Constants {
     public static final int INTAKE_ROTATION_MOTOR_ID = 23;
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
 
-    public static final double intakeDownAngle = 5;
-    public static final double intakeFunnelAngle = 90;
+    public static final double intakeDownAngle = 0;
+    public static final double intakeSpearAngle = 40;
+    public static final double intakeL1Angle = 30;
 
     public static final double intakeSpeed = 4;
   }

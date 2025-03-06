@@ -6,6 +6,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -14,14 +15,14 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.intakeCommands.FunnelIntake;
-import frc.robot.commands.intakeCommands.StopIntake;
+import frc.robot.commands.intakeCommands.IntakeMoveCommand;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -29,7 +30,7 @@ public class Intake extends SubsystemBase {
       new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX intakeRight =
-  new TalonFX(IntakeConstants.RIGHT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
+      new TalonFX(IntakeConstants.RIGHT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX rotation =
       new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -38,11 +39,12 @@ public class Intake extends SubsystemBase {
 
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
+          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withFeedback(
               new FeedbackConfigs()
                   // .withFeedbackRemoteSensorID(IntakeConstants.EXTENDER_MOTOR_ID)
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                  .withSensorToMechanismRatio(IntakeConstants.rotatorGearRatio))
+                  .withRotorToSensorRatio(IntakeConstants.rotatorGearRatio))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(false)
@@ -60,6 +62,9 @@ public class Intake extends SubsystemBase {
                   .withKG(0)
                   .withGravityType(GravityTypeValue.Arm_Cosine));
 
+  public boolean up = false;
+  public boolean stop = true;
+
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
     intakeLeft.setNeutralMode(NeutralModeValue.Coast);
@@ -67,8 +72,7 @@ public class Intake extends SubsystemBase {
 
     rotation.getConfigurator().apply(intakeRotationConfig);
 
-    NamedCommands.registerCommand("IntakeDown", new StopIntake(this));
-    NamedCommands.registerCommand("Funnel", new FunnelIntake(this));
+    NamedCommands.registerCommand("IntakeDown", new IntakeMoveCommand(this, false));
   }
 
   public double getRotationAngle() {
@@ -76,12 +80,20 @@ public class Intake extends SubsystemBase {
   }
 
   public void setAngle(double angle) {
-    rotation.setControl(new PositionVoltage(angle / 360));
+    rotation.setControl(new PositionVoltage(angle));
   }
 
   public void setIntakeSpeed(double speed) {
     intakeLeft.setControl(new VoltageOut(speed));
     intakeRight.setControl(new VoltageOut(-speed));
+  }
+
+  public void flipStop() {
+    stop = !stop;
+  }
+
+  public void flipUp() {
+    up = !up;
   }
 
   @Override

@@ -10,24 +10,31 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.intake.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class StopIntake extends Command {
+public class IntakeMoveCommand extends Command {
   /** Creates a new StopIntake. */
   Intake intake;
 
-  public StopIntake(Intake intake) {
+  boolean toggleEnable;
+
+  public IntakeMoveCommand(Intake intake, boolean toggleEnable) {
     addRequirements(intake);
     this.intake = intake;
+    this.toggleEnable = toggleEnable;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if (toggleEnable) {
+      intake.flipUp();
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setIntakeSpeed(0);
-    intake.setAngle(IntakeConstants.intakeDownAngle);
+    SmartDashboard.putBoolean("IntakeAtL1", intake.up);
+    intake.setAngle(intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle);
   }
 
   // Called once the command ends or is interrupted.

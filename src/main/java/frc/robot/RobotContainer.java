@@ -74,10 +74,9 @@ public class RobotContainer {
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final BoathookStabCommand stabBoathook;
 
-  private final StartIntake startIntake;
-  private final StartIntake rejectIntake;
-  private final FunnelIntake funnelIntake;
-  private final StopIntake stopIntake;
+  private final RunIntake startIntake;
+  private final RunIntake rejectIntake;
+  private final IntakeMoveCommand moveIntake;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -166,10 +165,9 @@ public class RobotContainer {
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new BoathookStabCommand(boathook, intake);
-    startIntake = new StartIntake(intake, -1);
-    rejectIntake = new StartIntake(intake, 1);
-    funnelIntake = new FunnelIntake(intake);
-    stopIntake = new StopIntake(intake);
+    startIntake = new RunIntake(intake, -1);
+    rejectIntake = new RunIntake(intake, 1);
+    moveIntake = new IntakeMoveCommand(intake, true);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -241,8 +239,7 @@ public class RobotContainer {
 
     controller.leftBumper().onTrue(startIntake);
     controller.leftTrigger().onTrue(rejectIntake);
-    controller.y().onTrue(stopIntake);
-    controller.x().onTrue(funnelIntake);
+    controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.rightBumper().onTrue(extendBoathook);
