@@ -248,27 +248,27 @@ public class RobotContainer {
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 
-    operatorController1.button(1).onTrue(twelveLeft.ignoringDisable(true));
-    operatorController1.button(2).onTrue(twoRight.ignoringDisable(true));
-    operatorController1.button(3).onTrue(twoLeft.ignoringDisable(true));
-    operatorController1.button(4).onTrue(L4.ignoringDisable(true));
-    operatorController1.button(5).onTrue(L3.ignoringDisable(true));
-    operatorController1.button(6).onTrue(L2.ignoringDisable(true));
-    operatorController1.button(7).onTrue(L1.ignoringDisable(true));
-    operatorController1.button(8).onTrue(fourRight.ignoringDisable(true));
-    operatorController1.button(11).onTrue(fourLeft.ignoringDisable(true));
-    operatorController1.button(12).onTrue(sixRight.ignoringDisable(true));
+    operatorController1.button(1).onTrue(twelveLeft);
+    operatorController1.button(2).onTrue(twoRight);
+    operatorController1.button(3).onTrue(twoLeft);
+    operatorController1.button(4).onTrue(L4);
+    operatorController1.button(5).onTrue(L3);
+    operatorController1.button(6).onTrue(L2);
+    operatorController1.button(7).onTrue(L1);
+    operatorController1.button(8).onTrue(fourRight);
+    operatorController1.button(11).onTrue(fourLeft);
+    operatorController1.button(12).onTrue(sixRight);
 
-    operatorController2.button(1).onTrue(twelveRight.ignoringDisable(true));
-    operatorController2.button(2).onTrue(tenLeft.ignoringDisable(true));
-    operatorController2.button(3).onTrue(tenRight.ignoringDisable(true));
+    operatorController2.button(1).onTrue(twelveRight);
+    operatorController2.button(2).onTrue(tenLeft);
+    operatorController2.button(3).onTrue(tenRight);
     operatorController2.button(4).onTrue(stabBoathook);
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(eightLeft.ignoringDisable(true));
-    operatorController2.button(11).onTrue(eightRight.ignoringDisable(true));
-    operatorController2.button(12).onTrue(sixLeft.ignoringDisable(true));
+    operatorController2.button(8).onTrue(eightLeft);
+    operatorController2.button(11).onTrue(eightRight);
+    operatorController2.button(12).onTrue(sixLeft);
   }
 
   /**
