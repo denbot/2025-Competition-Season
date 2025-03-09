@@ -29,7 +29,6 @@ public class StartIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setIntakeSpeed(IntakeConstants.intakeSpeed * direction);
     intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed * direction);
     intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
     intake.setAngle(IntakeConstants.intakeDownAngle);

@@ -26,7 +26,6 @@ public class StopIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setIntakeSpeed(0);
     intake.setLeftIndexerSpeed(0);
     intake.setRightIndexerSpeed(0);
     intake.setAngle(IntakeConstants.intakeDownAngle);

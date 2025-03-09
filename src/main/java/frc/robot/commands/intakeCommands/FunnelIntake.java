@@ -23,7 +23,6 @@ public class FunnelIntake extends Command {
   @Override
   public void initialize() {
     intake.setAngle(IntakeConstants.intakeFunnelAngle);
-    intake.setIntakeSpeed(0);
     intake.setLeftIndexerSpeed(-IntakeConstants.indexerSpeed);
     intake.setRightIndexerSpeed(IntakeConstants.indexerSpeed);
   }

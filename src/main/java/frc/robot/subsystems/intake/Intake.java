@@ -24,10 +24,6 @@ import frc.robot.commands.intakeCommands.FunnelIntake;
 import frc.robot.commands.intakeCommands.StopIntake;
 
 public class Intake extends SubsystemBase {
-  /** Creates a new Intake. */
-  private final TalonFX intake =
-      new TalonFX(IntakeConstants.INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
-
   private final TalonFX rotation =
       new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
   // private final CANcoder rotationEncoder =
@@ -65,7 +61,6 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
-    intake.setNeutralMode(NeutralModeValue.Coast);
     indexerLeft.setNeutralMode(NeutralModeValue.Coast);
     indexerRight.setNeutralMode(NeutralModeValue.Coast);
 
@@ -83,10 +78,6 @@ public class Intake extends SubsystemBase {
     rotation.setControl(new PositionVoltage(angle / 360));
   }
 
-  public void setIntakeSpeed(double speed) {
-    intake.setControl(new VoltageOut(speed));
-  }
-
   public void setLeftIndexerSpeed(double speed) {
     indexerLeft.setControl(new VoltageOut(speed));
   }
@@ -98,7 +89,6 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
-    SmartDashboard.putNumber("Intake Velocity", intake.getRotorVelocity().getValueAsDouble());
     SmartDashboard.putNumber(
         "Left Indexer Velocity", indexerLeft.getRotorVelocity().getValueAsDouble());
     SmartDashboard.putNumber(
