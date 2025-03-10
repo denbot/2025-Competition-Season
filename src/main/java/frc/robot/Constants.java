@@ -46,7 +46,7 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final double rotatorGearRatio = 120;
+    public static final double rotatorGearRatio = 1;
     public static final double forwardSoftLimit = 0.25;
     public static final double reverseSoftLimit = 0;
 
