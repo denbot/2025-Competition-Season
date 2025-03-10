@@ -33,7 +33,7 @@ public class GoToReefCommand extends Command {
   public GoToReefCommand(Drive drive) {
     this.direction = Robot.direction;
     this.drive = drive;
-    // addRequirements(drive);
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.

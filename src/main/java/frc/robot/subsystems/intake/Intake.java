@@ -9,8 +9,8 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -46,7 +46,6 @@ public class Intake extends SubsystemBase {
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
-          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withFeedback(
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(IntakeConstants.INTAKE_ROTATION_ENCODER_ID)
@@ -66,6 +65,12 @@ public class Intake extends SubsystemBase {
           .withSlot0(
               new Slot0Configs()
                   .withKP(10)
+                  .withKD(0)
+                  .withKG(0)
+                  .withGravityType(GravityTypeValue.Arm_Cosine))
+          .withSlot1(
+              new Slot1Configs()
+                  .withKP(5)
                   .withKD(0)
                   .withKG(0)
                   .withGravityType(GravityTypeValue.Arm_Cosine));
