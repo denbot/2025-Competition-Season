@@ -25,8 +25,8 @@ public class IntakeMoveCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //If we are in teleop, the same button will toggle the intake up or down
-    //Otherwise, we are in auto and just want the angle set to a specific place.
+    // If we are in teleop, the same button will toggle the intake up or down
+    // Otherwise, we are in auto and just want the angle set to a specific place.
     if (toggleEnable) {
       intake.flipUp();
     }
@@ -35,14 +35,14 @@ public class IntakeMoveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //Tell the drive team if the intake should be up or down and set the angle
+    // Tell the drive team if the intake should be up or down and set the angle
     SmartDashboard.putBoolean("IntakeAtL1", intake.up);
     intake.setAngle(intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted){}
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

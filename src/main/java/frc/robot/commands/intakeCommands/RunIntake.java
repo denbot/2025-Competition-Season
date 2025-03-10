@@ -25,14 +25,15 @@ public class RunIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //toggle the intake on or off
+    // toggle the intake on or off
     intake.flipStop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //Tell the drive team if the intake is running or not, then set the speed and direction of the intake wheels
+    // Tell the drive team if the intake is running or not, then set the speed and direction of the
+    // intake wheels
     SmartDashboard.putBoolean("Intake Running", intake.stop);
     intake.setIntakeSpeed(intake.stop ? 0 : -IntakeConstants.intakeSpeed * direction);
   }

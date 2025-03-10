@@ -26,7 +26,7 @@ public class IntakeReleaseCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //Reset and start timer
+    // Reset and start timer
     timer.reset();
     timer.start();
   }
@@ -34,21 +34,21 @@ public class IntakeReleaseCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //Reject piece
+    // Reject piece
     intake.setIntakeSpeed(IntakeConstants.intakeSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //When command is over, stop the intake wheels
+    // When command is over, stop the intake wheels
     intake.setIntakeSpeed(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //After specified time has passed, end the command
+    // After specified time has passed, end the command
     return timer.get() > time;
   }
 }
