@@ -166,8 +166,8 @@ public class RobotContainer {
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new BoathookStabCommand(boathook, intake);
-    startIntake = new StartIntake(intake, -1);
-    rejectIntake = new StartIntake(intake, 1);
+    startIntake = new StartIntake(intake, 2);
+    rejectIntake = new StartIntake(intake, -2);
     funnelIntake = new FunnelIntake(intake);
     stopIntake = new StopIntake(intake);
 
@@ -239,14 +239,16 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
-    controller.leftBumper().onTrue(startIntake);
-    controller.leftTrigger().onTrue(rejectIntake);
+    controller.leftBumper().whileTrue(startIntake);
+    controller.leftBumper().onFalse(stopIntake);
+    controller.leftTrigger().whileTrue(rejectIntake);
+    controller.leftTrigger().onFalse(stopIntake);
     controller.y().onTrue(stopIntake);
     controller.x().onTrue(funnelIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
-    controller.rightBumper().onTrue(extendBoathook);
-    controller.rightTrigger().onTrue(retractBoathook);
+    // controller.rightBumper().onTrue(extendBoathook);
+    // controller.rightTrigger().onTrue(retractBoathook);
 
     operatorController1.button(1).onTrue(twelveLeft);
     operatorController1.button(2).onTrue(twoRight);

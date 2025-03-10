@@ -31,7 +31,7 @@ public class StartIntake extends Command {
   public void execute() {
     intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed * direction);
     intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
-    intake.setAngle(IntakeConstants.intakeDownAngle);
+    // intake.setAngle(IntakeConstants.intakeDownAngle);
   }
 
   // Called once the command ends or is interrupted.
