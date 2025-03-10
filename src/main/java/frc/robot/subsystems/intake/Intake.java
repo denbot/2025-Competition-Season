@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -84,6 +85,7 @@ public class Intake extends SubsystemBase {
 
   public boolean up = false;
   public boolean stop = true;
+  private static final NeutralOut motorStop = new NeutralOut();
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
@@ -123,6 +125,11 @@ public class Intake extends SubsystemBase {
     Robot.robotContainer.m_orchestra.addInstrument(rotation);
     Robot.robotContainer.m_orchestra.addInstrument(intakeLeft);
     Robot.robotContainer.m_orchestra.addInstrument(intakeRight);
+  }
+
+  public void stopIntake() {
+    intakeLeft.setControl(motorStop);
+    intakeRight.setControl(motorStop);
   }
 
   @Override
