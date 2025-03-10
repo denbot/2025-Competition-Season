@@ -53,6 +53,7 @@ public final class Constants {
     public static final int LEFT_INTAKE_MOTOR_ID = 19;
     public static final int RIGHT_INTAKE_MOTOR_ID = 20;
 
+    public static final int CANDI_ID = 18;  // S1 is first switch, S2 is base
     public static final int INTAKE_ROTATION_MOTOR_ID = 23;
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
 
@@ -68,7 +69,7 @@ public final class Constants {
     public static final int ROTATION_MOTOR_ID = 14;
     public static final int ROTATION_ENCODER_ID = 15;
     public static final int EXTENDER_ENCODER_ID = 16;
-    public static final int BOATHOOK_CANDI_ID = 18;
+    public static final int CANDI_ID = 17;
     public static final double ROTATOR_GEAR_RATIO = 25;
     public static final double ROTATOR_FORWARD_LIMIT = 0.4;
     public static final double ROTATOR_REVERSE_LIMIT = 0.0;

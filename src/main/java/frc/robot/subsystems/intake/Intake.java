@@ -4,25 +4,14 @@
 
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,6 +32,9 @@ public class Intake extends SubsystemBase {
       new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
   private final CANcoder rotationEncoder =
       new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
+
+  private final CANdi intakeSensors =
+      new CANdi(IntakeConstants.CANDI_ID);
 
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
@@ -85,6 +77,17 @@ public class Intake extends SubsystemBase {
 
   public boolean up = false;
   public boolean stop = true;
+
+  private static final CANdiConfiguration intakeSensorsConfig =
+    new CANdiConfiguration()
+        .withDigitalInputs(
+            new DigitalInputsConfigs()
+                .withS1CloseState(S1CloseStateValue.CloseWhenNotFloating)
+                .withS1FloatState(S1FloatStateValue.FloatDetect)
+                .withS2CloseState(S2CloseStateValue.CloseWhenNotFloating)
+                .withS2FloatState(S2FloatStateValue.FloatDetect)
+        );
+
   private static final NeutralOut motorStop = new NeutralOut();
 
   public Intake() {
@@ -97,6 +100,7 @@ public class Intake extends SubsystemBase {
 
     NamedCommands.registerCommand(
         "IntakeDown", new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle));
+    intakeSensors.getConfigurator().apply(intakeSensorsConfig);
   }
 
   public double getRotationAngle() {
