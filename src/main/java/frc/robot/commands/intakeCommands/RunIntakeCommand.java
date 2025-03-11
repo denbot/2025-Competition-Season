@@ -10,9 +10,6 @@ import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.boathook.Boathook.Level;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.intake.Intake;
 
 public class RunIntakeCommand extends Command {
