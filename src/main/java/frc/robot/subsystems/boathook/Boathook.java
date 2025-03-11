@@ -36,7 +36,8 @@ public class Boathook extends SubsystemBase {
   private final CANcoder extensionEncoder =
       new CANcoder(BoathookConstants.EXTENDER_ENCODER_ID, OperatorConstants.canivoreSerial);
 
-  private final CANdi limitSensors = new CANdi(BoathookConstants.CANDI_ID);
+  private final CANdi limitSensors =
+      new CANdi(BoathookConstants.CANDI_ID, OperatorConstants.canivoreSerial);
 
   public double angle1;
   public double length1;

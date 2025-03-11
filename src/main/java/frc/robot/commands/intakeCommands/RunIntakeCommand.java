@@ -31,9 +31,20 @@ public class RunIntakeCommand extends Command {
   /** The initial subroutine of a command. Called once when the command is initially scheduled. */
   @Override
   public void initialize() {
+    ejectingWait.reset();
+    SmartDashboard.putString("IntakeStatus", "Running");
+
+    if (direction == Direction.Intake && intake.isCoralIntaken()) {
+      return; // Don't even start moving, we already have a piece
+    }
+
     intake.setIntakeSpeed(direction.speed);
     intake.setAngle(Constants.IntakeConstants.intakeDownAngle, 0);
-    SmartDashboard.putString("IntakeStatus", "Running");
+  }
+
+  @Override
+  public void execute() {
+    SmartDashboard.putBoolean("Coral status", intake.isCoralIntaken());
   }
 
   @Override

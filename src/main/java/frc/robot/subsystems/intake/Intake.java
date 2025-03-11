@@ -33,7 +33,8 @@ public class Intake extends SubsystemBase {
   private final CANcoder rotationEncoder =
       new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
 
-  private final CANdi intakeSensors = new CANdi(IntakeConstants.CANDI_ID);
+  private final CANdi intakeSensors =
+      new CANdi(IntakeConstants.CANDI_ID, OperatorConstants.canivoreSerial);
 
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
