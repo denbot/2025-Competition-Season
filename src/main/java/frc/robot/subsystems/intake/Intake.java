@@ -138,4 +138,9 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
   }
+
+  public boolean isCoralIntaken() {
+    // If either switch is triggered. This will eventually be one switch
+    return intakeSensors.getS1Closed().getValue() || intakeSensors.getS2Closed().getValue();
+  }
 }

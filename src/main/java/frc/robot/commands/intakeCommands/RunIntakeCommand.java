@@ -1,5 +1,6 @@
 package frc.robot.commands.intakeCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -19,6 +20,7 @@ public class RunIntakeCommand extends Command {
 
   private final Intake intake;
   private final Direction direction;
+  private final Timer ejectingWait = new Timer();
 
   public RunIntakeCommand(Intake intake, Direction direction) {
     this.intake = intake;
@@ -36,8 +38,25 @@ public class RunIntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    // TODO Check sensors and cancel based on that and direction (intake expects sensors to trigger,
-    // eject wants to see them stop)
+    if(direction == Direction.Intake) {
+      return intake.isCoralIntaken();
+    }
+
+    if(direction == Direction.Eject) {
+      if(intake.isCoralIntaken()) {
+        return false;  // Still on the nub, need to wait for it not to be
+      }
+
+      if(! ejectingWait.isRunning()) {
+        ejectingWait.restart();
+        return false;
+      }
+
+      if(ejectingWait.hasElapsed(.4)) {
+        return true;
+      }
+    }
+
     return false; // Cancels based on button released
   }
 
