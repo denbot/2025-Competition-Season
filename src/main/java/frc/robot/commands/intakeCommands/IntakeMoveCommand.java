@@ -14,12 +14,14 @@ public class IntakeMoveCommand extends Command {
   /** Creates a new StopIntake. */
   Intake intake;
 
+  double setPoint;
   boolean toggleEnable;
 
-  public IntakeMoveCommand(Intake intake, boolean toggleEnable) {
+  public IntakeMoveCommand(Intake intake, boolean toggleEnable, double setPoint) {
     addRequirements(intake);
     this.intake = intake;
     this.toggleEnable = toggleEnable;
+    this.setPoint = setPoint;
   }
 
   // Called when the command is initially scheduled.
@@ -37,7 +39,14 @@ public class IntakeMoveCommand extends Command {
   public void execute() {
     // Tell the drive team if the intake should be up or down and set the angle
     SmartDashboard.putBoolean("IntakeAtL1", intake.up);
-    intake.setAngle(intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle);
+    if (toggleEnable) {
+      intake.setAngle(
+          intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle,
+          intake.up ? 0 : 1);
+    } else {
+      intake.setAngle(setPoint, 0);
+    }
+    System.out.println("intake moving");
   }
 
   // Called once the command ends or is interrupted.

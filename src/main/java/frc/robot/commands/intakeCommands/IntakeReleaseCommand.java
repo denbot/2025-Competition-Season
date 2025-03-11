@@ -29,6 +29,7 @@ public class IntakeReleaseCommand extends Command {
     // Reset and start timer
     timer.reset();
     timer.start();
+    System.out.println("intake release start");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,6 +44,7 @@ public class IntakeReleaseCommand extends Command {
   public void end(boolean interrupted) {
     // When command is over, stop the intake wheels
     intake.setIntakeSpeed(0);
+    System.out.println("intake release stop");
   }
 
   // Returns true when the command should end.

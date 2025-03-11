@@ -165,7 +165,7 @@ public class RobotContainer {
     stabBoathook = new BoathookStabCommand(boathook, intake);
     startIntake = new RunIntake(intake, -1);
     rejectIntake = new RunIntake(intake, 1);
-    moveIntake = new IntakeMoveCommand(intake, true);
+    moveIntake = new IntakeMoveCommand(intake, true, 0);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -247,8 +247,8 @@ public class RobotContainer {
     controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
-    // controller.rightBumper().onTrue(extendBoathook);
-    // controller.rightTrigger().onTrue(retractBoathook);
+    controller.rightBumper().onTrue(extendBoathook);
+    controller.rightTrigger().onTrue(retractBoathook);
 
     controller
         .rightStick()

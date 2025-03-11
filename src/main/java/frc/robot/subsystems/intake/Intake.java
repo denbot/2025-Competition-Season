@@ -93,15 +93,16 @@ public class Intake extends SubsystemBase {
     rotation.getConfigurator().apply(intakeRotationConfig);
     rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig);
 
-    NamedCommands.registerCommand("IntakeDown", new IntakeMoveCommand(this, false));
+    NamedCommands.registerCommand(
+        "IntakeDown", new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle));
   }
 
   public double getRotationAngle() {
     return rotation.getRotorPosition().getValueAsDouble() * 360.0;
   }
 
-  public void setAngle(double angle) {
-    rotation.setControl(new PositionVoltage(angle));
+  public void setAngle(double angle, int slot) {
+    rotation.setControl(new PositionVoltage(angle).withSlot(slot));
   }
 
   public void setIntakeSpeed(double speed) {
