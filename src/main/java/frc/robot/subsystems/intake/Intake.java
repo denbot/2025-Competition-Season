@@ -39,10 +39,14 @@ public class Intake extends SubsystemBase {
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimitEnable(true)
+                  .withStatorCurrentLimit(70))
           .withFeedback(
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(IntakeConstants.INTAKE_ROTATION_ENCODER_ID)
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                   .withSensorToMechanismRatio(IntakeConstants.rotatorGearRatio)
                   .withRotorToSensorRatio(120))
           .withSoftwareLimitSwitch(
@@ -72,7 +76,7 @@ public class Intake extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0.001)
+                  .withMagnetOffset(0.085)
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   public boolean up = false;
