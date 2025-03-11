@@ -156,8 +156,7 @@ public class Boathook extends SubsystemBase {
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(true)
                   .withForwardSoftLimitThreshold(BoathookConstants.EXTENDER_FORWARD_LIMIT)
-                  .withReverseSoftLimitEnable(false)
-          )
+                  .withReverseSoftLimitEnable(false))
           //          .withMotionMagic(
           //              new MotionMagicConfigs()
           //                  .withMotionMagicAcceleration(2)
@@ -173,8 +172,7 @@ public class Boathook extends SubsystemBase {
                   .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
                   .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen)
                   .withForwardLimitEnable(false)
-                  .withForwardLimitAutosetPositionEnable(false)
-          );
+                  .withForwardLimitAutosetPositionEnable(false));
 
   CANcoderConfiguration extensionEncoderConfig =
       new CANcoderConfiguration()
