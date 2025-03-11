@@ -33,8 +33,7 @@ public class Intake extends SubsystemBase {
   private final CANcoder rotationEncoder =
       new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
 
-  private final CANdi intakeSensors =
-      new CANdi(IntakeConstants.CANDI_ID);
+  private final CANdi intakeSensors = new CANdi(IntakeConstants.CANDI_ID);
 
   public static final TalonFXConfiguration intakeRotationConfig =
       new TalonFXConfiguration()
@@ -79,14 +78,13 @@ public class Intake extends SubsystemBase {
   public boolean stop = true;
 
   private static final CANdiConfiguration intakeSensorsConfig =
-    new CANdiConfiguration()
-        .withDigitalInputs(
-            new DigitalInputsConfigs()
-                .withS1CloseState(S1CloseStateValue.CloseWhenNotFloating)
-                .withS1FloatState(S1FloatStateValue.FloatDetect)
-                .withS2CloseState(S2CloseStateValue.CloseWhenNotFloating)
-                .withS2FloatState(S2FloatStateValue.FloatDetect)
-        );
+      new CANdiConfiguration()
+          .withDigitalInputs(
+              new DigitalInputsConfigs()
+                  .withS1CloseState(S1CloseStateValue.CloseWhenNotFloating)
+                  .withS1FloatState(S1FloatStateValue.FloatDetect)
+                  .withS2CloseState(S2CloseStateValue.CloseWhenNotFloating)
+                  .withS2FloatState(S2FloatStateValue.FloatDetect));
 
   private static final NeutralOut motorStop = new NeutralOut();
 

@@ -69,16 +69,16 @@ public final class Constants {
     public static final int ROTATION_MOTOR_ID = 14;
     public static final int ROTATION_ENCODER_ID = 15;
     public static final int EXTENDER_ENCODER_ID = 16;
-    public static final int CANDI_ID = 17;
+    public static final int CANDI_ID = 17; // S1 is rotation, S2 is extension
     public static final double ROTATOR_GEAR_RATIO = 25;
-    public static final double ROTATOR_FORWARD_LIMIT = 0.4;
+    public static final double ROTATOR_FORWARD_LIMIT = 0.34;
     public static final double ROTATOR_REVERSE_LIMIT = 0.0;
     //    public static final double EXTENDER_CANCODER_RATIO = 101.6 / 40;
     //    public static final double EXTENDER_GEAR_RATIO = 25;
     // 4 inch mechanism drum
     // 40 mm sensor
-    public static final double EXTENDER_FORWARD_LIMIT = 4.5; // not in inches (rotations)
-    public static final double EXTENDER_REVERSE_LIMIT = -0.15;
+    public static final double EXTENDER_FORWARD_LIMIT = 8.48; // not in inches (rotations)
+    public static final double EXTENDER_REVERSE_LIMIT = 0;
 
     public static final double STAB_ANGLE = 20;
     public static final double IDLE_ANGLE = 90;
