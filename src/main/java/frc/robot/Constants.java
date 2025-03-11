@@ -61,7 +61,8 @@ public final class Constants {
     public static final double intakeSpearAngle = 40;
     public static final double intakeL1Angle = 25;
 
-    public static final double intakeSpeed = 4;
+    public static final double intakeSpeed = 40;  // Rotations / Second
+    public static final double intakeAcceleration = 13;  // Rotations / Second^2
   }
 
   public static class BoathookConstants {

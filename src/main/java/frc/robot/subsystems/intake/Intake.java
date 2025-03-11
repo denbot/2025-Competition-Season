@@ -7,6 +7,7 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
@@ -86,12 +88,29 @@ public class Intake extends SubsystemBase {
                   .withS2CloseState(S2CloseStateValue.CloseWhenNotFloating)
                   .withS2FloatState(S2FloatStateValue.FloatDetect));
 
+  private static final TalonFXConfiguration intakeConfig = new TalonFXConfiguration()
+      .withCurrentLimits(
+          new CurrentLimitsConfigs()
+              .withStatorCurrentLimitEnable(true)
+              .withStatorCurrentLimit(30)
+      )
+      .withSlot0(
+          new Slot0Configs()
+              .withKS(5.4)
+              .withKP(3)
+      );
+
   private static final NeutralOut motorStop = new NeutralOut();
+  private static final VelocityTorqueCurrentFOC intakeSpin = new VelocityTorqueCurrentFOC(0)
+      .withAcceleration(IntakeConstants.intakeAcceleration);
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
     intakeLeft.setNeutralMode(NeutralModeValue.Coast);
     intakeRight.setNeutralMode(NeutralModeValue.Coast);
+
+    intakeLeft.getConfigurator().apply(intakeConfig);
+    intakeRight.getConfigurator().apply(intakeConfig);
 
     rotation.getConfigurator().apply(intakeRotationConfig);
     rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig);
@@ -109,9 +128,9 @@ public class Intake extends SubsystemBase {
     rotation.setControl(new PositionVoltage(angle).withSlot(slot));
   }
 
-  public void setIntakeSpeed(double speed) {
-    intakeLeft.setControl(new VoltageOut(speed));
-    intakeRight.setControl(new VoltageOut(-speed));
+  public void setIntakeSpeed(double velocity) {
+    intakeLeft.setControl(intakeSpin.withVelocity(velocity));
+    intakeRight.setControl(intakeSpin.withVelocity(-velocity));
   }
 
   public void flipStop() {
