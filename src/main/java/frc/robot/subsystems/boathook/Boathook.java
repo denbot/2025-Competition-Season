@@ -57,7 +57,7 @@ public class Boathook extends SubsystemBase {
           .withFeedback(
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(BoathookConstants.ROTATION_ENCODER_ID)
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                   .withSensorToMechanismRatio(BoathookConstants.ROTATOR_GEAR_RATIO))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
@@ -77,12 +77,14 @@ public class Boathook extends SubsystemBase {
                   .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign))
           .withHardwareLimitSwitch(
               new HardwareLimitSwitchConfigs()
-                  .withForwardLimitEnable(true)
-                  .withForwardLimitAutosetPositionEnable(true)
-                  .withForwardLimitAutosetPositionValue(BoathookConstants.ROTATOR_REVERSE_LIMIT)
-                  .withForwardLimitRemoteSensorID(BoathookConstants.CANDI_ID)
-                  .withForwardLimitSource(ForwardLimitSourceValue.RemoteCANdiS1)
-                  .withForwardLimitType(ForwardLimitTypeValue.NormallyOpen));
+                  .withForwardLimitEnable(false)
+                  .withForwardLimitAutosetPositionEnable(false)
+                  .withReverseLimitEnable(true)
+                  .withReverseLimitAutosetPositionEnable(true)
+                  .withReverseLimitAutosetPositionValue(BoathookConstants.ROTATOR_REVERSE_LIMIT)
+                  .withReverseLimitRemoteSensorID(BoathookConstants.CANDI_ID)
+                  .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS1)
+                  .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen));
 
   private static final CANcoderConfiguration rotationEncoderConfig =
       new CANcoderConfiguration()
