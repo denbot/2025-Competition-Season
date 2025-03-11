@@ -22,7 +22,9 @@ public class ExtendBoathookCommandIdle extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.println("extend idle start");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -39,6 +41,7 @@ public class ExtendBoathookCommandIdle extends Command {
   @Override
   public void end(boolean interrupted) {
     boathook.setBrakeExtender();
+    System.out.println("extend idle end");
   }
 
   // Returns true when the command should end.

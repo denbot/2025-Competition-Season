@@ -10,35 +10,48 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.intake.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class StartIntake extends Command {
-  /** Creates a new StartIntake. */
+public class IntakeMoveCommand extends Command {
+  /** Creates a new StopIntake. */
   Intake intake;
 
-  double direction;
+  double setPoint;
+  boolean toggleEnable;
 
-  public StartIntake(Intake intake, double direction) {
+  public IntakeMoveCommand(Intake intake, boolean toggleEnable, double setPoint) {
     addRequirements(intake);
     this.intake = intake;
-    this.direction = direction;
+    this.toggleEnable = toggleEnable;
+    this.setPoint = setPoint;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    // If we are in teleop, the same button will toggle the intake up or down
+    // Otherwise, we are in auto and just want the angle set to a specific place.
+    if (toggleEnable) {
+      intake.flipUp();
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setLeftIndexerSpeed(IntakeConstants.indexerSpeed * direction);
-    intake.setRightIndexerSpeed(-IntakeConstants.indexerSpeed * direction);
-    // intake.setAngle(IntakeConstants.intakeDownAngle);
+    // Tell the drive team if the intake should be up or down and set the angle
+    SmartDashboard.putBoolean("IntakeAtL1", intake.up);
+    if (toggleEnable) {
+      intake.setAngle(
+          intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle,
+          intake.up ? 0 : 1);
+    } else {
+      intake.setAngle(setPoint, 0);
+    }
+    System.out.println("intake moving");
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    SmartDashboard.putString("IntakeStatus", "Running");
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

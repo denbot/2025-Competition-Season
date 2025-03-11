@@ -50,17 +50,17 @@ public final class Constants {
     public static final double forwardSoftLimit = 0.25;
     public static final double reverseSoftLimit = 0;
 
+    public static final int LEFT_INTAKE_MOTOR_ID = 19;
+    public static final int RIGHT_INTAKE_MOTOR_ID = 20;
+
     public static final int INTAKE_ROTATION_MOTOR_ID = 23;
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
 
-    public static final int INDEXER_LEFT_MOTOR_ID = 19;
-    public static final int INDEXER_RIGHT_MOTOR_ID = 20;
-
-    public static final double intakeDownAngle = 100;
-    public static final double intakeFunnelAngle = 9000;
+    public static final double intakeDownAngle = 0;
+    public static final double intakeSpearAngle = 40;
+    public static final double intakeL1Angle = 25;
 
     public static final double intakeSpeed = 4;
-    public static final double indexerSpeed = 3;
   }
 
   public static class BoathookConstants {
@@ -79,15 +79,15 @@ public final class Constants {
     public static final double EXTENDER_FORWARD_LIMIT = 4.5; // not in inches (rotations)
     public static final double EXTENDER_REVERSE_LIMIT = -0.15;
 
-    public static final double STAB_ANGLE = 12;
+    public static final double STAB_ANGLE = 20;
     public static final double IDLE_ANGLE = 90;
-    public static final double L2_SETUP_ANGLE = 0.35 * 360;
-    public static final double L3_SETUP_ANGLE = 0.33 * 360;
-    public static final double L4_SETUP_ANGLE = 0.3 * 360;
-    public static final double L2_SCORE_ANGLE = 0.36 * 360;
-    public static final double L3_SCORE_ANGLE = 0.35 * 360;
-    public static final double L4_SCORE_ANGLE = 0.305 * 360;
-    public static final double STAB_EXTENSION = 0.19;
+    public static final double L2_SETUP_ANGLE = 0.32 * 360;
+    public static final double L3_SETUP_ANGLE = 0.3 * 360;
+    public static final double L4_SETUP_ANGLE = 90;
+    public static final double L2_SCORE_ANGLE = 0.34 * 360;
+    public static final double L3_SCORE_ANGLE = 0.32 * 360;
+    public static final double L4_SCORE_ANGLE = 93;
+    public static final double STAB_EXTENSION = -0.085;
     public static final double IDLE_EXTENSION = -0.15;
     public static final double L2_EXTENSION = 0.58;
     public static final double L3_EXTENSION = 1.85;
