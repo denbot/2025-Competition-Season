@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,7 +15,6 @@ import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
@@ -88,21 +86,17 @@ public class Intake extends SubsystemBase {
                   .withS2CloseState(S2CloseStateValue.CloseWhenNotFloating)
                   .withS2FloatState(S2FloatStateValue.FloatDetect));
 
-  private static final TalonFXConfiguration intakeConfig = new TalonFXConfiguration()
-      .withCurrentLimits(
-          new CurrentLimitsConfigs()
-              .withStatorCurrentLimitEnable(true)
-              .withStatorCurrentLimit(30)
-      )
-      .withSlot0(
-          new Slot0Configs()
-              .withKS(5.4)
-              .withKP(3)
-      );
+  private static final TalonFXConfiguration intakeConfig =
+      new TalonFXConfiguration()
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  .withStatorCurrentLimitEnable(true)
+                  .withStatorCurrentLimit(30))
+          .withSlot0(new Slot0Configs().withKS(5.4).withKP(3));
 
   private static final NeutralOut motorStop = new NeutralOut();
-  private static final VelocityTorqueCurrentFOC intakeSpin = new VelocityTorqueCurrentFOC(0)
-      .withAcceleration(IntakeConstants.intakeAcceleration);
+  private static final VelocityTorqueCurrentFOC intakeSpin =
+      new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);

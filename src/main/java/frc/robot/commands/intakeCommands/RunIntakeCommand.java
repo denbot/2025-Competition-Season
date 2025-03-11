@@ -38,21 +38,21 @@ public class RunIntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    if(direction == Direction.Intake) {
+    if (direction == Direction.Intake) {
       return intake.isCoralIntaken();
     }
 
-    if(direction == Direction.Eject) {
-      if(intake.isCoralIntaken()) {
-        return false;  // Still on the nub, need to wait for it not to be
+    if (direction == Direction.Eject) {
+      if (intake.isCoralIntaken()) {
+        return false; // Still on the nub, need to wait for it not to be
       }
 
-      if(! ejectingWait.isRunning()) {
+      if (!ejectingWait.isRunning()) {
         ejectingWait.restart();
         return false;
       }
 
-      if(ejectingWait.hasElapsed(.4)) {
+      if (ejectingWait.hasElapsed(.4)) {
         return true;
       }
     }
