@@ -7,10 +7,6 @@ package frc.robot.commands.boathookCommands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleStabBoathookCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommandIdle;
-import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommandStab;
 import frc.robot.commands.intakeCommands.IntakeMoveCommand;
 import frc.robot.commands.intakeCommands.IntakeReleaseCommand;
 import frc.robot.subsystems.boathook.Boathook;
@@ -25,12 +21,14 @@ public class BoathookStabCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new AngleIdleBoathookCommand(boathook),
-        new ExtendBoathookCommandStab(boathook),
-        new AngleStabBoathookCommand(boathook),
-        new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 0, 2),
+        // new AngleIdleBoathookCommand(boathook),
+        // new ExtendBoathookCommandStab(boathook),
+        // new AngleStabBoathookCommand(boathook),
+        new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 0),
         new ParallelCommandGroup(
-            new AngleIdleBoathookCommand(boathook), new IntakeReleaseCommand(intake, 1)),
-        new ExtendBoathookCommandIdle(boathook));
+            // new AngleIdleBoathookCommand(boathook),
+            new IntakeReleaseCommand(intake, 1)) // ,
+        // new ExtendBoathookCommandIdle(boathook)
+        );
   }
 }

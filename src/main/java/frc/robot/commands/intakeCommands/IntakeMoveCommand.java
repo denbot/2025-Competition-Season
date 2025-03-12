@@ -47,7 +47,7 @@ public class IntakeMoveCommand extends Command {
     if (toggleEnable) {
       intake.setAngle(
           intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle,
-          intake.up ? 0 : 1,
+          intake.up ? 1 : 0,
           intake.up ? 2.0 : -3.0);
     } else {
       intake.setAngle(setPoint, slot, feedForward);

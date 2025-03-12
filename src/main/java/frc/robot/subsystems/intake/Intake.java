@@ -61,16 +61,23 @@ public class Intake extends SubsystemBase {
                   .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(63.5)
-                  .withKD(12)
+                  .withKP(20)
+                  .withKD(13)
                   .withKG(2)
                   .withGravityType(GravityTypeValue.Arm_Cosine))
           .withSlot1(
               new Slot1Configs()
-                  .withKP(20)
-                  .withKD(13)
+                  .withKP(63.5)
+                  .withKD(12)
                   .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine));
+                  .withGravityType(GravityTypeValue.Arm_Cosine))
+          .withSlot2(
+            new Slot2Configs()
+                .withKP(20.1)
+                .withKS(1.8)
+                .withKG(2)
+                .withGravityType(GravityTypeValue.Arm_Cosine)
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign));
 
   public static final CANcoderConfiguration intakeRotationSensorConfig =
       new CANcoderConfiguration()
