@@ -58,7 +58,8 @@ public class Boathook extends SubsystemBase {
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(BoathookConstants.ROTATION_ENCODER_ID)
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                  .withSensorToMechanismRatio(BoathookConstants.ROTATOR_GEAR_RATIO))
+                  .withSensorToMechanismRatio(BoathookConstants.ROTATOR_GEAR_RATIO)
+                  .withFeedbackRotorOffset(0))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(true)
@@ -77,20 +78,20 @@ public class Boathook extends SubsystemBase {
                   .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign))
           .withHardwareLimitSwitch(
               new HardwareLimitSwitchConfigs()
-                  .withForwardLimitEnable(false)
-                  .withForwardLimitAutosetPositionEnable(false)
                   .withReverseLimitEnable(true)
                   .withReverseLimitAutosetPositionEnable(true)
                   .withReverseLimitAutosetPositionValue(BoathookConstants.ROTATOR_REVERSE_LIMIT)
                   .withReverseLimitRemoteSensorID(BoathookConstants.CANDI_ID)
                   .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS1)
-                  .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen));
+                  .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen)
+                  .withForwardLimitEnable(false)
+                  .withForwardLimitAutosetPositionEnable(false));
 
   private static final CANcoderConfiguration rotationEncoderConfig =
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0.41)
+                  .withMagnetOffset(0) // 0.41
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -104,7 +105,8 @@ public class Boathook extends SubsystemBase {
                   .withFeedbackRemoteSensorID(BoathookConstants.EXTENDER_ENCODER_ID)
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                   .withRotorToSensorRatio(25 * (34.0 / 24.0))
-                  .withSensorToMechanismRatio(1.8))
+                  .withSensorToMechanismRatio(1.8)
+                  .withFeedbackRotorOffset(0))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(true)
@@ -131,7 +133,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0.372)
+                  .withMagnetOffset(0) // 0.372
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   CANdiConfiguration limitSensorsConfig =
@@ -189,8 +191,38 @@ public class Boathook extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (rotationMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
+      rotationEncoder
+          .getConfigurator()
+          .apply(
+              rotationEncoderConfig.MagnetSensor.withMagnetOffset(
+                  rotationEncoder.getPosition().getValue()));
+      //   rotationMotor
+      //       .getConfigurator()
+      //       .apply(this.resetMinToZero(rotationConfig, rotationMotor.getPosition().getValue()));
+    }
+
+    if (extenderMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
+      extensionEncoder
+          .getConfigurator()
+          .apply(
+              extensionEncoderConfig.MagnetSensor.withMagnetOffset(
+                  extensionEncoder.getPosition().getValue()));
+      //   extenderMotor
+      //       .getConfigurator()
+      //       .apply(this.resetMinToZero(extenderConfig, extenderMotor.getPosition().getValue()));
+    }
+
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());
     SmartDashboard.putNumber("Boathook Extension", getLength());
   }
+
+  private TalonFXConfiguration resetMinToZero(TalonFXConfiguration configuration, Angle angle) {
+    return configuration
+        .withFeedback(new FeedbackConfigs().withFeedbackRotorOffset(angle))
+        .withHardwareLimitSwitch(
+            new HardwareLimitSwitchConfigs().withReverseLimitAutosetPositionEnable(false));
+  }
+  ;
 }

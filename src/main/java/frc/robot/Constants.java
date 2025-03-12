@@ -58,8 +58,8 @@ public final class Constants {
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
 
     public static final double intakeDownAngle = 0;
-    public static final double intakeSpearAngle = 40;
-    public static final double intakeL1Angle = 25;
+    public static final double intakeSpearAngle = 0.31;
+    public static final double intakeL1Angle = 0.24;
 
     public static final double intakeSpeed = 40; // Rotations / Second
     public static final double intakeAcceleration = 13; // Rotations / Second^2

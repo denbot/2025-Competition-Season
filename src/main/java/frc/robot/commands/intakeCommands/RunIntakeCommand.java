@@ -39,7 +39,6 @@ public class RunIntakeCommand extends Command {
     }
 
     intake.setIntakeSpeed(direction.speed);
-    intake.setAngle(Constants.IntakeConstants.intakeDownAngle, 0);
   }
 
   @Override

@@ -16,12 +16,17 @@ public class IntakeMoveCommand extends Command {
 
   double setPoint;
   boolean toggleEnable;
+  int slot;
+  double feedForward;
 
-  public IntakeMoveCommand(Intake intake, boolean toggleEnable, double setPoint) {
+  public IntakeMoveCommand(
+      Intake intake, boolean toggleEnable, double setPoint, int slot, double feedForward) {
     addRequirements(intake);
     this.intake = intake;
     this.toggleEnable = toggleEnable;
     this.setPoint = setPoint;
+    this.slot = slot;
+    this.feedForward = feedForward;
   }
 
   // Called when the command is initially scheduled.
@@ -42,11 +47,11 @@ public class IntakeMoveCommand extends Command {
     if (toggleEnable) {
       intake.setAngle(
           intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle,
-          intake.up ? 0 : 1);
+          intake.up ? 0 : 1,
+          intake.up ? 2.0 : -3.0);
     } else {
-      intake.setAngle(setPoint, 0);
+      intake.setAngle(setPoint, slot, feedForward);
     }
-    System.out.println("intake moving");
   }
 
   // Called once the command ends or is interrupted.

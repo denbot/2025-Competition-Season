@@ -6,7 +6,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
@@ -61,15 +61,15 @@ public class Intake extends SubsystemBase {
                   .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(10)
-                  .withKD(0)
-                  .withKG(0)
+                  .withKP(63.5)
+                  .withKD(12)
+                  .withKG(2)
                   .withGravityType(GravityTypeValue.Arm_Cosine))
           .withSlot1(
               new Slot1Configs()
-                  .withKP(5)
-                  .withKD(0)
-                  .withKG(0)
+                  .withKP(20)
+                  .withKD(13)
+                  .withKG(2)
                   .withGravityType(GravityTypeValue.Arm_Cosine));
 
   public static final CANcoderConfiguration intakeRotationSensorConfig =
@@ -103,6 +103,8 @@ public class Intake extends SubsystemBase {
   private static final VelocityTorqueCurrentFOC intakeSpin =
       new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
 
+  private static final PositionTorqueCurrentFOC intakeMove = new PositionTorqueCurrentFOC(0);
+
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
     intakeLeft.setNeutralMode(NeutralModeValue.Coast);
@@ -115,7 +117,7 @@ public class Intake extends SubsystemBase {
     rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig);
 
     NamedCommands.registerCommand(
-        "IntakeDown", new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle));
+        "IntakeDown", new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
     intakeSensors.getConfigurator().apply(intakeSensorsConfig);
   }
 
@@ -123,8 +125,8 @@ public class Intake extends SubsystemBase {
     return rotation.getRotorPosition().getValueAsDouble() * 360.0;
   }
 
-  public void setAngle(double angle, int slot) {
-    rotation.setControl(new PositionVoltage(angle).withSlot(slot));
+  public void setAngle(double angle, int slot, double feedForward) {
+    rotation.setControl(intakeMove.withPosition(angle).withSlot(slot).withFeedForward(feedForward));
   }
 
   public void setIntakeSpeed(double velocity) {
