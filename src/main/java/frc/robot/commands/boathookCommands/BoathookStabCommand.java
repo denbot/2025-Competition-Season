@@ -4,11 +4,9 @@
 
 package frc.robot.commands.boathookCommands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.intakeCommands.IntakeMoveCommand;
-import frc.robot.commands.intakeCommands.IntakeReleaseCommand;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.intake.Intake;
 
@@ -24,10 +22,10 @@ public class BoathookStabCommand extends SequentialCommandGroup {
         // new AngleIdleBoathookCommand(boathook),
         // new ExtendBoathookCommandStab(boathook),
         // new AngleStabBoathookCommand(boathook),
-        new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 0),
-        new ParallelCommandGroup(
-            // new AngleIdleBoathookCommand(boathook),
-            new IntakeReleaseCommand(intake, 1)) // ,
+        new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 0) // ,
+        // new ParallelCommandGroup(
+        // new AngleIdleBoathookCommand(boathook),
+        // new IntakeReleaseCommand(intake, 1)) // ,
         // new ExtendBoathookCommandIdle(boathook)
         );
   }

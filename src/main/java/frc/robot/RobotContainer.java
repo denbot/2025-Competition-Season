@@ -191,7 +191,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Attempt to load the chrp
-    var status = m_orchestra.loadMusic("OceanMan.chrp");
+    var status = m_orchestra.loadMusic("OhoOasis.chrp");
 
     if (!status.isOK()) {
       // log error
