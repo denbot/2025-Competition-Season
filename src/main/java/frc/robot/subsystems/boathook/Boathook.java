@@ -58,7 +58,7 @@ public class Boathook extends SubsystemBase {
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(BoathookConstants.ROTATION_ENCODER_ID)
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                  .withSensorToMechanismRatio(BoathookConstants.ROTATOR_GEAR_RATIO)
+                  .withRotorToSensorRatio(BoathookConstants.ROTATOR_GEAR_RATIO)
                   .withFeedbackRotorOffset(0))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
@@ -91,7 +91,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0) // 0.41
+                  .withMagnetOffset(-0.582) // 0.41
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -191,27 +191,28 @@ public class Boathook extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (rotationMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
-      rotationEncoder
-          .getConfigurator()
-          .apply(
-              rotationEncoderConfig.MagnetSensor.withMagnetOffset(
-                  rotationEncoder.getPosition().getValue()));
-      //   rotationMotor
-      //       .getConfigurator()
-      //       .apply(this.resetMinToZero(rotationConfig, rotationMotor.getPosition().getValue()));
-    }
+    // if (rotationMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
+    //   rotationEncoder
+    //       .getConfigurator()
+    //       .apply(
+    //           rotationEncoderConfig.MagnetSensor.withMagnetOffset(
+    //               rotationEncoder.getPosition().getValue()));
+    //   rotationMotor
+    //       .getConfigurator()
+    //       .apply(this.resetMinToZero(rotationConfig, rotationMotor.getPosition().getValue()));
+    // }
 
-    if (extenderMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
-      extensionEncoder
-          .getConfigurator()
-          .apply(
-              extensionEncoderConfig.MagnetSensor.withMagnetOffset(
-                  extensionEncoder.getPosition().getValue()));
-      //   extenderMotor
-      //       .getConfigurator()
-      //       .apply(this.resetMinToZero(extenderConfig, extenderMotor.getPosition().getValue()));
-    }
+    // if (extenderMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
+    //   extensionEncoder
+    //       .getConfigurator()
+    //       .apply(
+    //           extensionEncoderConfig.MagnetSensor.withMagnetOffset(
+    //               extensionEncoder.getPosition().getValue()));
+    //   //   extenderMotor
+    //   //       .getConfigurator()
+    //   //       .apply(this.resetMinToZero(extenderConfig,
+    // extenderMotor.getPosition().getValue()));
+    // }
 
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());

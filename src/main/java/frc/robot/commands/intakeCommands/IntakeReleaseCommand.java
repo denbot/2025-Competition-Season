@@ -36,7 +36,7 @@ public class IntakeReleaseCommand extends Command {
   @Override
   public void execute() {
     // Reject piece
-    intake.setIntakeSpeed(IntakeConstants.intakeSpeed);
+    intake.setIntakeSpeed(-IntakeConstants.intakeSpeed);
   }
 
   // Called once the command ends or is interrupted.

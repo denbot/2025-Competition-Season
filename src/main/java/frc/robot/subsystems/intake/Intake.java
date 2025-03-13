@@ -7,6 +7,7 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
@@ -132,6 +133,10 @@ public class Intake extends SubsystemBase {
     return rotation.getRotorPosition().getValueAsDouble() * 360.0;
   }
 
+  public double getRotationVelocity() {
+    return rotation.getVelocity().getValueAsDouble();
+  }
+
   public void setAngle(double angle, int slot, double feedForward) {
     rotation.setControl(intakeMove.withPosition(angle).withSlot(slot).withFeedForward(feedForward));
   }
@@ -139,6 +144,10 @@ public class Intake extends SubsystemBase {
   public void setIntakeSpeed(double velocity) {
     intakeLeft.setControl(intakeSpin.withVelocity(velocity));
     intakeRight.setControl(intakeSpin.withVelocity(-velocity));
+  }
+
+  public void setStaticBrake() {
+    rotation.setControl(new StaticBrake());
   }
 
   public void flipStop() {

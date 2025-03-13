@@ -4,6 +4,7 @@
 
 package frc.robot.commands.intakeCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
@@ -18,6 +19,7 @@ public class IntakeMoveCommand extends Command {
   boolean toggleEnable;
   int slot;
   double feedForward;
+  Timer timer = new Timer();
 
   public IntakeMoveCommand(
       Intake intake, boolean toggleEnable, double setPoint, int slot, double feedForward) {
@@ -37,6 +39,8 @@ public class IntakeMoveCommand extends Command {
     if (toggleEnable) {
       intake.flipUp();
     }
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,11 +60,16 @@ public class IntakeMoveCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("Intake Moved");
+    if (!toggleEnable) {
+      intake.setStaticBrake();
+    }
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return toggleEnable ? true : timer.get() > 0.5 && intake.getRotationVelocity() < 0.01;
   }
 }

@@ -59,7 +59,7 @@ public final class Constants {
 
     public static final double intakeDownAngle = 0;
     public static final double intakeSpearAngle = 0.55;
-    public static final double intakeL1Angle = 0.22;
+    public static final double intakeL1Angle = 0.2;
 
     public static final double intakeSpeed = 40; // Rotations / Second
     public static final double intakeAcceleration = 13; // Rotations / Second^2
@@ -81,17 +81,17 @@ public final class Constants {
     public static final double EXTENDER_FORWARD_LIMIT = 8.48; // not in inches (rotations)
     public static final double EXTENDER_REVERSE_LIMIT = 0;
 
-    public static final double STAB_ANGLE = 20;
+    public static final double STAB_ANGLE = 32;
     public static final double IDLE_ANGLE = 90;
     public static final double L2_SETUP_ANGLE = 0.32 * 360;
     public static final double L3_SETUP_ANGLE = 0.3 * 360;
     public static final double L4_SETUP_ANGLE = 90;
-    public static final double L2_SCORE_ANGLE = 0.34 * 360;
+    public static final double L2_SCORE_ANGLE = 0.37 * 360;
     public static final double L3_SCORE_ANGLE = 0.32 * 360;
     public static final double L4_SCORE_ANGLE = 93;
-    public static final double STAB_EXTENSION = -0.085;
-    public static final double IDLE_EXTENSION = -0.15;
-    public static final double L2_EXTENSION = 0.58;
+    public static final double STAB_EXTENSION = 0;
+    public static final double IDLE_EXTENSION = 0;
+    public static final double L2_EXTENSION = 0.78;
     public static final double L3_EXTENSION = 1.85;
     public static final double L4_EXTENSION = 4;
   }

@@ -191,7 +191,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Attempt to load the chrp
-    var status = m_orchestra.loadMusic("OhoOasis.chrp");
+    var status = m_orchestra.loadMusic("OceanMan.chrp");
 
     if (!status.isOK()) {
       // log error
@@ -252,9 +252,7 @@ public class RobotContainer {
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 
-    controller
-        .rightStick()
-        .onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
+    controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
     controller.leftStick().onTrue(Commands.runOnce(() -> m_orchestra.stop()).ignoringDisable(true));
 
     operatorController1.button(1).onTrue(twelveLeft);
