@@ -190,7 +190,7 @@ public class RobotContainer {
     preCheckTab.schedule();
 
     // Attempt to load the chrp
-    var status = m_orchestra.loadMusic("OhoOasis.chrp");
+    var status = m_orchestra.loadMusic("OceanMan.chrp");
 
     if (!status.isOK()) {
       // log error

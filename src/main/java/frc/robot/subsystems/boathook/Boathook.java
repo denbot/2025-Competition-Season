@@ -240,27 +240,28 @@ public class Boathook extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (rotationMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
-      rotationEncoder
-          .getConfigurator()
-          .apply(
-              rotationEncoderConfig.MagnetSensor.withMagnetOffset(
-                  rotationEncoder.getPosition().getValue()));
-      //   rotationMotor
-      //       .getConfigurator()
-      //       .apply(this.resetMinToZero(rotationConfig, rotationMotor.getPosition().getValue()));
-    }
+    // if (rotationMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
+    //   rotationEncoder
+    //       .getConfigurator()
+    //       .apply(
+    //           rotationEncoderConfig.MagnetSensor.withMagnetOffset(
+    //               rotationEncoder.getPosition().getValue()));
+    //   rotationMotor
+    //       .getConfigurator()
+    //       .apply(this.resetMinToZero(rotationConfig, rotationMotor.getPosition().getValue()));
+    // }
 
-    if (extenderMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
-      extensionEncoder
-          .getConfigurator()
-          .apply(
-              extensionEncoderConfig.MagnetSensor.withMagnetOffset(
-                  extensionEncoder.getPosition().getValue()));
-      //   extenderMotor
-      //       .getConfigurator()
-      //       .apply(this.resetMinToZero(extenderConfig, extenderMotor.getPosition().getValue()));
-    }
+    // if (extenderMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
+    //   extensionEncoder
+    //       .getConfigurator()
+    //       .apply(
+    //           extensionEncoderConfig.MagnetSensor.withMagnetOffset(
+    //               extensionEncoder.getPosition().getValue()));
+    //   //   extenderMotor
+    //   //       .getConfigurator()
+    //   //       .apply(this.resetMinToZero(extenderConfig,
+    // extenderMotor.getPosition().getValue()));
+    // }
 
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());
