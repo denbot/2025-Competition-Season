@@ -58,8 +58,7 @@ public class Boathook extends SubsystemBase {
               new FeedbackConfigs()
                   .withFeedbackRemoteSensorID(BoathookConstants.ROTATION_ENCODER_ID)
                   .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                  .withRotorToSensorRatio(BoathookConstants.ROTATOR_GEAR_RATIO)
-                  .withFeedbackRotorOffset(0))
+                  .withRotorToSensorRatio(BoathookConstants.ROTATOR_GEAR_RATIO))
           .withSoftwareLimitSwitch(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(true)
@@ -191,39 +190,8 @@ public class Boathook extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (rotationMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
-    //   rotationEncoder
-    //       .getConfigurator()
-    //       .apply(
-    //           rotationEncoderConfig.MagnetSensor.withMagnetOffset(
-    //               rotationEncoder.getPosition().getValue()));
-    //   rotationMotor
-    //       .getConfigurator()
-    //       .apply(this.resetMinToZero(rotationConfig, rotationMotor.getPosition().getValue()));
-    // }
-
-    // if (extenderMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround) {
-    //   extensionEncoder
-    //       .getConfigurator()
-    //       .apply(
-    //           extensionEncoderConfig.MagnetSensor.withMagnetOffset(
-    //               extensionEncoder.getPosition().getValue()));
-    //   //   extenderMotor
-    //   //       .getConfigurator()
-    //   //       .apply(this.resetMinToZero(extenderConfig,
-    // extenderMotor.getPosition().getValue()));
-    // }
-
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());
     SmartDashboard.putNumber("Boathook Extension", getLength());
   }
-
-  private TalonFXConfiguration resetMinToZero(TalonFXConfiguration configuration, Angle angle) {
-    return configuration
-        .withFeedback(new FeedbackConfigs().withFeedbackRotorOffset(angle))
-        .withHardwareLimitSwitch(
-            new HardwareLimitSwitchConfigs().withReverseLimitAutosetPositionEnable(false));
-  }
-  ;
 }

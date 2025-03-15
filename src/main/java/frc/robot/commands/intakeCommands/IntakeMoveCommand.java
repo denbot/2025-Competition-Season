@@ -13,13 +13,13 @@ import frc.robot.subsystems.intake.Intake;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeMoveCommand extends Command {
   /** Creates a new StopIntake. */
-  Intake intake;
+  private final Intake intake;
 
-  double setPoint;
-  boolean toggleEnable;
-  int slot;
-  double feedForward;
-  Timer timer = new Timer();
+  private final double setPoint;
+  private final boolean toggleEnable;
+  private final int slot;
+  private final double feedForward;
+  private final Timer timer = new Timer();
 
   public IntakeMoveCommand(
       Intake intake, boolean toggleEnable, double setPoint, int slot, double feedForward) {
