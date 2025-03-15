@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -51,10 +52,10 @@ import frc.robot.Constants;
 import frc.robot.Constants.Direction;
 import frc.robot.Constants.Mode;
 import frc.robot.LimelightHelpers;
+import frc.robot.commands.visionCommands.GoToReefCommand;
+import frc.robot.commands.visionCommands.PipelineChange;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
-import frc.robot.vision.commands.GoToReefCommand;
-import frc.robot.vision.commands.PipelineChange;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -110,6 +111,9 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
+  @AutoLogOutput private Pose2d leftPose;
+  @AutoLogOutput public Pose2d rightPose;
 
   public Drive(
       GyroIO gyroIO,
@@ -230,6 +234,8 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      SmartDashboard.putNumber("X Velocity", getChassisSpeeds().vxMetersPerSecond);
+      SmartDashboard.putNumber("Y Velocity", getChassisSpeeds().vyMetersPerSecond);
     }
 
     // Update gyro alert
@@ -343,6 +349,8 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
+    rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
+    leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
     return poseEstimator.getEstimatedPosition();
   }
 

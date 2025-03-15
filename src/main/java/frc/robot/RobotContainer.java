@@ -13,9 +13,11 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,10 +25,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookStabCommand;
+import frc.robot.commands.boathookCommands.SetSetPointsCommand;
 import frc.robot.commands.intakeCommands.*;
+import frc.robot.commands.visionCommands.GoToReefCommand;
+import frc.robot.commands.visionCommands.PipelineChange;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -34,8 +44,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.vision.commands.GoToReefCommand;
-import frc.robot.vision.commands.PipelineChange;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -47,7 +55,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
-  public final Intake intake = new Intake();
+  public final Intake intake;
+  public final Boathook boathook;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -56,13 +65,17 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  public Orchestra m_orchestra = new Orchestra();
 
   // Commands
   private final GoToReefCommand reef;
-  private final StartIntake startIntake;
-  private final StartIntake rejectIntake;
-  private final FunnelIntake funnelIntake;
-  private final StopIntake stopIntake;
+  private final BoathookExtendMotionPathCommand extendBoathook;
+  private final BoathookRetractMotionPathCommand retractBoathook;
+  private final BoathookStabCommand stabBoathook;
+
+  private final RunIntakeCommand pullInCoral;
+  private final RunIntakeCommand rejectCoral;
+  private final IntakeMoveCommand moveIntake;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -85,7 +98,28 @@ public class RobotContainer {
   private final PipelineChange twoLeft = new PipelineChange(3, Direction.LEFT, 120);
   private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final SetSetPointsCommand L1 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
+  private final SetSetPointsCommand L2 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.L2_EXTENSION,
+          BoathookConstants.L2_SETUP_ANGLE, BoathookConstants.L2_EXTENSION,
+          BoathookConstants.L2_SCORE_ANGLE, BoathookConstants.IDLE_EXTENSION);
+  private final SetSetPointsCommand L3 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.L3_EXTENSION,
+          BoathookConstants.L3_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
+          BoathookConstants.L3_SCORE_ANGLE, BoathookConstants.L2_EXTENSION);
+  private final SetSetPointsCommand L4 =
+      new SetSetPointsCommand(
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.L4_EXTENSION,
+          BoathookConstants.L4_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
+          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
+
+  /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
@@ -122,11 +156,17 @@ public class RobotContainer {
         break;
     }
 
+    intake = new Intake();
+    boathook = new Boathook();
+
     reef = new GoToReefCommand(drive);
-    startIntake = new StartIntake(intake, -1);
-    rejectIntake = new StartIntake(intake, 1);
-    funnelIntake = new FunnelIntake(intake, 1);
-    stopIntake = new StopIntake(intake);
+    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
+    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
+    stabBoathook = new BoathookStabCommand(boathook, intake);
+
+    pullInCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake);
+    rejectCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject);
+    moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -149,6 +189,13 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Attempt to load the chrp
+    var status = m_orchestra.loadMusic("OceanMan.chrp");
+
+    if (!status.isOK()) {
+      // log error
+    }
   }
 
   /**
@@ -166,12 +213,8 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    controller.leftBumper().onTrue(startIntake);
-    controller.leftTrigger().onTrue(rejectIntake);
-    controller.y().onTrue(stopIntake);
-    controller.x().onTrue(funnelIntake);
-
     // Lock to 0° when A button is held
+    // TODO Lock this into rotating around the reef
     controller
         .a()
         .whileTrue(
@@ -179,31 +222,46 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+                Rotation2d::new));
 
     // Switch to X pattern when X button is pressed
     // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when Start button is pressed
     controller
         .start()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    () -> {
+                      boolean isFlipped =
+                          DriverStation.getAlliance().isPresent()
+                              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+                      Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
+                      drive.setPose(new Pose2d(drive.getPose().getTranslation(), rotation));
+                    },
                     drive)
                 .ignoringDisable(true));
 
     controller.b().onTrue(reef);
 
+    controller.leftBumper().whileTrue(pullInCoral);
+    controller.leftTrigger().whileTrue(rejectCoral);
+    controller.y().onTrue(moveIntake);
+
+    // boathook.setDefaultCommand(idleBoathook);
+    controller.rightBumper().onTrue(extendBoathook);
+    controller.rightTrigger().onTrue(retractBoathook);
+
+    controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
+    controller.leftStick().onTrue(Commands.runOnce(() -> m_orchestra.stop()).ignoringDisable(true));
+
     operatorController1.button(1).onTrue(twelveLeft);
     operatorController1.button(2).onTrue(twoRight);
     operatorController1.button(3).onTrue(twoLeft);
-    // operatorController1.button(4).onTrue(L4);
-    // operatorController1.button(5).onTrue(L3);
-    // operatorController1.button(6).onTrue(L2);
-    // operatorController1.button(7).onTrue(L1);
+    operatorController1.button(4).onTrue(L4);
+    operatorController1.button(5).onTrue(L3);
+    operatorController1.button(6).onTrue(L2);
+    operatorController1.button(7).onTrue(L1);
     operatorController1.button(8).onTrue(fourRight);
     operatorController1.button(11).onTrue(fourLeft);
     operatorController1.button(12).onTrue(sixRight);
@@ -211,7 +269,7 @@ public class RobotContainer {
     operatorController2.button(1).onTrue(twelveRight);
     operatorController2.button(2).onTrue(tenLeft);
     operatorController2.button(3).onTrue(tenRight);
-    // operatorController2.button(4).onTrue(TODO);
+    operatorController2.button(4).onTrue(stabBoathook);
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);

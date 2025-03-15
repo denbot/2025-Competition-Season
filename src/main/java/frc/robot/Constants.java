@@ -46,22 +46,53 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final double rotatorGearRatio = 90;
+    public static final double rotatorGearRatio = 1;
     public static final double forwardSoftLimit = 0.25;
     public static final double reverseSoftLimit = 0;
 
-    public static final int INTAKE_MOTOR_ID = 21;
+    public static final int LEFT_INTAKE_MOTOR_ID = 19;
+    public static final int RIGHT_INTAKE_MOTOR_ID = 20;
 
+    public static final int CANDI_ID = 18; // S1 is first switch, S2 is base
     public static final int INTAKE_ROTATION_MOTOR_ID = 23;
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
 
-    public static final int INDEXER_LEFT_MOTOR_ID = 19;
-    public static final int INDEXER_RIGHT_MOTOR_ID = 20;
+    public static final double intakeDownAngle = 0;
+    public static final double intakeSpearAngle = 0.55;
+    public static final double intakeL1Angle = 0.2;
 
-    public static final double intakeDownAngle = 5;
-    public static final double intakeFunnelAngle = 90;
+    public static final double intakeSpeed = 40; // Rotations / Second
+    public static final double intakeAcceleration = 13; // Rotations / Second^2
+  }
 
-    public static final double intakeSpeed = 4;
-    public static final double indexerSpeed = 3;
+  public static class BoathookConstants {
+    public static final int EXTENDER_MOTOR_ID = 13;
+    public static final int ROTATION_MOTOR_ID = 14;
+    public static final int ROTATION_ENCODER_ID = 15;
+    public static final int EXTENDER_ENCODER_ID = 16;
+    public static final int CANDI_ID = 17; // S1 is rotation, S2 is extension
+    public static final double ROTATOR_GEAR_RATIO = 25;
+    public static final double ROTATOR_FORWARD_LIMIT = 0.34;
+    public static final double ROTATOR_REVERSE_LIMIT = 0.0;
+    //    public static final double EXTENDER_CANCODER_RATIO = 101.6 / 40;
+    //    public static final double EXTENDER_GEAR_RATIO = 25;
+    // 4 inch mechanism drum
+    // 40 mm sensor
+    public static final double EXTENDER_FORWARD_LIMIT = 8.48; // not in inches (rotations)
+    public static final double EXTENDER_REVERSE_LIMIT = 0;
+
+    public static final double STAB_ANGLE = 32;
+    public static final double IDLE_ANGLE = 90;
+    public static final double L2_SETUP_ANGLE = 0.32 * 360;
+    public static final double L3_SETUP_ANGLE = 0.3 * 360;
+    public static final double L4_SETUP_ANGLE = 90;
+    public static final double L2_SCORE_ANGLE = 0.37 * 360;
+    public static final double L3_SCORE_ANGLE = 0.32 * 360;
+    public static final double L4_SCORE_ANGLE = 93;
+    public static final double STAB_EXTENSION = 0;
+    public static final double IDLE_EXTENSION = 0;
+    public static final double L2_EXTENSION = 0.78;
+    public static final double L3_EXTENSION = 1.85;
+    public static final double L4_EXTENSION = 4;
   }
 }
