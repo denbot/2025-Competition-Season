@@ -28,7 +28,9 @@ public class BoathookStabCommand extends SequentialCommandGroup {
         new ExtendBoathookCommandStab(boathook),
         new AngleStabBoathookCommand(boathook),
         new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 0),
+        new IntakeReleaseCommand(intake, 0.25),
         new ParallelCommandGroup(
-            new AngleIdleBoathookCommand(boathook), new IntakeReleaseCommand(intake, 2)));
+            new AngleIdleBoathookCommand(boathook), new IntakeReleaseCommand(intake, 2)),
+        new IntakeMoveCommand(intake, false, IntakeConstants.intakeDownAngle, 0, 0));
   }
 }
