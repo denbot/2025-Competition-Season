@@ -1640,6 +1640,6 @@ public class LimelightHelpers {
    * @param throttleAmount The number of frames to skip before processing another frame.
    */
   public static void setThrottle(String limelightName, int throttleAmount) {
-    getLimelightNTTable(limelightName).getEntry("throttle_set").setNumber(throttleAmount);
+    getLimelightNTTable(limelightName).getEntry("throttle_set").setInteger(throttleAmount);
   }
 }
