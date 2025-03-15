@@ -1632,4 +1632,14 @@ public class LimelightHelpers {
 
     return results;
   }
+
+  /**
+   * Updates the throttle_set setting for a limelight
+   *
+   * @param limelightName Name of the Limelight camera
+   * @param throttleAmount The number of frames to skip before processing another frame.
+   */
+  public static void setThrottle(String limelightName, int throttleAmount) {
+    getLimelightNTTable(limelightName).getEntry("throttle_set").setNumber(throttleAmount);
+  }
 }

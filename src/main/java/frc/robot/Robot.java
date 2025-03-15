@@ -20,7 +20,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Threads;
@@ -161,10 +160,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     // Enable limelight 4 throttling when disabled to prevent overheating.
-    NetworkTableInstance.getDefault()
-        .getTable("limelight-rear")
-        .getEntry("throttle_set")
-        .setNumber(120);
+    LimelightHelpers.setThrottle("limelight-rear", 120);
   }
 
   /** This function is called periodically when disabled. */
@@ -175,10 +171,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     // Disable limelight 4 throttling
-    NetworkTableInstance.getDefault()
-        .getTable("limelight-rear")
-        .getEntry("throttle_set")
-        .setNumber(0);
+    LimelightHelpers.setThrottle("limelight-rear", 0);
 
     autonomousCommand = robotContainer.getAutonomousCommand();
     getRed();
@@ -209,10 +202,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     // Disable limelight 4 throttling
-    NetworkTableInstance.getDefault()
-        .getTable("limelight-rear")
-        .getEntry("throttle_set")
-        .setNumber(120);
+    LimelightHelpers.setThrottle("limelight-rear", 0);
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -237,10 +227,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void testInit() {
     // Disable limelight 4 throttling
-    NetworkTableInstance.getDefault()
-        .getTable("limelight-rear")
-        .getEntry("throttle_set")
-        .setNumber(0);
+    LimelightHelpers.setThrottle("limelight-rear", 0);
 
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
@@ -254,10 +241,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationInit() {
     // Enable limelight 4 throttling to prevent overheating.
-    NetworkTableInstance.getDefault()
-        .getTable("limelight-rear")
-        .getEntry("throttle_set")
-        .setNumber(120);
+    LimelightHelpers.setThrottle("limelight-rear", 120);
   }
 
   /** This function is called periodically whilst in simulation. */
