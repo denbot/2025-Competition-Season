@@ -100,13 +100,13 @@ public class GoToReefCommand extends Command {
     // then rotates and translates the translation so it is relative to the robot
     // at least thats what I think we are doing, I might have it wrong
 
-    double offset = (direction == Direction.LEFT) ? -0.2 : 0.2;
+    double offset = (direction == Direction.LEFT) ? -0.15 : 0.15;
     translate = new Translation3d(offset, 0, -0.5);
 
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
 
-    double maxVelocity = 5; // TODO: When in large space set to 6
+    double maxVelocity = 2; // TODO: When in large space set to 6
     double xDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * translate.getZ()));
     SmartDashboard.putNumber("xDriveSpeed", xDriveSpeed);
     double yDriveSpeed = Math.max(-maxVelocity, Math.min(maxVelocity, kP * -translate.getX()));

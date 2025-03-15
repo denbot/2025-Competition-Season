@@ -12,10 +12,10 @@ import frc.robot.Robot;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PipelineChange extends Command {
   /** Creates a new GoToReef. */
-  int pipeline;
+  private final int pipeline;
 
-  double angle;
-  Direction direction;
+  private final double angle;
+  private final Direction direction;
 
   public PipelineChange(int pipeline, Direction direction, double angle) {
     this.pipeline = pipeline;

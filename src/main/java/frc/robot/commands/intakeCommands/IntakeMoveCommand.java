@@ -4,6 +4,7 @@
 
 package frc.robot.commands.intakeCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
@@ -12,16 +13,22 @@ import frc.robot.subsystems.intake.Intake;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeMoveCommand extends Command {
   /** Creates a new StopIntake. */
-  Intake intake;
+  private final Intake intake;
 
-  double setPoint;
-  boolean toggleEnable;
+  private final double setPoint;
+  private final boolean toggleEnable;
+  private final int slot;
+  private final double feedForward;
+  private final Timer timer = new Timer();
 
-  public IntakeMoveCommand(Intake intake, boolean toggleEnable, double setPoint) {
+  public IntakeMoveCommand(
+      Intake intake, boolean toggleEnable, double setPoint, int slot, double feedForward) {
     addRequirements(intake);
     this.intake = intake;
     this.toggleEnable = toggleEnable;
     this.setPoint = setPoint;
+    this.slot = slot;
+    this.feedForward = feedForward;
   }
 
   // Called when the command is initially scheduled.
@@ -32,6 +39,8 @@ public class IntakeMoveCommand extends Command {
     if (toggleEnable) {
       intake.flipUp();
     }
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,20 +51,25 @@ public class IntakeMoveCommand extends Command {
     if (toggleEnable) {
       intake.setAngle(
           intake.up ? IntakeConstants.intakeL1Angle : IntakeConstants.intakeDownAngle,
-          intake.up ? 0 : 1);
+          intake.up ? 1 : 0,
+          intake.up ? 2.0 : -3.0);
     } else {
-      intake.setAngle(setPoint, 0);
+      intake.setAngle(setPoint, slot, feedForward);
     }
-    System.out.println("intake moving");
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("Intake Moved");
+    if (!toggleEnable) {
+      intake.setStaticBrake();
+    }
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return toggleEnable ? true : timer.get() > 0.5 && intake.getRotationVelocity() < 0.01;
   }
 }

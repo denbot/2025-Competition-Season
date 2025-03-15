@@ -10,13 +10,13 @@ import frc.robot.Robot;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetSetPointsCommand extends Command {
   /** Creates a new SetSetPoints. */
-  double angle1;
+  private final double angle1;
 
-  double length1;
-  double angle2;
-  double length2;
-  double angle3;
-  double length3;
+  private final double length1;
+  private final double angle2;
+  private final double length2;
+  private final double angle3;
+  private final double length3;
 
   public SetSetPointsCommand(
       double angle1, double length1, double angle2, double length2, double angle3, double length3) {

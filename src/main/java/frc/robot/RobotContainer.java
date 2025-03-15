@@ -73,8 +73,8 @@ public class RobotContainer {
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final BoathookStabCommand stabBoathook;
 
-  private final RunIntake startIntake;
-  private final RunIntake rejectIntake;
+  private final RunIntakeCommand pullInCoral;
+  private final RunIntakeCommand rejectCoral;
   private final IntakeMoveCommand moveIntake;
 
   // each of these corresponds to a different button on the button board
@@ -119,7 +119,7 @@ public class RobotContainer {
           BoathookConstants.L4_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
           BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
@@ -163,9 +163,10 @@ public class RobotContainer {
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new BoathookStabCommand(boathook, intake);
-    startIntake = new RunIntake(intake, -1);
-    rejectIntake = new RunIntake(intake, 1);
-    moveIntake = new IntakeMoveCommand(intake, true, 0);
+
+    pullInCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake);
+    rejectCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject);
+    moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -213,6 +214,7 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
+    // TODO Lock this into rotating around the reef
     controller
         .a()
         .whileTrue(
@@ -242,17 +244,15 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
-    controller.leftBumper().onTrue(startIntake);
-    controller.leftTrigger().onTrue(rejectIntake);
+    controller.leftBumper().whileTrue(pullInCoral);
+    controller.leftTrigger().whileTrue(rejectCoral);
     controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 
-    controller
-        .rightStick()
-        .onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
+    controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
     controller.leftStick().onTrue(Commands.runOnce(() -> m_orchestra.stop()).ignoringDisable(true));
 
     operatorController1.button(1).onTrue(twelveLeft);
