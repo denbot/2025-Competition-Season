@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Direction;
+import frc.robot.Constants.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.elastic.Elastic;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -49,6 +50,7 @@ public class Robot extends LoggedRobot {
   public static RobotContainer robotContainer;
   private final Matrix<N3, N1> visionMatrix = new Matrix<>(Nat.N3(), Nat.N1());
   public static Direction direction = Direction.LEFT;
+  public static ReefTarget target = ReefTarget.TWELVE;
   public static double angle;
   private Field2d field = new Field2d();
   private final Timer timer = new Timer();
@@ -148,6 +150,9 @@ public class Robot extends LoggedRobot {
     maybeAddVisionMeasurement("limelight-left");
     maybeAddVisionMeasurement("limelight-right");
     field.setRobotPose(robotContainer.drive.getPose());
+
+    SmartDashboard.putNumberArray(
+        "Pose", LimelightHelpers.getTargetPose_RobotSpace("limelight-left"));
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {

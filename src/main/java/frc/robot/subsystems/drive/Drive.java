@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Direction;
 import frc.robot.Constants.Mode;
+import frc.robot.Constants.ReefTarget;
 import frc.robot.LimelightHelpers;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.PipelineChange;
@@ -134,18 +135,20 @@ public class Drive extends SubsystemBase {
     PhoenixOdometryThread.getInstance().start();
 
     NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
-    NamedCommands.registerCommand("12L", new PipelineChange(4, Direction.LEFT, 180));
-    NamedCommands.registerCommand("12R", new PipelineChange(4, Direction.RIGHT, 180));
-    NamedCommands.registerCommand("10L", new PipelineChange(5, Direction.LEFT, -120));
-    NamedCommands.registerCommand("10R", new PipelineChange(5, Direction.RIGHT, -120));
-    NamedCommands.registerCommand("8L", new PipelineChange(6, Direction.LEFT, -60));
-    NamedCommands.registerCommand("8R", new PipelineChange(6, Direction.RIGHT, -60));
-    NamedCommands.registerCommand("6L", new PipelineChange(1, Direction.LEFT, 0));
-    NamedCommands.registerCommand("6R", new PipelineChange(1, Direction.RIGHT, 0));
-    NamedCommands.registerCommand("4L", new PipelineChange(2, Direction.LEFT, 60));
-    NamedCommands.registerCommand("4R", new PipelineChange(2, Direction.RIGHT, 60));
-    NamedCommands.registerCommand("2L", new PipelineChange(3, Direction.LEFT, 120));
-    NamedCommands.registerCommand("2R", new PipelineChange(3, Direction.RIGHT, 120));
+    NamedCommands.registerCommand(
+        "12L", new PipelineChange(Direction.LEFT, 180, ReefTarget.TWELVE));
+    NamedCommands.registerCommand(
+        "12R", new PipelineChange(Direction.RIGHT, 180, ReefTarget.TWELVE));
+    NamedCommands.registerCommand("10L", new PipelineChange(Direction.LEFT, -120, ReefTarget.TEN));
+    NamedCommands.registerCommand("10R", new PipelineChange(Direction.RIGHT, -120, ReefTarget.TEN));
+    NamedCommands.registerCommand("8L", new PipelineChange(Direction.LEFT, -60, ReefTarget.EIGHT));
+    NamedCommands.registerCommand("8R", new PipelineChange(Direction.RIGHT, -60, ReefTarget.EIGHT));
+    NamedCommands.registerCommand("6L", new PipelineChange(Direction.LEFT, 0, ReefTarget.SIX));
+    NamedCommands.registerCommand("6R", new PipelineChange(Direction.RIGHT, 0, ReefTarget.SIX));
+    NamedCommands.registerCommand("4L", new PipelineChange(Direction.LEFT, 60, ReefTarget.FOUR));
+    NamedCommands.registerCommand("4R", new PipelineChange(Direction.RIGHT, 60, ReefTarget.FOUR));
+    NamedCommands.registerCommand("2L", new PipelineChange(Direction.LEFT, 120, ReefTarget.TWO));
+    NamedCommands.registerCommand("2R", new PipelineChange(Direction.RIGHT, 120, ReefTarget.TWO));
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
