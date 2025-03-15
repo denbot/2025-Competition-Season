@@ -1,14 +1,14 @@
-package frc.robot.commands.rumble;
+package frc.robot.commands.rumbleCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.subsystems.RumbleSubsystem;
 
 public class RumbleCommand extends Command {
-  private final XboxController controller;
+  private final CommandGenericHID controller;
   private final Pulse[] pulses;
   private final Timer timer;
   private final boolean runsInAutonomous;
@@ -62,7 +62,7 @@ public class RumbleCommand extends Command {
   private void nextPulseIndex() {
     pulseIndex++;
 
-    if (pulseIndex > pulses.length) {
+    if (pulseIndex >= pulses.length) {
       return; // Command will finish in isFinished
     }
 
@@ -78,7 +78,7 @@ public class RumbleCommand extends Command {
       return true; // Just kill the command so we don't have to check each time
     }
 
-    return pulseIndex > pulses.length; // We ran out of pulses
+    return pulseIndex >= pulses.length; // We ran out of pulses
   }
 
   @Override
