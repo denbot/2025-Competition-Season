@@ -35,6 +35,7 @@ import frc.robot.commands.boathookCommands.SetSetPointsCommand;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.PipelineChange;
+import frc.robot.commands.visionCommands.TrajectoryTestCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
@@ -76,6 +77,8 @@ public class RobotContainer {
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
   private final IntakeMoveCommand moveIntake;
+
+  private final TrajectoryTestCommand moveWithTrajectory;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -168,6 +171,8 @@ public class RobotContainer {
     rejectCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject);
     moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
 
+    moveWithTrajectory = new TrajectoryTestCommand(drive);
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -252,8 +257,10 @@ public class RobotContainer {
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 
-    controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
+    // controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
     controller.leftStick().onTrue(Commands.runOnce(() -> m_orchestra.stop()).ignoringDisable(true));
+
+    controller.back().onTrue(moveWithTrajectory);
 
     operatorController1.button(1).onTrue(twelveLeft);
     operatorController1.button(2).onTrue(twoRight);
