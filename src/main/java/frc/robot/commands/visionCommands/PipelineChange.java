@@ -6,21 +6,21 @@ package frc.robot.commands.visionCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Direction;
-import frc.robot.LimelightHelpers;
+import frc.robot.Constants.ReefTarget;
 import frc.robot.Robot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PipelineChange extends Command {
   /** Creates a new GoToReef. */
-  private final int pipeline;
-
   private final double angle;
-  private final Direction direction;
 
-  public PipelineChange(int pipeline, Direction direction, double angle) {
-    this.pipeline = pipeline;
+  private final Direction direction;
+  private final ReefTarget target;
+
+  public PipelineChange(Direction direction, double angle, ReefTarget target) {
     this.direction = direction;
     this.angle = angle;
+    this.target = target;
   }
 
   // Called when the command is initially scheduled.
@@ -28,17 +28,12 @@ public class PipelineChange extends Command {
   public void initialize() {
     Robot.direction = this.direction;
     Robot.angle = this.angle;
+    Robot.target = this.target;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    // sets the limelight pipeline to the desired side of the reef
-    // the pipeline (which can be found in the limelight web ui) changes the accepted limelights
-    // each pipeline is set to only accept one side of the reef
-    LimelightHelpers.setPipelineIndex("limelight-left", pipeline);
-    LimelightHelpers.setPipelineIndex("limelight-right", pipeline);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

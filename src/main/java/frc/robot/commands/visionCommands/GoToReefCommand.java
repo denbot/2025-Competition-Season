@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Direction;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 
@@ -27,6 +28,7 @@ public class GoToReefCommand extends Command {
   int framesDropped = 0;
   Translation3d translate;
   double lastAngleError = 0;
+  double target = 0.0;
 
   Drive drive;
 
@@ -40,12 +42,21 @@ public class GoToReefCommand extends Command {
   @Override
   public void initialize() {
     this.direction = Robot.direction;
+    this.target =
+        DriverStation.getAlliance().get() == Alliance.Red ? Robot.target.red : Robot.target.blue;
     SmartDashboard.putString("commandDirection", String.valueOf(direction));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+    for (RawFiducial fiducial : fiducials) {
+      if (fiducial.id == target) {
+        double distToRobot = fiducial.distToRobot; // Distance to robot
+      }
+    }
+
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
     if (LimelightHelpers.getTV("limelight-left") || LimelightHelpers.getTV("limelight-right")) {
@@ -73,13 +84,10 @@ public class GoToReefCommand extends Command {
       lastAngleError += 360;
     }
 
-    System.out.println(lastAngleError);
-
     double[] tagPoseRobot;
     // if in simulation, comment out this line:
     if (LimelightHelpers.getTV("limelight-left")) {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-left");
-
     } else {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-right");
     }

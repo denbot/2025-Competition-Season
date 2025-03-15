@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Direction;
+import frc.robot.Constants.ReefTarget;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
@@ -84,23 +85,27 @@ public class RobotContainer {
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private final PipelineChange twelveLeft = new PipelineChange(4, Direction.LEFT, 180);
-  private final PipelineChange twelveRight = new PipelineChange(4, Direction.RIGHT, 180);
+  private final PipelineChange twelveLeft =
+      new PipelineChange(Direction.LEFT, 180, ReefTarget.TWELVE);
+  private final PipelineChange twelveRight =
+      new PipelineChange(Direction.RIGHT, 180, ReefTarget.TWELVE);
 
-  private final PipelineChange tenLeft = new PipelineChange(5, Direction.LEFT, -120);
-  private final PipelineChange tenRight = new PipelineChange(5, Direction.RIGHT, -120);
+  private final PipelineChange tenLeft = new PipelineChange(Direction.LEFT, -120, ReefTarget.TEN);
+  private final PipelineChange tenRight = new PipelineChange(Direction.RIGHT, -120, ReefTarget.TEN);
 
-  private final PipelineChange eightLeft = new PipelineChange(6, Direction.LEFT, -60);
-  private final PipelineChange eightRight = new PipelineChange(6, Direction.RIGHT, -60);
+  private final PipelineChange eightLeft =
+      new PipelineChange(Direction.LEFT, -60, ReefTarget.EIGHT);
+  private final PipelineChange eightRight =
+      new PipelineChange(Direction.RIGHT, -60, ReefTarget.EIGHT);
 
-  private final PipelineChange sixLeft = new PipelineChange(1, Direction.LEFT, 0);
-  private final PipelineChange sixRight = new PipelineChange(1, Direction.RIGHT, 0);
+  private final PipelineChange sixLeft = new PipelineChange(Direction.LEFT, 0, ReefTarget.SIX);
+  private final PipelineChange sixRight = new PipelineChange(Direction.RIGHT, 0, ReefTarget.SIX);
 
-  private final PipelineChange fourLeft = new PipelineChange(2, Direction.LEFT, 60);
-  private final PipelineChange fourRight = new PipelineChange(2, Direction.RIGHT, 60);
+  private final PipelineChange fourLeft = new PipelineChange(Direction.LEFT, 60, ReefTarget.FOUR);
+  private final PipelineChange fourRight = new PipelineChange(Direction.RIGHT, 60, ReefTarget.FOUR);
 
-  private final PipelineChange twoLeft = new PipelineChange(3, Direction.LEFT, 120);
-  private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
+  private final PipelineChange twoLeft = new PipelineChange(Direction.LEFT, 120, ReefTarget.TWO);
+  private final PipelineChange twoRight = new PipelineChange(Direction.RIGHT, 120, ReefTarget.TWO);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
