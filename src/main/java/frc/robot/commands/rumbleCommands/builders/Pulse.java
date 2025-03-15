@@ -1,4 +1,4 @@
-package frc.robot.commands.rumbleCommands;
+package frc.robot.commands.rumbleCommands.builders;
 
 import edu.wpi.first.wpilibj.GenericHID;
 

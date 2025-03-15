@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import frc.robot.commands.rumbleCommands.builders.Pulse;
 import frc.robot.subsystems.RumbleSubsystem;
 
 public class RumbleCommand extends Command {

@@ -1,6 +1,7 @@
-package frc.robot.commands.rumbleCommands;
+package frc.robot.commands.rumbleCommands.builders;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import frc.robot.commands.rumbleCommands.RumbleCommand;
 import frc.robot.subsystems.RumbleSubsystem;
 
 public class RumbleBuilder implements CanAddPulse {
