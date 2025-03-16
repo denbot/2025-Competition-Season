@@ -36,6 +36,7 @@ import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.PipelineChange;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -57,6 +58,7 @@ public class RobotContainer {
   public final Drive drive;
   public final Intake intake;
   public final Boathook boathook;
+  public final RumbleSubsystem rumbleSubsystem;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -122,6 +124,8 @@ public class RobotContainer {
           BoathookConstants.IDLE_ANGLE,
           BoathookConstants.IDLE_EXTENSION);
 
+  public final RumblePresets rumblePresets;
+
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
@@ -161,6 +165,7 @@ public class RobotContainer {
 
     intake = new Intake();
     boathook = new Boathook();
+    rumbleSubsystem = new RumbleSubsystem(controller);
 
     reef = new GoToReefCommand(drive);
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
@@ -170,6 +175,8 @@ public class RobotContainer {
     pullInCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject);
     moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
+
+    rumblePresets = new RumblePresets(rumbleSubsystem);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
