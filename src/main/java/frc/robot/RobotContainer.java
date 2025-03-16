@@ -251,7 +251,7 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
-    controller.leftBumper().whileTrue(rumblePresets.coralEjected);
+    controller.leftBumper().whileTrue(rumblePresets.larsonScanner);
     controller.leftTrigger().whileTrue(rumblePresets.coralIntaken);
     controller.y().onTrue(moveIntake);
 

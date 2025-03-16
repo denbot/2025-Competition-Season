@@ -10,6 +10,8 @@ public class MultiRumbleCommand extends StateBasedRumbleCommand<MultiRumbleComma
   private int currentIndex;
 
   public MultiRumbleCommand(RumbleSubsystem subsystem, RumbleScale[] rumbleScales) {
+    // subsystem does not get added as a requirement, the rumble commands do.
+
     commands = new RumbleCommand[rumbleScales.length + 1];
     double leftRumble = 0;
     double rightRumble = 0;

@@ -76,8 +76,7 @@ public abstract class StateBasedRumbleCommand<E extends Enum<E>> extends Command
   @Override
   public void end(boolean interrupted) {
     // We can't trust interrupted as the scheduler wouldn't interrupt us, but weShouldEnd only
-    // happens if a sub-command
-    // is interrupted.
+    // happens if a sub-command is interrupted.
     interrupted = weShouldEnd;
 
     // If we were interrupted, this command was already canceled
