@@ -115,9 +115,12 @@ public class RobotContainer {
           BoathookConstants.L3_SCORE_ANGLE, BoathookConstants.L2_EXTENSION);
   private final SetSetPointsCommand L4 =
       new SetSetPointsCommand(
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.L4_EXTENSION,
-          BoathookConstants.L4_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
+          BoathookConstants.L4_SETUP_ANGLE - 2,
+          BoathookConstants.L4_EXTENSION,
+          BoathookConstants.L4_SETUP_ANGLE,
+          BoathookConstants.L3_EXTENSION,
+          BoathookConstants.IDLE_ANGLE,
+          BoathookConstants.IDLE_EXTENSION);
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
@@ -244,8 +247,8 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
-    controller.leftBumper().whileTrue(pullInCoral);
-    controller.leftTrigger().whileTrue(rejectCoral);
+    controller.leftTrigger().whileTrue(pullInCoral);
+    controller.leftBumper().whileTrue(rejectCoral);
     controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);

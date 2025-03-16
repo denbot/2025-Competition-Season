@@ -101,7 +101,7 @@ public class GoToReefCommand extends Command {
     // at least thats what I think we are doing, I might have it wrong
 
     double offset = (direction == Direction.LEFT) ? -0.15 : 0.15;
-    translate = new Translation3d(offset, 0, -0.5);
+    translate = new Translation3d(offset, 0, -0.57);
 
     translate = translate.rotateBy(pose.getRotation());
     translate = translate.plus(pose.getTranslation());
