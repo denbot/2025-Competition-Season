@@ -50,8 +50,8 @@ public class MultiRumbleCommand extends StateBasedRumbleCommand<MultiRumbleComma
 
   @Override
   public void initialize() {
-    super.initialize();
     currentIndex = 0;
+    super.initialize();
   }
 
   @Override
@@ -73,6 +73,8 @@ public class MultiRumbleCommand extends StateBasedRumbleCommand<MultiRumbleComma
         return State.END;
       }
       return State.RUN_COMMAND;
+    } else if (currentState == State.END) {
+      return State.END;
     }
 
     throw new RuntimeException("Did not handle all states in MultiRumbleCommand");

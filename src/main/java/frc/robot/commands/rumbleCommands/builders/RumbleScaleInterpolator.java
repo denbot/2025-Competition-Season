@@ -10,6 +10,10 @@ public class RumbleScaleInterpolator {
 
   public RumbleScaleInterpolator(
       RumbleScale.ScaleType scaleType, double start, double target, double runTime) {
+    if (scaleType == RumbleScale.ScaleType.INSTANT) {
+      start = target;
+    }
+
     this.scaleType = scaleType;
     this.start = start;
     this.target = target;
@@ -17,10 +21,6 @@ public class RumbleScaleInterpolator {
 
     if (scaleType == RumbleScale.ScaleType.INSTANT) {
       scaleFactor = 1;
-      if (Math.abs(target - start) > 0.001) {
-        throw new IllegalArgumentException(
-            "Start and target must be identical for ScaleType of NONE");
-      }
     } else if (scaleType == RumbleScale.ScaleType.EXPONENTIAL) {
       double n = runTime + start;
       scaleFactor = Math.pow(target + 1, 1.0 / n);

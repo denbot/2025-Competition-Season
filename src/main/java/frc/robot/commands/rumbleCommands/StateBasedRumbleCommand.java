@@ -30,6 +30,9 @@ public abstract class StateBasedRumbleCommand<E extends Enum<E>> extends Command
     CommandScheduler.getInstance()
         .onCommandFinish(
             command -> {
+              if (currentCommand == null) {
+                return;
+              }
               if (currentCommand.isEmpty() || currentCommand.get() != command) {
                 return;
               }
