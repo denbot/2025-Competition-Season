@@ -1,13 +1,13 @@
 package frc.robot;
 
+import frc.robot.commands.rumbleCommands.PulseRumbleCommand;
 import frc.robot.commands.rumbleCommands.builders.Pulse;
 import frc.robot.commands.rumbleCommands.builders.RumbleBuilder;
-import frc.robot.commands.rumbleCommands.RumbleCommand;
 import frc.robot.subsystems.RumbleSubsystem;
 
 public class RumblePresets {
-  public final RumbleCommand coralIntaken;
-  public final RumbleCommand coralEjected;
+  public final PulseRumbleCommand coralIntaken;
+  public final PulseRumbleCommand coralEjected;
 
   public RumblePresets(RumbleSubsystem subsystem) {
     RumbleBuilder builder = new RumbleBuilder(subsystem);

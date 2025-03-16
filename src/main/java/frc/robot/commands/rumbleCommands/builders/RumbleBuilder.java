@@ -1,7 +1,7 @@
 package frc.robot.commands.rumbleCommands.builders;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import frc.robot.commands.rumbleCommands.RumbleCommand;
+import frc.robot.commands.rumbleCommands.PulseRumbleCommand;
 import frc.robot.subsystems.RumbleSubsystem;
 
 public class RumbleBuilder implements CanAddPulse {
@@ -58,8 +58,8 @@ public class RumbleBuilder implements CanAddPulse {
       return new PulseBuilder(this, new Pulse(delay.time, 0, GenericHID.RumbleType.kBothRumble));
     }
 
-    public RumbleCommand build() {
-      return new RumbleCommand(rumbleSubsystem, pulses, runsInAutonomous, runsWhenDisabled);
+    public PulseRumbleCommand build() {
+      return new PulseRumbleCommand(rumbleSubsystem, pulses, runsInAutonomous, runsWhenDisabled);
     }
   }
 }
