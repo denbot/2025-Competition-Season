@@ -1,10 +1,8 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
 import frc.robot.commands.rumbleCommands.Pulse;
 import frc.robot.commands.rumbleCommands.RumbleBuilder;
 import frc.robot.commands.rumbleCommands.RumbleCommand;
-import frc.robot.commands.rumbleCommands.ScaledRumbleCommand;
 import frc.robot.subsystems.RumbleSubsystem;
 
 public class RumblePresets {
