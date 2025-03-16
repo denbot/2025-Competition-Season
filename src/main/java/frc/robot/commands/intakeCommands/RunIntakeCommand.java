@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.intake.Intake;
 
 public class RunIntakeCommand extends Command {
@@ -49,7 +50,13 @@ public class RunIntakeCommand extends Command {
   @Override
   public boolean isFinished() {
     if (direction == Direction.Intake) {
-      return intake.isCoralIntaken();
+      boolean coralIntaken = intake.isCoralIntaken();
+
+      if (coralIntaken) {
+        Robot.rumble().coralIntaken.schedule();
+      }
+
+      return coralIntaken;
     }
 
     if (direction == Direction.Eject) {
@@ -63,6 +70,7 @@ public class RunIntakeCommand extends Command {
       }
 
       if (ejectingWait.hasElapsed(.4)) {
+        Robot.rumble().coralEjected.schedule();
         return true;
       }
     }
