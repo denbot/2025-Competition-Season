@@ -1,9 +1,6 @@
 package frc.robot.commands.rumbleCommands.builders;
 
-import edu.wpi.first.wpilibj.GenericHID;
-
-public record Pulse(double time, double power, GenericHID.RumbleType rumbleType) {
-
+public class Pulse {
   public enum PulseTime {
     FAST(0.2),
     SUSTAINED(0.5);

@@ -3,17 +3,13 @@ package frc.robot.commands.rumbleCommands;
 import frc.robot.commands.rumbleCommands.builders.RumbleScale;
 import frc.robot.commands.rumbleCommands.builders.RumbleScaleInterpolator;
 import frc.robot.subsystems.RumbleSubsystem;
-
 import java.util.Optional;
 
 public class MultiRumbleCommand extends StateBasedRumbleCommand<MultiRumbleCommand.State> {
   private final RumbleCommand[] commands;
   private int currentIndex;
 
-  public MultiRumbleCommand(
-      RumbleSubsystem subsystem,
-      RumbleScale[] rumbleScales
-  ) {
+  public MultiRumbleCommand(RumbleSubsystem subsystem, RumbleScale[] rumbleScales) {
     commands = new RumbleCommand[rumbleScales.length + 1];
     double leftRumble = 0;
     double rightRumble = 0;
@@ -22,12 +18,9 @@ public class MultiRumbleCommand extends StateBasedRumbleCommand<MultiRumbleComma
       RumbleScale scale = rumbleScales[i];
       RumbleScaleInterpolator leftInterpolator;
       if (scale.leftTarget().isPresent()) {
-        leftInterpolator = new RumbleScaleInterpolator(
-            scale.scaleType(),
-            leftRumble,
-            scale.leftTarget().get(),
-            scale.time()
-        );
+        leftInterpolator =
+            new RumbleScaleInterpolator(
+                scale.scaleType(), leftRumble, scale.leftTarget().get(), scale.time());
 
         leftRumble = scale.leftTarget().get();
       } else {
@@ -36,30 +29,21 @@ public class MultiRumbleCommand extends StateBasedRumbleCommand<MultiRumbleComma
 
       RumbleScaleInterpolator rightInterpolator;
       if (scale.rightTarget().isPresent()) {
-        rightInterpolator = new RumbleScaleInterpolator(
-            scale.scaleType(),
-            rightRumble,
-            scale.rightTarget().get(),
-            scale.time()
-        );
+        rightInterpolator =
+            new RumbleScaleInterpolator(
+                scale.scaleType(), rightRumble, scale.rightTarget().get(), scale.time());
 
         rightRumble = scale.rightTarget().get();
       } else {
         rightInterpolator = RumbleScaleInterpolator.instantly(rightRumble, scale.time());
       }
 
-      commands[i] = new RumbleCommand(
-          subsystem,
-          leftInterpolator,
-          rightInterpolator
-      );
+      commands[i] = new RumbleCommand(subsystem, leftInterpolator, rightInterpolator);
     }
 
-    commands[rumbleScales.length] = new RumbleCommand(
-        subsystem,
-        RumbleScaleInterpolator.stop(),
-        RumbleScaleInterpolator.stop()
-    );
+    commands[rumbleScales.length] =
+        new RumbleCommand(
+            subsystem, RumbleScaleInterpolator.stop(), RumbleScaleInterpolator.stop());
   }
 
   @Override

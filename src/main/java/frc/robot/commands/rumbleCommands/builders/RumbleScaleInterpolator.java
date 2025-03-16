@@ -36,12 +36,7 @@ public class RumbleScaleInterpolator {
   }
 
   public static RumbleScaleInterpolator instantly(double rumble, double time) {
-    return new RumbleScaleInterpolator(
-        RumbleScale.ScaleType.INSTANT,
-        rumble,
-        rumble,
-        time
-    );
+    return new RumbleScaleInterpolator(RumbleScale.ScaleType.INSTANT, rumble, rumble, time);
   }
 
   public double rumbleAtTime(double time) {
