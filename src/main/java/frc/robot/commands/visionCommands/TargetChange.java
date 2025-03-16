@@ -10,14 +10,14 @@ import frc.robot.Constants.ReefTarget;
 import frc.robot.Robot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class PipelineChange extends Command {
+public class TargetChange extends Command {
   /** Creates a new GoToReef. */
   private final double angle;
 
   private final Direction direction;
   private final ReefTarget target;
 
-  public PipelineChange(Direction direction, double angle, ReefTarget target) {
+  public TargetChange(Direction direction, double angle, ReefTarget target) {
     this.direction = direction;
     this.angle = angle;
     this.target = target;
