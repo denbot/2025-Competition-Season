@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Direction;
+import frc.robot.commands.visionCommands.TrackObjectsCommand;
 import frc.robot.generated.TunerConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -49,6 +50,7 @@ public class Robot extends LoggedRobot {
   public static double angle;
   private Field2d field = new Field2d();
   private final Timer timer = new Timer();
+  private final TrackObjectsCommand trackObjects;
 
   public Robot() {
     // Record metadata
@@ -120,6 +122,8 @@ public class Robot extends LoggedRobot {
     // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
     visionMatrix.fill(0.5); // X/Y location to 0.5
     visionMatrix.set(2, 0, 9999999); // Vision rotation is not to be trusted, apparently
+
+    trackObjects = new TrackObjectsCommand();
   }
 
   /** This function is called periodically during all modes. */
@@ -140,6 +144,11 @@ public class Robot extends LoggedRobot {
     maybeAddVisionMeasurement("limelight-left");
     maybeAddVisionMeasurement("limelight-right");
     field.setRobotPose(robotContainer.drive.getPose());
+
+    // Make sure the track object command is scheduled and running.
+    if (!trackObjects.isScheduled()) {
+      CommandScheduler.getInstance().schedule(trackObjects);
+    }
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {
