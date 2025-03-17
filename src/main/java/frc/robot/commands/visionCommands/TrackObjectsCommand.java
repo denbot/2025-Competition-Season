@@ -53,6 +53,7 @@ public class TrackObjectsCommand extends Command {
     coralTracker.addRawDetections(detections);
     coralTracker.update();
     SingleCoralTrackingState singleTrackingState = coralTracker.getTrackingState();
+
     SmartDashboard.putBoolean("Object_Filter_Tracking", singleTrackingState.isTracking());
     SmartDashboard.putNumber("Object_Tx", singleTrackingState.tx());
     SmartDashboard.putNumber("Object_Ty", singleTrackingState.ty());
@@ -77,8 +78,8 @@ public class TrackObjectsCommand extends Command {
     //
     multiCoralTracker.addRawDetections(detections);
     multiCoralTracker.update();
-
     MultiCoralTrackingState multiTrackingState = multiCoralTracker.getTrackingState();
+
 
     SingleCoralTrackingState activeStates[] = multiTrackingState.getActiveTracks();
     SmartDashboard.putNumber("MultiObject_ActiveTracks", activeStates.length);

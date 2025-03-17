@@ -9,6 +9,10 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.LimelightHelpers.RawDetection;
 
+/**
+ * Tracks a single coral piece, filtering the position and handles flickering detections using a Kalman Filter. 
+ * This will not handle multiple detections in a single frame very well.
+ */
 public class SingleCoralTracker {
   int objectId;
   boolean isActive;
@@ -25,6 +29,9 @@ public class SingleCoralTracker {
     this.timer = new Timer();
     timer.start();
 
+    //Create the plant for the kalman filter. The filters state is (x,y,velocity_x,veloity_y) of the
+    //coral in the 2d camera image plane frame. Not sure the velocity really adds much, but if the camera or
+    //coral is moving with flickering detections it will theoretically better predict those flickering frames.
     Matrix<N4, N4> plantA = new Matrix<N4, N4>(Nat.N4(), Nat.N4());
     plantA.set(0, 2, 1.0);
     plantA.set(1, 3, 1.0);
@@ -55,7 +62,7 @@ public class SingleCoralTracker {
 
   /**
    * Reinitalize the kalman filter to the default values. This is done whenever we see a new object
-   * when no object is currently being tracked.
+   * when no object is currently being tracked. This just sets the state to all zeros with very high uncertainty.
    */
   private void initializeKalmanFilter() {
     Matrix<N4, N4> initalP = new Matrix<N4, N4>(Nat.N4(), Nat.N4());
@@ -85,7 +92,9 @@ public class SingleCoralTracker {
     }
   }
 
-  /** This is called whenever tracking is lost to update the filter state. */
+  /** This is called whenever tracking is lost to deactivate the Kalman Filter and indicate that no object
+   *  is being tracked anymore. 
+   */
   private void lostTracking() {
     isActive = false;
     lastValidDetection = null;
@@ -93,8 +102,9 @@ public class SingleCoralTracker {
   }
 
   /**
-   * Provide a list of detections. The detection that is closest to the current estimated location
-   * from the filter will be given to the filter
+   * Processed a list of detections. The detection that is closest to the current estimated location
+   * from the filter will be given to the filter. All others will be ignored. If multiple objects are in
+   * the frame then flickering detections can result in the filter prediciton jumping between objects.
    *
    * @param detections All the detections from the camera.
    */
@@ -130,7 +140,10 @@ public class SingleCoralTracker {
     }
   }
 
-  /** Update the filter. */
+  /**
+   * Update the filter. This checks to see if we have timed out and should disable the filter.
+   * It also performs the predict step of the Kalman Filter.
+   */
   public void update() {
     if (!this.isActive) {
       return;
@@ -151,13 +164,15 @@ public class SingleCoralTracker {
     }
   }
 
-  /** Reset the filter */
+  /** 
+   * Reset the filter to all zeros with large uncertainty.
+   */
   public void reset() {
     initializeKalmanFilter();
   }
 
   /**
-   * Returns true if the filter is active.
+   * Returns true if the filter is active. Active means it has seen a detection in the last second.
    *
    * @return True if active, False if otherwise.
    */
@@ -167,7 +182,7 @@ public class SingleCoralTracker {
 
   /**
    * Returns true if we are tracking a piece. This checks if the filter is active and if we have at
-   * seen the piece at least 5 times
+   * seen the piece at least 5 times. This will filter out spurious single frame false positive detections. 
    *
    * @return True if we are tracking a piece, false otherwise.
    */
@@ -175,6 +190,10 @@ public class SingleCoralTracker {
     return isActive && detectionCount > 5;
   }
 
+  /**
+   * Gets a record of the current state of the tracker. This can be saved and view later if needed.
+   * @return
+   */
   public SingleCoralTrackingState getTrackingState() {
     return new SingleCoralTrackingState(
         objectId,
@@ -186,10 +205,18 @@ public class SingleCoralTracker {
         lastValidDetection);
   }
 
+  /**
+   * Gets the X position of the object relative to the center of the frame in degrees
+   * @return Degress off center in the horizontal direction.
+   */
   public double getTX() {
     return kalmanFilter.getXhat(0);
   }
 
+  /**
+   * Gets the Y position of the object relative to the center of the frame in degrees
+   * @return Degress off center in the vertical direction.
+   */
   public double getTY() {
     return kalmanFilter.getXhat(1);
   }
