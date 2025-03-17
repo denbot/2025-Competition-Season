@@ -2,9 +2,7 @@ package frc.robot.vision;
 
 import frc.robot.LimelightHelpers.RawDetection;
 
-/**
- * Stores the state of a single coral tracker from a specific timestep.
- */
+/** Stores the state of a single coral tracker from a specific timestep. */
 public record SingleCoralTrackingState(
     int classId,
     double tx,

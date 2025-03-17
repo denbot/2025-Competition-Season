@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 /**
  * Tracks multiple coral objects at once. This is useful if you expect to have multiple in frame.
- * This will (do its best) handle inconsistant, flickering detections for an object without the 
+ * This will (do its best) handle inconsistant, flickering detections for an object without the
  * tracks jumping between different objects. If multiple detections are seen it will create a track
- * for each detection. On subsequent frames it will optimally match the detections to the appropriate
- * track based on the distance between the track and the new detections.
+ * for each detection. On subsequent frames it will optimally match the detections to the
+ * appropriate track based on the distance between the track and the new detections.
  */
 public class MultiCoralTracker {
   private int maxTrackers = 5;
@@ -24,9 +24,7 @@ public class MultiCoralTracker {
     }
   }
 
-  /**
-   * Reset all the single coral filters.
-   */
+  /** Reset all the single coral filters. */
   public void reset() {
     for (SingleCoralTracker singleCoralTracker : trackers) {
       singleCoralTracker.reset();
@@ -34,7 +32,9 @@ public class MultiCoralTracker {
   }
 
   /**
-   * Calculates the "score" to use for matching tracks to detections. Currently this just uses distance.
+   * Calculates the "score" to use for matching tracks to detections. Currently this just uses
+   * distance.
+   *
    * @param tracker The tracker to generate the score for
    * @param detection The detection to generate the score for
    * @return The generated score
@@ -44,8 +44,9 @@ public class MultiCoralTracker {
   }
 
   /**
-   * Create more trackers if there are not enough for the number of detections seen. This ensures
-   * we don't run out of trackers if we have a lot of detections.
+   * Create more trackers if there are not enough for the number of detections seen. This ensures we
+   * don't run out of trackers if we have a lot of detections.
+   *
    * @param newNumTrackers The target number of trackers to end with.
    */
   public void updateNumTrackers(int newNumTrackers) {
@@ -61,6 +62,7 @@ public class MultiCoralTracker {
 
   /**
    * Locates a free (unused) tracker from the list of trackers.
+   *
    * @return The first free tracker in the list
    */
   private SingleCoralTracker findFreeTracker() {
@@ -167,7 +169,9 @@ public class MultiCoralTracker {
   }
 
   /**
-   * Generates the state for the tracker, this can be saved and used later (i.e. if the tracker is run in a thread.)
+   * Generates the state for the tracker, this can be saved and used later (i.e. if the tracker is
+   * run in a thread.)
+   *
    * @return The saved state of the tracker
    */
   public MultiCoralTrackingState getTrackingState() {
@@ -184,9 +188,7 @@ public class MultiCoralTracker {
     return trackers;
   }
 
-  /**
-   * Update all the single coral trackers that make up the multi-coral tracker.
-   */
+  /** Update all the single coral trackers that make up the multi-coral tracker. */
   public void update() {
     for (int i = 0; i < trackers.size(); i++) {
       trackers.get(i).update();

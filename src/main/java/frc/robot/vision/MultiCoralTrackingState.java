@@ -2,9 +2,7 @@ package frc.robot.vision;
 
 import java.util.ArrayList;
 
-/**
- * Stores the state of a multi-coral tracker from a specific timestep.
- */
+/** Stores the state of a multi-coral tracker from a specific timestep. */
 public record MultiCoralTrackingState(SingleCoralTrackingState[] states) {
 
   public SingleCoralTrackingState[] getActiveTracks() {
