@@ -81,14 +81,17 @@ public final class Constants {
     public static final double EXTENDER_FORWARD_LIMIT = 4.55; // not in inches (rotations)
     public static final double EXTENDER_REVERSE_LIMIT = 0;
 
+    // Rotation in degrees
     public static final double STAB_ANGLE = 32;
     public static final double IDLE_ANGLE = 90;
-    public static final double L2_SETUP_ANGLE = 0.32 * 360;
-    public static final double L3_SETUP_ANGLE = 0.3 * 360;
-    public static final double L4_SETUP_ANGLE = 0.27 * 360;
-    public static final double L2_SCORE_ANGLE = 0.37 * 360;
-    public static final double L3_SCORE_ANGLE = 0.32 * 360;
-    public static final double L4_SCORE_ANGLE = 93;
+    public static final double L2_SETUP_ANGLE = 115;
+    public static final double L3_SETUP_ANGLE = 108;
+    public static final double L4_SETUP_ANGLE = 97;
+    public static final double L2_SCORE_ANGLE = 133;
+    public static final double L3_SCORE_ANGLE = 115;
+    public static final double L4_SCORE_ANGLE = 97;
+
+    // Extension in rotations
     public static final double STAB_EXTENSION = 0;
     public static final double IDLE_EXTENSION = 0;
     public static final double L2_EXTENSION = 0.75;

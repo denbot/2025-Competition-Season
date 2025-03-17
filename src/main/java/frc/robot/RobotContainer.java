@@ -17,6 +17,7 @@ import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,19 +26,19 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookStabCommand;
-import frc.robot.commands.boathookCommands.SetSetPointsCommand;
+import frc.robot.commands.boathookCommands.HandoffCommand;
+import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.PipelineChange;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
+import frc.robot.subsystems.boathook.Boathook.Level;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -66,6 +67,7 @@ public class RobotContainer {
   private final CommandGenericHID operatorController2 = new CommandGenericHID(2);
 
   // Dashboard inputs
+  public DSControlWord controlWord = new DSControlWord();
   private final LoggedDashboardChooser<Command> autoChooser;
   public Orchestra m_orchestra = new Orchestra();
 
@@ -73,7 +75,7 @@ public class RobotContainer {
   private final GoToReefCommand reef;
   private final BoathookExtendMotionPathCommand extendBoathook;
   private final BoathookRetractMotionPathCommand retractBoathook;
-  private final BoathookStabCommand stabBoathook;
+  private final HandoffCommand stabBoathook;
 
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
@@ -100,29 +102,10 @@ public class RobotContainer {
   private final PipelineChange twoLeft = new PipelineChange(3, Direction.LEFT, 120);
   private final PipelineChange twoRight = new PipelineChange(3, Direction.RIGHT, 120);
 
-  private final SetSetPointsCommand L1 =
-      new SetSetPointsCommand(
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION);
-  private final SetSetPointsCommand L2 =
-      new SetSetPointsCommand(
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.L2_EXTENSION,
-          BoathookConstants.L2_SETUP_ANGLE, BoathookConstants.L2_EXTENSION,
-          BoathookConstants.L2_SCORE_ANGLE, BoathookConstants.IDLE_EXTENSION);
-  private final SetSetPointsCommand L3 =
-      new SetSetPointsCommand(
-          BoathookConstants.IDLE_ANGLE, BoathookConstants.L3_EXTENSION,
-          BoathookConstants.L3_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
-          BoathookConstants.L3_SCORE_ANGLE, BoathookConstants.L2_EXTENSION);
-  private final SetSetPointsCommand L4 =
-      new SetSetPointsCommand(
-          BoathookConstants.L4_SETUP_ANGLE - 2,
-          BoathookConstants.L4_EXTENSION,
-          BoathookConstants.L4_SETUP_ANGLE,
-          BoathookConstants.L3_EXTENSION,
-          BoathookConstants.IDLE_ANGLE,
-          BoathookConstants.IDLE_EXTENSION);
+  private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
+  private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
+  private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
+  private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
 
   public final RumblePresets rumblePresets;
 
@@ -170,10 +153,12 @@ public class RobotContainer {
     reef = new GoToReefCommand(drive);
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
-    stabBoathook = new BoathookStabCommand(boathook, intake);
+    stabBoathook = new HandoffCommand(boathook, intake);
 
-    pullInCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake);
-    rejectCoral = new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject);
+    pullInCoral =
+        new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake, boathook, controlWord);
+    rejectCoral =
+        new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject, boathook, controlWord);
     moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
@@ -262,16 +247,17 @@ public class RobotContainer {
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
 
-    controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
-    controller.leftStick().onTrue(Commands.runOnce(() -> m_orchestra.stop()).ignoringDisable(true));
+    // controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
+    // controller.leftStick().onTrue(Commands.runOnce(() ->
+    // m_orchestra.stop()).ignoringDisable(true));
 
     operatorController1.button(1).onTrue(twelveLeft);
     operatorController1.button(2).onTrue(twoRight);
     operatorController1.button(3).onTrue(twoLeft);
-    operatorController1.button(4).onTrue(L4);
-    operatorController1.button(5).onTrue(L3);
-    operatorController1.button(6).onTrue(L2);
-    operatorController1.button(7).onTrue(L1);
+    operatorController1.button(4).onTrue(SetL4);
+    operatorController1.button(5).onTrue(SetL3);
+    operatorController1.button(6).onTrue(SetL2);
+    operatorController1.button(7).onTrue(SetL1);
     operatorController1.button(8).onTrue(fourRight);
     operatorController1.button(11).onTrue(fourLeft);
     operatorController1.button(12).onTrue(sixRight);

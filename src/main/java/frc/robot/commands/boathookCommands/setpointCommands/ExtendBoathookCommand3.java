@@ -25,9 +25,12 @@ public class ExtendBoathookCommand3 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boathook.setLength(boathook.length3);
+    boathook.setLength(boathook.getLevel().length3);
     System.out.println(
-        "extending length: " + boathook.getLength() + " and extending to: " + boathook.length3);
+        "extending length: "
+            + boathook.getLength()
+            + " and extending to: "
+            + boathook.getLevel().length3);
   }
 
   // Called once the command ends or is interrupted.
@@ -39,6 +42,6 @@ public class ExtendBoathookCommand3 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(boathook.getLength() - boathook.length3) < 0.1;
+    return Math.abs(boathook.getLength() - boathook.getLevel().length3) < 0.1;
   }
 }

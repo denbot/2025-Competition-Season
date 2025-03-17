@@ -37,7 +37,7 @@ public class IntakeMoveCommand extends Command {
     // If we are in teleop, the same button will toggle the intake up or down
     // Otherwise, we are in auto and just want the angle set to a specific place.
     if (toggleEnable) {
-      intake.flipUp();
+      intake.flipL1Toggle();
     }
     timer.reset();
     timer.start();

@@ -24,9 +24,9 @@ public class Angle2BoathookCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boathook.setAngle(boathook.angle2);
+    boathook.setAngle(boathook.getLevel().angle2);
     System.out.println("CURRENT ANGLE: " + boathook.getAngle());
-    System.out.println("SET ANGLE: " + boathook.angle2);
+    System.out.println("SET ANGLE: " + boathook.getLevel().angle2);
   }
 
   // Called once the command ends or is interrupted.
@@ -36,6 +36,6 @@ public class Angle2BoathookCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(boathook.getAngle() - boathook.angle2) < 5;
+    return Math.abs(boathook.getAngle() - boathook.getLevel().angle2) < 5;
   }
 }

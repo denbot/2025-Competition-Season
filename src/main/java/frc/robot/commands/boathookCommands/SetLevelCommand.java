@@ -6,38 +6,22 @@ package frc.robot.commands.boathookCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.boathook.Boathook.Level;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SetSetPointsCommand extends Command {
-  /** Creates a new SetSetPoints. */
-  private final double angle1;
+public class SetLevelCommand extends Command {
+  /** Creates a new SetLevel. */
+  private final Level level;
 
-  private final double length1;
-  private final double angle2;
-  private final double length2;
-  private final double angle3;
-  private final double length3;
-
-  public SetSetPointsCommand(
-      double angle1, double length1, double angle2, double length2, double angle3, double length3) {
+  public SetLevelCommand(Level level) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.angle1 = angle1;
-    this.length1 = length1;
-    this.angle2 = angle2;
-    this.length2 = length2;
-    this.angle3 = angle3;
-    this.length3 = length3;
+    this.level = level;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.robotContainer.boathook.angle1 = angle1;
-    Robot.robotContainer.boathook.length1 = length1;
-    Robot.robotContainer.boathook.angle2 = angle2;
-    Robot.robotContainer.boathook.length2 = length2;
-    Robot.robotContainer.boathook.angle3 = angle3;
-    Robot.robotContainer.boathook.length3 = length3;
+    Robot.robotContainer.boathook.setLevel(level);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

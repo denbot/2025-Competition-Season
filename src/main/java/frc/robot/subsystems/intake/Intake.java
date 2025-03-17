@@ -88,7 +88,6 @@ public class Intake extends SubsystemBase {
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   public boolean up = false;
-  public boolean stop = true;
 
   private static final CANdiConfiguration intakeSensorsConfig =
       new CANdiConfiguration()
@@ -150,11 +149,7 @@ public class Intake extends SubsystemBase {
     rotation.setControl(new StaticBrake());
   }
 
-  public void flipStop() {
-    stop = !stop;
-  }
-
-  public void flipUp() {
+  public void flipL1Toggle() {
     up = !up;
   }
 
