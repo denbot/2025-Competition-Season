@@ -59,6 +59,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import frc.robot.util.limelight.Limelights;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -352,8 +354,8 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
-    rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
-    leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+    rightPose = LimelightHelpers.getBotPose2d_wpiBlue(Limelights.RIGHT.name);
+    leftPose = LimelightHelpers.getBotPose2d_wpiBlue(Limelights.LEFT.name);
     return poseEstimator.getEstimatedPosition();
   }
 
