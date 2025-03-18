@@ -1,10 +1,15 @@
 package frc.robot.commands.intakeCommands;
 
+import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Robot;
+import frc.robot.commands.boathookCommands.HandoffCommand;
+import frc.robot.subsystems.boathook.Boathook;
+import frc.robot.subsystems.boathook.Boathook.Level;
 import frc.robot.subsystems.intake.Intake;
 
 public class RunIntakeCommand extends Command {
@@ -19,13 +24,23 @@ public class RunIntakeCommand extends Command {
     }
   }
 
+  private final Boathook boathook;
   private final Intake intake;
+  private final DSControlWord controlWord;
   private final Direction direction;
   private final Timer ejectingWait = new Timer();
 
-  public RunIntakeCommand(Intake intake, Direction direction) {
+  private final IntakeMoveCommand liftToL1;
+  private final HandoffCommand runHandoff;
+
+  public RunIntakeCommand(
+      Intake intake, Direction direction, Boathook boathook, DSControlWord controlWord) {
     this.intake = intake;
+    this.boathook = boathook;
+    this.controlWord = controlWord;
     this.direction = direction;
+    this.liftToL1 = new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2);
+    this.runHandoff = new HandoffCommand(boathook, intake);
     addRequirements(this.intake);
   }
 
@@ -54,6 +69,12 @@ public class RunIntakeCommand extends Command {
 
       if (coralIntaken) {
         Robot.rumble().coralIntaken.schedule();
+        if (boathook.getLevel() == Level.L1) {
+          liftToL1.schedule();
+          intake.flipL1Toggle();
+        } else {
+          runHandoff.schedule();
+        }
       }
 
       return coralIntaken;

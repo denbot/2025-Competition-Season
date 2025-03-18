@@ -24,6 +24,52 @@ import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
+  public enum Level {
+    L1(
+        BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+        BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
+        BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION),
+    L2(
+        BoathookConstants.IDLE_ANGLE, BoathookConstants.L2_EXTENSION,
+        BoathookConstants.L2_SETUP_ANGLE, BoathookConstants.L2_EXTENSION,
+        BoathookConstants.L2_SCORE_ANGLE, BoathookConstants.IDLE_EXTENSION),
+    L3(
+        BoathookConstants.IDLE_ANGLE, BoathookConstants.L3_EXTENSION,
+        BoathookConstants.L3_SETUP_ANGLE, BoathookConstants.L3_EXTENSION,
+        BoathookConstants.L3_SCORE_ANGLE, BoathookConstants.L2_EXTENSION),
+    L4(
+        BoathookConstants.L4_SETUP_ANGLE - 2,
+        BoathookConstants.L4_EXTENSION,
+        BoathookConstants.L4_SETUP_ANGLE,
+        BoathookConstants.L3_EXTENSION,
+        BoathookConstants.IDLE_ANGLE,
+        BoathookConstants.IDLE_EXTENSION);
+
+    public double angle1;
+    public double length1;
+    public double angle2;
+    public double length2;
+    public double angle3;
+    public double length3;
+
+    Level(
+        double angle1,
+        double length1,
+        double angle2,
+        double length2,
+        double angle3,
+        double length3) {
+      this.angle1 = angle1;
+      this.length1 = length1;
+      this.angle2 = angle2;
+      this.length2 = length2;
+      this.angle3 = angle3;
+      this.length3 = length3;
+    }
+  }
+
+  private Level level = Level.L1;
+
   private static final TalonFX rotationMotor =
       new TalonFX(BoathookConstants.ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
 
@@ -38,15 +84,6 @@ public class Boathook extends SubsystemBase {
 
   private final CANdi limitSensors =
       new CANdi(BoathookConstants.CANDI_ID, OperatorConstants.canivoreSerial);
-
-  public double angle1;
-  public double length1;
-
-  public double angle2;
-  public double length2;
-
-  public double angle3;
-  public double length3;
 
   public static final TalonFXConfiguration rotationConfig =
       new TalonFXConfiguration()
@@ -90,7 +127,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.582) // 0.41
+                  .withMagnetOffset(-0.32662109375) // 0.41
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -132,7 +169,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0) // 0.372
+                  .withMagnetOffset(-0.18) // 0.372
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   CANdiConfiguration limitSensorsConfig =
@@ -157,10 +194,6 @@ public class Boathook extends SubsystemBase {
     NamedCommands.registerCommand("BoathookRetract", new BoathookRetractMotionPathCommand(this));
   }
 
-  //   public double getRotationAngle() {
-  //     return rotationEncoder.getAbsolutePosition().getValueAsDouble() * 360;
-  //   }
-
   public void setAngle(double angle) {
     rotationMotor.setControl(new PositionVoltage(angle / 360.0));
   }
@@ -181,6 +214,14 @@ public class Boathook extends SubsystemBase {
 
   public void setBrakeExtender() {
     extenderMotor.setControl(new StaticBrake());
+  }
+
+  public void setLevel(Level incomingLevel) {
+    this.level = incomingLevel;
+  }
+
+  public Level getLevel() {
+    return level;
   }
 
   public void addInstruments() {

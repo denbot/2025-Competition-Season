@@ -14,11 +14,13 @@ public class HandoffPrepIntakeCommand extends Command {
   /** Creates a new IndexReleaseCommand. */
   private final Intake intake;
 
+  private final double runTime;
   private final Timer timer = new Timer();
 
-  public HandoffPrepIntakeCommand(Intake intake) {
+  public HandoffPrepIntakeCommand(Intake intake, double runTime) {
     addRequirements(intake);
     this.intake = intake;
+    this.runTime = runTime;
   }
 
   // Called when the command is initially scheduled.
@@ -47,6 +49,6 @@ public class HandoffPrepIntakeCommand extends Command {
   @Override
   public boolean isFinished() {
     // After specified time has passed, end the command
-    return timer.get() > 0.25;
+    return timer.get() > runTime;
   }
 }
