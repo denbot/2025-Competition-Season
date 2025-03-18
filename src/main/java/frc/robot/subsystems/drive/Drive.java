@@ -53,7 +53,7 @@ import frc.robot.Constants.Direction;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
-import frc.robot.game.ReefTarget;
+import frc.robot.game.ReefAprilTag;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -136,18 +136,18 @@ public class Drive extends SubsystemBase {
     PhoenixOdometryThread.getInstance().start();
 
     NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
-    NamedCommands.registerCommand("12L", new TargetChange(Direction.LEFT, 180, ReefTarget.TWELVE));
-    NamedCommands.registerCommand("12R", new TargetChange(Direction.RIGHT, 180, ReefTarget.TWELVE));
-    NamedCommands.registerCommand("10L", new TargetChange(Direction.LEFT, -120, ReefTarget.TEN));
-    NamedCommands.registerCommand("10R", new TargetChange(Direction.RIGHT, -120, ReefTarget.TEN));
-    NamedCommands.registerCommand("8L", new TargetChange(Direction.LEFT, -60, ReefTarget.EIGHT));
-    NamedCommands.registerCommand("8R", new TargetChange(Direction.RIGHT, -60, ReefTarget.EIGHT));
-    NamedCommands.registerCommand("6L", new TargetChange(Direction.LEFT, 0, ReefTarget.SIX));
-    NamedCommands.registerCommand("6R", new TargetChange(Direction.RIGHT, 0, ReefTarget.SIX));
-    NamedCommands.registerCommand("4L", new TargetChange(Direction.LEFT, 60, ReefTarget.FOUR));
-    NamedCommands.registerCommand("4R", new TargetChange(Direction.RIGHT, 60, ReefTarget.FOUR));
-    NamedCommands.registerCommand("2L", new TargetChange(Direction.LEFT, 120, ReefTarget.TWO));
-    NamedCommands.registerCommand("2R", new TargetChange(Direction.RIGHT, 120, ReefTarget.TWO));
+    NamedCommands.registerCommand("12L", new TargetChange(Direction.LEFT, 180, ReefAprilTag.TWELVE));
+    NamedCommands.registerCommand("12R", new TargetChange(Direction.RIGHT, 180, ReefAprilTag.TWELVE));
+    NamedCommands.registerCommand("10L", new TargetChange(Direction.LEFT, -120, ReefAprilTag.TEN));
+    NamedCommands.registerCommand("10R", new TargetChange(Direction.RIGHT, -120, ReefAprilTag.TEN));
+    NamedCommands.registerCommand("8L", new TargetChange(Direction.LEFT, -60, ReefAprilTag.EIGHT));
+    NamedCommands.registerCommand("8R", new TargetChange(Direction.RIGHT, -60, ReefAprilTag.EIGHT));
+    NamedCommands.registerCommand("6L", new TargetChange(Direction.LEFT, 0, ReefAprilTag.SIX));
+    NamedCommands.registerCommand("6R", new TargetChange(Direction.RIGHT, 0, ReefAprilTag.SIX));
+    NamedCommands.registerCommand("4L", new TargetChange(Direction.LEFT, 60, ReefAprilTag.FOUR));
+    NamedCommands.registerCommand("4R", new TargetChange(Direction.RIGHT, 60, ReefAprilTag.FOUR));
+    NamedCommands.registerCommand("2L", new TargetChange(Direction.LEFT, 120, ReefAprilTag.TWO));
+    NamedCommands.registerCommand("2R", new TargetChange(Direction.RIGHT, 120, ReefAprilTag.TWO));
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(

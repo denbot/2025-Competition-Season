@@ -1,6 +1,6 @@
 package frc.robot.game;
 
-public enum ReefTarget {
+public enum ReefAprilTag {
   TWO(9, 22),
   FOUR(8, 17),
   SIX(7, 18),
@@ -11,7 +11,7 @@ public enum ReefTarget {
   public final double red;
   public final double blue;
 
-  ReefTarget(double red, double blue) {
+  ReefAprilTag(double red, double blue) {
     this.red = red;
     this.blue = blue;
   }
