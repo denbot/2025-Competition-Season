@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
@@ -37,6 +36,7 @@ import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.game.ReefAprilTag;
+import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -85,24 +85,35 @@ public class RobotContainer {
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private final TargetChange twelveLeft = new TargetChange(Direction.LEFT, 180, ReefAprilTag.TWELVE);
+  private final TargetChange twelveLeft =
+      new TargetChange(ReefTarget.Direction.LEFT, 180, ReefAprilTag.TWELVE);
   private final TargetChange twelveRight =
-      new TargetChange(Direction.RIGHT, 180, ReefAprilTag.TWELVE);
+      new TargetChange(ReefTarget.Direction.RIGHT, 180, ReefAprilTag.TWELVE);
 
-  private final TargetChange tenLeft = new TargetChange(Direction.LEFT, -120, ReefAprilTag.TEN);
-  private final TargetChange tenRight = new TargetChange(Direction.RIGHT, -120, ReefAprilTag.TEN);
+  private final TargetChange tenLeft =
+      new TargetChange(ReefTarget.Direction.LEFT, -120, ReefAprilTag.TEN);
+  private final TargetChange tenRight =
+      new TargetChange(ReefTarget.Direction.RIGHT, -120, ReefAprilTag.TEN);
 
-  private final TargetChange eightLeft = new TargetChange(Direction.LEFT, -60, ReefAprilTag.EIGHT);
-  private final TargetChange eightRight = new TargetChange(Direction.RIGHT, -60, ReefAprilTag.EIGHT);
+  private final TargetChange eightLeft =
+      new TargetChange(ReefTarget.Direction.LEFT, -60, ReefAprilTag.EIGHT);
+  private final TargetChange eightRight =
+      new TargetChange(ReefTarget.Direction.RIGHT, -60, ReefAprilTag.EIGHT);
 
-  private final TargetChange sixLeft = new TargetChange(Direction.LEFT, 0, ReefAprilTag.SIX);
-  private final TargetChange sixRight = new TargetChange(Direction.RIGHT, 0, ReefAprilTag.SIX);
+  private final TargetChange sixLeft =
+      new TargetChange(ReefTarget.Direction.LEFT, 0, ReefAprilTag.SIX);
+  private final TargetChange sixRight =
+      new TargetChange(ReefTarget.Direction.RIGHT, 0, ReefAprilTag.SIX);
 
-  private final TargetChange fourLeft = new TargetChange(Direction.LEFT, 60, ReefAprilTag.FOUR);
-  private final TargetChange fourRight = new TargetChange(Direction.RIGHT, 60, ReefAprilTag.FOUR);
+  private final TargetChange fourLeft =
+      new TargetChange(ReefTarget.Direction.LEFT, 60, ReefAprilTag.FOUR);
+  private final TargetChange fourRight =
+      new TargetChange(ReefTarget.Direction.RIGHT, 60, ReefAprilTag.FOUR);
 
-  private final TargetChange twoLeft = new TargetChange(Direction.LEFT, 120, ReefAprilTag.TWO);
-  private final TargetChange twoRight = new TargetChange(Direction.RIGHT, 120, ReefAprilTag.TWO);
+  private final TargetChange twoLeft =
+      new TargetChange(ReefTarget.Direction.LEFT, 120, ReefAprilTag.TWO);
+  private final TargetChange twoRight =
+      new TargetChange(ReefTarget.Direction.RIGHT, 120, ReefAprilTag.TWO);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
