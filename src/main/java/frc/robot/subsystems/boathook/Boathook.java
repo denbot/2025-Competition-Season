@@ -85,15 +85,6 @@ public class Boathook extends SubsystemBase {
   private final CANdi limitSensors =
       new CANdi(BoathookConstants.CANDI_ID, OperatorConstants.canivoreSerial);
 
-  public double angle1;
-  public double length1;
-
-  public double angle2;
-  public double length2;
-
-  public double angle3;
-  public double length3;
-
   public static final TalonFXConfiguration rotationConfig =
       new TalonFXConfiguration()
           .withCurrentLimits(
@@ -136,8 +127,8 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.32662109375)
-          );
+                  .withMagnetOffset(-0.32662109375) // 0.41
+                  .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
       new TalonFXConfiguration()
@@ -178,8 +169,8 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.18)
-          );
+                  .withMagnetOffset(-0.18) // 0.372
+                  .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   CANdiConfiguration limitSensorsConfig =
       new CANdiConfiguration()
