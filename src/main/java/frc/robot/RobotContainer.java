@@ -32,6 +32,7 @@ import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
+import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.PipelineChange;
@@ -109,6 +110,8 @@ public class RobotContainer {
 
   public final RumblePresets rumblePresets;
 
+  public final PreCheckTab preCheckTab;
+
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
@@ -184,6 +187,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    preCheckTab = new PreCheckTab(controller, operatorController1, operatorController2);
+    preCheckTab.schedule();
 
     // Attempt to load the chrp
     var status = m_orchestra.loadMusic("OceanMan.chrp");
