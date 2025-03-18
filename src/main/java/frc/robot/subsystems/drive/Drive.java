@@ -51,16 +51,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Direction;
 import frc.robot.Constants.Mode;
-import frc.robot.Constants.ReefTarget;
-import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
+import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.limelight.LimelightHelpers;
+import frc.robot.util.limelight.Limelights;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import frc.robot.util.limelight.Limelights;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -137,10 +136,8 @@ public class Drive extends SubsystemBase {
     PhoenixOdometryThread.getInstance().start();
 
     NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
-    NamedCommands.registerCommand(
-        "12L", new TargetChange(Direction.LEFT, 180, ReefTarget.TWELVE));
-    NamedCommands.registerCommand(
-        "12R", new TargetChange(Direction.RIGHT, 180, ReefTarget.TWELVE));
+    NamedCommands.registerCommand("12L", new TargetChange(Direction.LEFT, 180, ReefTarget.TWELVE));
+    NamedCommands.registerCommand("12R", new TargetChange(Direction.RIGHT, 180, ReefTarget.TWELVE));
     NamedCommands.registerCommand("10L", new TargetChange(Direction.LEFT, -120, ReefTarget.TEN));
     NamedCommands.registerCommand("10R", new TargetChange(Direction.RIGHT, -120, ReefTarget.TEN));
     NamedCommands.registerCommand("8L", new TargetChange(Direction.LEFT, -60, ReefTarget.EIGHT));

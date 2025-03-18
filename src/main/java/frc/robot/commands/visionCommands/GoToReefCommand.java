@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Direction;
-import frc.robot.util.limelight.LimelightHelpers;
-import frc.robot.util.limelight.LimelightHelpers.RawFiducial;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.limelight.LimelightHelpers;
+import frc.robot.util.limelight.LimelightHelpers.RawFiducial;
 import frc.robot.util.limelight.Limelights;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -60,7 +60,8 @@ public class GoToReefCommand extends Command {
 
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
-    if (LimelightHelpers.getTV(Limelights.LEFT.name) || LimelightHelpers.getTV(Limelights.RIGHT.name)) {
+    if (LimelightHelpers.getTV(Limelights.LEFT.name)
+        || LimelightHelpers.getTV(Limelights.RIGHT.name)) {
       framesDropped = 0;
     } else {
       framesDropped++;
