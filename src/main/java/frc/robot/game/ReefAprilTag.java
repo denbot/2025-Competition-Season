@@ -5,7 +5,7 @@ public enum ReefAprilTag {
   FOUR(8, 17, 60),
   SIX(7, 18, 0),
   EIGHT(6, 19, -60),
-  TEN(11, 20, -129),
+  TEN(11, 20, -120),
   TWELVE(10, 21, 180);
 
   public final int red;
