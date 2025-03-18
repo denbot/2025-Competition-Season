@@ -25,7 +25,7 @@ public class GoToReefCommand extends Command {
   double kP = 5;
 
   double rotationalKP = 0.3;
-  ReefTarget.Direction direction = ReefTarget.Direction.LEFT;
+  ReefTarget reefTarget = ReefTarget.TWELVE_LEFT;
   int framesDropped = 0;
   Translation3d translate;
   double lastAngleError = 0;
@@ -34,7 +34,6 @@ public class GoToReefCommand extends Command {
   Drive drive;
 
   public GoToReefCommand(Drive drive) {
-    this.direction = Robot.direction;
     this.drive = drive;
     addRequirements(drive);
   }
@@ -42,10 +41,13 @@ public class GoToReefCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.direction = Robot.direction;
+    // We set the reefTarget here from the robot and only use
+    this.reefTarget = Robot.reefTarget;
     this.target =
-        DriverStation.getAlliance().get() == Alliance.Red ? Robot.target.red : Robot.target.blue;
-    SmartDashboard.putString("commandDirection", String.valueOf(direction));
+        DriverStation.getAlliance().get() == Alliance.Red
+            ? Robot.reefTarget.aprilTag.red
+            : Robot.reefTarget.aprilTag.blue;
+    SmartDashboard.putString("commandDirection", String.valueOf(reefTarget.direction));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -70,7 +72,7 @@ public class GoToReefCommand extends Command {
 
     // Used to "flip" the rotation of the application whenever the field is not blue
     var currentAlliance = DriverStation.getAlliance();
-    double targetAngle = Robot.angle;
+    double targetAngle = this.reefTarget.angle;
     if (currentAlliance.get() == Alliance.Red) {
       targetAngle += 180;
       if (targetAngle > 180) {
@@ -89,10 +91,15 @@ public class GoToReefCommand extends Command {
     double[] tagPoseRobot;
     // TODO Fix this to be based on odometry and not based on direct tag
     // if in simulation, comment out this line:
-    if (LimelightHelpers.getTV(Limelights.LEFT.name)) {
+    if (LimelightHelpers.getTV(Limelights.LEFT.name)
+        && LimelightHelpers.getFiducialID(Limelights.LEFT.name) == target) {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name);
-    } else {
+    } else if (LimelightHelpers.getTV(Limelights.RIGHT.name)
+        && LimelightHelpers.getFiducialID(Limelights.RIGHT.name) == target) {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.RIGHT.name);
+    } else {
+      // TODO Notify driver here?
+      return; // Our primary april tag in view of either camera isn't our target
     }
 
     // comment this line out before actually running the robot:
@@ -111,7 +118,7 @@ public class GoToReefCommand extends Command {
     // then rotates and translates the translation so it is relative to the robot
     // at least thats what I think we are doing, I might have it wrong
 
-    double offset = (direction == ReefTarget.Direction.LEFT) ? -0.15 : 0.15;
+    double offset = (reefTarget.direction == ReefTarget.Direction.LEFT) ? -0.15 : 0.15;
     translate = new Translation3d(offset, 0, -0.57);
 
     translate = translate.rotateBy(pose.getRotation());
