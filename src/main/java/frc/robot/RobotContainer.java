@@ -80,6 +80,7 @@ public class RobotContainer {
 
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
+  private final IntakeMoveCommand moveIntake;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -161,6 +162,7 @@ public class RobotContainer {
         new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake, boathook, controlWord);
     rejectCoral =
         new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject, boathook, controlWord);
+    moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -245,6 +247,7 @@ public class RobotContainer {
 
     controller.leftBumper().whileTrue(pullInCoral);
     controller.leftTrigger().whileTrue(rejectCoral);
+    controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.rightBumper().onTrue(extendBoathook);

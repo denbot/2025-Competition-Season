@@ -41,7 +41,6 @@ public class RunIntakeCommand extends Command {
     this.direction = direction;
     this.liftToL1 = new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2);
     this.runHandoff = new HandoffCommand(boathook, intake);
-
     addRequirements(this.intake);
   }
 

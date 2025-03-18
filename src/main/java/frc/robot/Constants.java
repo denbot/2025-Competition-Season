@@ -73,7 +73,7 @@ public final class Constants {
     //    public static final double EXTENDER_GEAR_RATIO = 25;
     // 4 inch mechanism drum
     // 40 mm sensor
-    public static final double EXTENDER_FORWARD_LIMIT = 8.48; // not in inches (rotations)
+    public static final double EXTENDER_FORWARD_LIMIT = 4.55; // not in inches (rotations)
     public static final double EXTENDER_REVERSE_LIMIT = 0;
 
     // Rotation in degrees
