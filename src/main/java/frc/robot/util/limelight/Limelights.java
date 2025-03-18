@@ -1,9 +1,6 @@
 package frc.robot.util.limelight;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -37,7 +34,7 @@ public enum Limelights {
     if (limelightLastCheckTimer.containsKey(name)) {
       long elapsedTime = fpgaTime - limelightLastCheckTimer.get(name);
 
-      if (elapsedTime < 1_000_000) {  // 1 second in microseconds
+      if (elapsedTime < 1_000_000) { // 1 second in microseconds
         return limelightCache.getOrDefault(name, false);
       }
       limelightLastCheckTimer.put(name, fpgaTime);

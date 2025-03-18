@@ -6,8 +6,8 @@ package frc.robot.commands.visionCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Direction;
-import frc.robot.Constants.ReefTarget;
 import frc.robot.Robot;
+import frc.robot.game.ReefTarget;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TargetChange extends Command {
