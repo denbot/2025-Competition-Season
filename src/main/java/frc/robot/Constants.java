@@ -92,10 +92,10 @@ public final class Constants {
     public static final double L4_SCORE_ANGLE = 97;
 
     // Extension in rotations
-    public static final double STAB_EXTENSION = 0;
-    public static final double IDLE_EXTENSION = 0;
-    public static final double L2_EXTENSION = 0.75;
+    public static final double STAB_EXTENSION = 0.02;
+    public static final double IDLE_EXTENSION = 0.02;
+    public static final double L2_EXTENSION = 0.85;
     public static final double L3_EXTENSION = 1.95;
-    public static final double L4_EXTENSION = 4.2;
+    public static final double L4_EXTENSION = 4.5;
   }
 }

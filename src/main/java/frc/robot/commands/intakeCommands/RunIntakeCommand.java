@@ -68,14 +68,12 @@ public class RunIntakeCommand extends Command {
       boolean coralIntaken = intake.isCoralIntaken();
 
       if (coralIntaken) {
-        if (controlWord.isTeleopEnabled()) {
-          Robot.rumble().coralIntaken.schedule();
-          if (boathook.getLevel() == Level.L1) {
-            liftToL1.schedule();
-            intake.flipL1Toggle();
-          } else {
-            runHandoff.schedule();
-          }
+        Robot.rumble().coralIntaken.schedule();
+        if (boathook.getLevel() == Level.L1) {
+          liftToL1.schedule();
+          intake.flipL1Toggle();
+        } else {
+          runHandoff.schedule();
         }
       }
 
