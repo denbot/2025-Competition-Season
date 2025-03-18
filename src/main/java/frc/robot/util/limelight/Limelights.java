@@ -10,8 +10,8 @@ import java.util.Map;
 
 public enum Limelights {
   LEFT("limelight-left", "10.95.86.11"),
-  RIGHT("limelight-right", "10.95.86.12"),
-  REAR("limelight-rear", "10.95.86.13");
+  RIGHT("limelight-right", "10.95.86.13"),
+  REAR("limelight-rear", "10.95.86.12");
 
   private static final Map<String, Boolean> limelightCache = new HashMap<>();
   private static final Map<String, Long> limelightLastCheckTimer = new HashMap<>();
@@ -43,7 +43,7 @@ public enum Limelights {
       // Note that "this loop" is approximate, we just verify it wasn't in the last 20 ms.
       for (Map.Entry<String, Long> lastChecked : limelightLastCheckTimer.entrySet()) {
         long elapsedTime = fpgaTime - lastChecked.getValue();
-        if (elapsedTime > 20) {
+        if (elapsedTime < 20) {
           return false; // We haven't been checked and another camera got checked this loop
         }
       }

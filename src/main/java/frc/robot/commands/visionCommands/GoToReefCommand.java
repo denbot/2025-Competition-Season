@@ -16,7 +16,6 @@ import frc.robot.Robot;
 import frc.robot.game.ReefTarget;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.limelight.LimelightHelpers;
-import frc.robot.util.limelight.LimelightHelpers.RawFiducial;
 import frc.robot.util.limelight.Limelights;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
