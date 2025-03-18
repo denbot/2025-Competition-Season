@@ -86,6 +86,7 @@ public class GoToReefCommand extends Command {
     }
 
     double[] tagPoseRobot;
+    // TODO Fix this to be based on odometry and not based on direct tag
     // if in simulation, comment out this line:
     if (LimelightHelpers.getTV(Limelights.LEFT.name)) {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name);

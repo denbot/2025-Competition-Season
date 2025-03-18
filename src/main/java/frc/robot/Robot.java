@@ -33,6 +33,7 @@ import frc.robot.Constants.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
+import frc.robot.util.limelight.LimelightPipeline;
 import frc.robot.util.limelight.Limelights;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -132,6 +133,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
+    Limelights.LEFT.setPipeline(LimelightPipeline.APRIL_TAG);
+    Limelights.RIGHT.setPipeline(LimelightPipeline.APRIL_TAG);
+    Limelights.REAR.setPipeline(LimelightPipeline.APRIL_TAG);
   }
 
   /** This function is called periodically during all modes. */

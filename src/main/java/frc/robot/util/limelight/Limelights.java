@@ -1,5 +1,7 @@
 package frc.robot.util.limelight;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 
 import java.io.IOException;
@@ -23,6 +25,10 @@ public enum Limelights {
   Limelights(String name, String ip) {
     this.name = name;
     this.ip = ip;
+  }
+
+  public void setPipeline(LimelightPipeline pipeline) {
+    LimelightHelpers.setPipelineIndex(name, pipeline.pipeline);
   }
 
   public boolean isConnected() {
