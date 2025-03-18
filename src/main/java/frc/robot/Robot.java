@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Direction;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.elastic.Elastic;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -179,6 +180,8 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    Elastic.Tabs.PRE_CHECK.show();
+
     // Enable limelight 4 throttling when disabled to prevent overheating.
     LimelightHelpers.setThrottle("limelight-rear", 120);
   }
@@ -190,6 +193,8 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    Elastic.Tabs.AUTONOMOUS.show();
+
     // Disable limelight 4 throttling
     LimelightHelpers.setThrottle("limelight-rear", 0);
 
@@ -207,6 +212,8 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    Elastic.Tabs.TELEOPERATED.show();
+
     // Disable limelight 4 throttling
     LimelightHelpers.setThrottle("limelight-rear", 0);
 
