@@ -53,13 +53,6 @@ public class GoToReefCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-    for (RawFiducial fiducial : fiducials) {
-      if (fiducial.id == aprilTagTarget) {
-        double distToRobot = fiducial.distToRobot; // Distance to robot
-      }
-    }
-
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
     if (LimelightHelpers.getTV(Limelights.LEFT.name)
