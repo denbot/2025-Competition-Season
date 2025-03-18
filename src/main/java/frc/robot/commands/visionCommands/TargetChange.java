@@ -6,29 +6,20 @@ package frc.robot.commands.visionCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.game.ReefAprilTag;
 import frc.robot.game.ReefTarget;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TargetChange extends Command {
-  /** Creates a new GoToReef. */
-  private final double angle;
+  private final ReefTarget target;
 
-  private final ReefTarget.Direction direction;
-  private final ReefAprilTag target;
-
-  public TargetChange(ReefTarget.Direction direction, double angle, ReefAprilTag target) {
-    this.direction = direction;
-    this.angle = angle;
+  public TargetChange(ReefTarget target) {
     this.target = target;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.direction = this.direction;
-    Robot.angle = this.angle;
-    Robot.target = this.target;
+    Robot.reefTarget = this.target;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
