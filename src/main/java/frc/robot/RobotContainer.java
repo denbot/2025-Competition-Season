@@ -245,8 +245,8 @@ public class RobotContainer {
 
     controller.b().onTrue(reef);
 
-    controller.leftBumper().whileTrue(pullInCoral);
-    controller.leftTrigger().whileTrue(rejectCoral);
+    controller.leftBumper().whileTrue(rejectCoral);
+    controller.leftTrigger().whileTrue(pullInCoral);
     controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
