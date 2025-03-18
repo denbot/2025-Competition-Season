@@ -29,7 +29,7 @@ public class GoToReefCommand extends Command {
   int framesDropped = 0;
   Translation3d translate;
   double lastAngleError = 0;
-  double target = 0.0;
+  int aprilTagTarget = 0;
 
   Drive drive;
 
@@ -43,7 +43,7 @@ public class GoToReefCommand extends Command {
   public void initialize() {
     // We set the reefTarget here from the robot and only use
     this.reefTarget = Robot.reefTarget;
-    this.target =
+    this.aprilTagTarget =
         DriverStation.getAlliance().get() == Alliance.Red
             ? Robot.reefTarget.aprilTag.red
             : Robot.reefTarget.aprilTag.blue;
@@ -55,7 +55,7 @@ public class GoToReefCommand extends Command {
   public void execute() {
     RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
     for (RawFiducial fiducial : fiducials) {
-      if (fiducial.id == target) {
+      if (fiducial.id == aprilTagTarget) {
         double distToRobot = fiducial.distToRobot; // Distance to robot
       }
     }
@@ -92,10 +92,10 @@ public class GoToReefCommand extends Command {
     // TODO Fix this to be based on odometry and not based on direct tag
     // if in simulation, comment out this line:
     if (LimelightHelpers.getTV(Limelights.LEFT.name)
-        && LimelightHelpers.getFiducialID(Limelights.LEFT.name) == target) {
+        && LimelightHelpers.getFiducialID(Limelights.LEFT.name) == aprilTagTarget) {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name);
     } else if (LimelightHelpers.getTV(Limelights.RIGHT.name)
-        && LimelightHelpers.getFiducialID(Limelights.RIGHT.name) == target) {
+        && LimelightHelpers.getFiducialID(Limelights.RIGHT.name) == aprilTagTarget) {
       tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.RIGHT.name);
     } else {
       // TODO Notify driver here?
