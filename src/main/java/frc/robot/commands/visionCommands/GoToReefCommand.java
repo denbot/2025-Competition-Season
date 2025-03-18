@@ -17,6 +17,7 @@ import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.LimelightHelpers.RawFiducial;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.limelight.Limelights;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToReefCommand extends Command {
@@ -59,7 +60,7 @@ public class GoToReefCommand extends Command {
 
     // if we drop a frame, do nothing for this periodic, unless we've dropped 6 or more frames, in
     // which case we end the command
-    if (LimelightHelpers.getTV("limelight-left") || LimelightHelpers.getTV("limelight-right")) {
+    if (LimelightHelpers.getTV(Limelights.LEFT.name) || LimelightHelpers.getTV(Limelights.RIGHT.name)) {
       framesDropped = 0;
     } else {
       framesDropped++;
@@ -86,10 +87,10 @@ public class GoToReefCommand extends Command {
 
     double[] tagPoseRobot;
     // if in simulation, comment out this line:
-    if (LimelightHelpers.getTV("limelight-left")) {
-      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-left");
+    if (LimelightHelpers.getTV(Limelights.LEFT.name)) {
+      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name);
     } else {
-      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace("limelight-right");
+      tagPoseRobot = LimelightHelpers.getTargetPose_RobotSpace(Limelights.RIGHT.name);
     }
 
     // comment this line out before actually running the robot:

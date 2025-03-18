@@ -33,6 +33,7 @@ import frc.robot.Constants.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
+import frc.robot.util.limelight.Limelights;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -148,12 +149,12 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-    maybeAddVisionMeasurement("limelight-left");
-    maybeAddVisionMeasurement("limelight-right");
+    maybeAddVisionMeasurement(Limelights.LEFT.name);
+    maybeAddVisionMeasurement(Limelights.RIGHT.name);
     field.setRobotPose(robotContainer.drive.getPose());
 
     SmartDashboard.putNumberArray(
-        "Pose", LimelightHelpers.getTargetPose_RobotSpace("limelight-left"));
+        "Pose", LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name));
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {
