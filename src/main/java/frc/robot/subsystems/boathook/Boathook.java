@@ -70,7 +70,6 @@ public class Boathook extends SubsystemBase {
 
   private Level level = Level.L1;
   public double microRotationOffset = 0.0;
-  public double microExtensionOffset = 0.0;
 
   private static final TalonFX rotationMotor =
       new TalonFX(BoathookConstants.ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -214,6 +213,10 @@ public class Boathook extends SubsystemBase {
     return length.getValueAsDouble();
   }
 
+  public double getLengthSetpoint() {
+    return extenderMotor.getClosedLoopReference().getValueAsDouble();
+  }
+
   public void setBrakeExtender() {
     extenderMotor.setControl(new StaticBrake());
   }
@@ -237,5 +240,6 @@ public class Boathook extends SubsystemBase {
     SmartDashboard.putNumber("Boathook Angle", getAngle());
     SmartDashboard.putNumber("Boathook Extension", getLength());
     SmartDashboard.putNumber("MicroRotation", microRotationOffset);
+    SmartDashboard.putNumber("MicroExtension", getLengthSetpoint());
   }
 }

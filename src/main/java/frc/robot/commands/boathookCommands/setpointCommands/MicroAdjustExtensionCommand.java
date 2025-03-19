@@ -34,7 +34,7 @@ public class MicroAdjustExtensionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    boathook.microExtensionOffset += direction.offsetIncrement;
+    boathook.setLength(boathook.getLengthSetpoint() + direction.offsetIncrement);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

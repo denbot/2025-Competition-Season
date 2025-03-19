@@ -167,10 +167,8 @@ public class RobotContainer {
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
 
-    pullInCoral =
-        new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake, boathook, controlWord);
-    rejectCoral =
-        new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject, boathook, controlWord);
+    pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
+    rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
     moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
 
     microRotationAdjustForwards =
@@ -272,8 +270,8 @@ public class RobotContainer {
     controller.rightTrigger().onTrue(retractBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
     controller.povRight().onTrue(microRotationAdjustForwards);
-    controller.povUp().onTrue(microExtensionAdjustInwards);
-    controller.povDown().onTrue(microExtensionAdjustOutwards);
+    controller.povDown().onTrue(microExtensionAdjustInwards);
+    controller.povUp().onTrue(microExtensionAdjustOutwards);
     // controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
