@@ -69,6 +69,8 @@ public class Boathook extends SubsystemBase {
   }
 
   private Level level = Level.L1;
+  public double microRotationOffset = 0.0;
+  public double microExtensionOffset = 0.0;
 
   private static final TalonFX rotationMotor =
       new TalonFX(BoathookConstants.ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -106,7 +108,7 @@ public class Boathook extends SubsystemBase {
           //         .withMotionMagicCruiseVelocity(1))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(32)
+                  .withKP(20)
                   .withKD(0)
                   .withKS(0)
                   .withKG(0)
@@ -127,7 +129,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.3464)
+                  .withMagnetOffset(-0.36819140625)
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -234,5 +236,6 @@ public class Boathook extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());
     SmartDashboard.putNumber("Boathook Extension", getLength());
+    SmartDashboard.putNumber("MicroRotation", microRotationOffset);
   }
 }

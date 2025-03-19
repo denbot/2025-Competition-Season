@@ -171,6 +171,6 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isCoralIntaken() {
-    return intakeSensors.getS2Closed().getValue();
+    return intakeSensors.getS2Closed().getValue() || intakeSensors.getS1Closed().getValue();
   }
 }
