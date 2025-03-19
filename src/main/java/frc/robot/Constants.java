@@ -48,7 +48,7 @@ public final class Constants {
     public static final int LEFT_INTAKE_MOTOR_ID = 19;
     public static final int RIGHT_INTAKE_MOTOR_ID = 20;
 
-    public static final int CANDI_ID = 18; // S1 is first switch, S2 is base
+    public static final int CANDI_ID = 18; // S1 is unused, S2 is base switch
     public static final int INTAKE_ROTATION_MOTOR_ID = 23;
     public static final int INTAKE_ROTATION_ENCODER_ID = 24;
 
