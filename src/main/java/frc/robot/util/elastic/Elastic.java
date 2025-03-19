@@ -14,7 +14,8 @@ public final class Elastic {
   public enum Tabs {
     PRE_CHECK("Pre-Check"),
     AUTONOMOUS("Autonomous"),
-    TELEOPERATED("Teleoperated");
+    TELEOPERATED("Teleoperated"),
+    BOATHOOK("Boathook");
 
     private final String name;
 

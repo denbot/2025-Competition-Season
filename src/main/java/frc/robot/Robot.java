@@ -196,8 +196,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    Elastic.Tabs.PRE_CHECK.show();
-
     // Enable limelight 4 throttling when disabled to prevent overheating.
     LimelightHelpers.setThrottle("limelight-rear", 120);
   }

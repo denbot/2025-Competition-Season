@@ -4,18 +4,22 @@
 
 package frc.robot.subsystems.boathook;
 
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
@@ -147,21 +151,30 @@ public class Boathook extends SubsystemBase {
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(true)
                   .withForwardSoftLimitThreshold(BoathookConstants.EXTENDER_FORWARD_LIMIT)
-                  .withReverseSoftLimitEnable(false))
-          //          .withMotionMagic(
-          //              new MotionMagicConfigs()
-          //                  .withMotionMagicAcceleration(2)
-          //                  .withMotionMagicCruiseVelocity(1))
-          .withSlot0(new Slot0Configs().withKP(20).withKD(0).withKG(0))
+                  .withReverseSoftLimitEnable(true)
+                  .withReverseSoftLimitThreshold(BoathookConstants.EXTENDER_REVERSE_LIMIT))
+          .withMotionMagic(
+              new MotionMagicConfigs()
+                  .withMotionMagicAcceleration(.5)
+                  .withMotionMagicCruiseVelocity(1))
+                    .withSlot0(new Slot0Configs().withKP(20).withKD(0).withKG(0))
+          .withSlot2( // For ZeroBoathookExtension
+              new Slot2Configs()
+                  .withKP(1)
+                  .withKS(.4)
+                  .withKG(-.2)
+                  .withGravityType(GravityTypeValue.Elevator_Static))
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withHardwareLimitSwitch(
               new HardwareLimitSwitchConfigs()
-                  .withReverseLimitEnable(true)
-                  .withReverseLimitAutosetPositionEnable(true)
-                  .withReverseLimitAutosetPositionValue(BoathookConstants.EXTENDER_REVERSE_LIMIT)
-                  .withReverseLimitRemoteSensorID(BoathookConstants.CANDI_ID)
-                  .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
-                  .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen)
+                  // Hardware limit switches don't currently work with RemoteCANcoder
+                  .withReverseLimitEnable(false)
+                  .withReverseLimitAutosetPositionEnable(false)
+                  //
+                  // .withReverseLimitAutosetPositionValue(BoathookConstants.EXTENDER_REVERSE_LIMIT)
+                  //                  .withReverseLimitRemoteSensorID(BoathookConstants.CANDI_ID)
+                  //                  .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)
+                  //                  .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen)
                   .withForwardLimitEnable(false)
                   .withForwardLimitAutosetPositionEnable(false));
 
@@ -169,7 +182,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.18) // 0.372
+                  .withMagnetOffset(.312)
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   CANdiConfiguration limitSensorsConfig =
@@ -180,6 +193,9 @@ public class Boathook extends SubsystemBase {
                   .withS1FloatState(S1FloatStateValue.FloatDetect)
                   .withS2CloseState(S2CloseStateValue.CloseWhenLow)
                   .withS2FloatState(S2FloatStateValue.FloatDetect));
+
+  private final VelocityVoltage zeroBoathookExtensionControl =
+      new VelocityVoltage(-.8).withEnableFOC(true).withIgnoreHardwareLimits(true).withSlot(2);
 
   public Boathook() {
     rotationMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -216,6 +232,10 @@ public class Boathook extends SubsystemBase {
     extenderMotor.setControl(new StaticBrake());
   }
 
+  public void setNeutralExtender() {
+    extenderMotor.setControl(new NeutralOut());
+  }
+
   public void setLevel(Level incomingLevel) {
     this.level = incomingLevel;
   }
@@ -229,10 +249,35 @@ public class Boathook extends SubsystemBase {
     Robot.robotContainer.m_orchestra.addInstrument(extenderMotor);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Boathook Angle", getAngle());
-    SmartDashboard.putNumber("Boathook Extension", getLength());
+  public void setSlowlyRetract() {
+    extenderMotor.setControl(zeroBoathookExtensionControl);
+  }
+
+  public boolean isExtenderAtMinimumLimit() {
+    return limitSensors.getS2Closed().getValue();
+  }
+
+  public boolean isRotationAtMinimumLimit() {
+    return limitSensors.getS1Closed().getValue();
+  }
+
+  public double extensionMagnetOffset() {
+    MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
+    extensionEncoder.getConfigurator().refresh(magnetSensorConfigs);
+
+    return magnetSensorConfigs.MagnetOffset;
+  }
+
+  public void zeroExtensionOffset() {
+    double position = extensionEncoder.getPosition().getValueAsDouble();
+
+    setMagnetOffset(-position);
+  }
+
+  public void setMagnetOffset(double offset) {
+    MagnetSensorConfigs magnetSensorConfigs =
+        extensionEncoderConfig.MagnetSensor.withMagnetOffset(offset);
+
+    extensionEncoder.getConfigurator().apply(magnetSensorConfigs);
   }
 }
