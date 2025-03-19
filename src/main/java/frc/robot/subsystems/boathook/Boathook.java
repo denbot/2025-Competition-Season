@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems.boathook;
 
-import static edu.wpi.first.units.Units.Volts;
-
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
@@ -15,11 +12,8 @@ import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
@@ -131,7 +125,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.3464)
+                  .withMagnetOffset(-0.3794)
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -157,7 +151,7 @@ public class Boathook extends SubsystemBase {
               new MotionMagicConfigs()
                   .withMotionMagicAcceleration(.5)
                   .withMotionMagicCruiseVelocity(1))
-                    .withSlot0(new Slot0Configs().withKP(20).withKD(0).withKG(0))
+          .withSlot0(new Slot0Configs().withKP(20).withKD(0).withKG(0))
           .withSlot2( // For ZeroBoathookExtension
               new Slot2Configs()
                   .withKP(1)
@@ -197,6 +191,10 @@ public class Boathook extends SubsystemBase {
   private final VelocityVoltage zeroBoathookExtensionControl =
       new VelocityVoltage(-.8).withEnableFOC(true).withIgnoreHardwareLimits(true).withSlot(2);
 
+  private final VoltageOut forceRotateIn = new VoltageOut(-2).withEnableFOC(true);
+
+  private final NeutralOut neutralOut = new NeutralOut();
+
   public Boathook() {
     rotationMotor.setNeutralMode(NeutralModeValue.Brake);
     extenderMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -233,7 +231,7 @@ public class Boathook extends SubsystemBase {
   }
 
   public void setNeutralExtender() {
-    extenderMotor.setControl(new NeutralOut());
+    extenderMotor.setControl(neutralOut);
   }
 
   public void setLevel(Level incomingLevel) {
@@ -271,13 +269,41 @@ public class Boathook extends SubsystemBase {
   public void zeroExtensionOffset() {
     double position = extensionEncoder.getPosition().getValueAsDouble();
 
-    setMagnetOffset(-position);
+    setExtensionMagnetOffset(-position);
   }
 
-  public void setMagnetOffset(double offset) {
+  public void setExtensionMagnetOffset(double offset) {
     MagnetSensorConfigs magnetSensorConfigs =
         extensionEncoderConfig.MagnetSensor.withMagnetOffset(offset);
 
     extensionEncoder.getConfigurator().apply(magnetSensorConfigs);
+  }
+
+  public double rotationMagnetOffset() {
+    MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
+    extensionEncoder.getConfigurator().refresh(magnetSensorConfigs);
+
+    return magnetSensorConfigs.MagnetOffset;
+  }
+
+  public void zeroRotationOffset(double offset) {
+    double position = rotationEncoder.getPosition().getValueAsDouble() - offset;
+
+    setExtensionMagnetOffset(-position);
+  }
+
+  public void setRotationMagnetOffset(double offset) {
+    MagnetSensorConfigs magnetSensorConfigs =
+        rotationEncoderConfig.MagnetSensor.withMagnetOffset(offset);
+
+    rotationEncoder.getConfigurator().apply(magnetSensorConfigs);
+  }
+
+  public void setForceRotateIn() {
+    rotationMotor.setControl(forceRotateIn);
+  }
+
+  public void setNeutralRotate() {
+    rotationMotor.setControl(neutralOut);
   }
 }

@@ -31,7 +31,7 @@ import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
-import frc.robot.commands.boathookCommands.calibration.ZeroBoathookExtension;
+import frc.robot.commands.boathookCommands.calibration.ZeroBoathookRotation;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
@@ -273,7 +273,7 @@ public class RobotContainer {
     operatorController2.button(2).onTrue(tenLeft);
     operatorController2.button(3).onTrue(tenRight);
     operatorController2.button(4).onTrue(stabBoathook);
-    operatorController2.button(5).whileTrue(new ZeroBoathookExtension(boathook));
+    operatorController2.button(5).onTrue(new ZeroBoathookRotation(boathook));
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
     operatorController2.button(8).onTrue(eightLeft);
