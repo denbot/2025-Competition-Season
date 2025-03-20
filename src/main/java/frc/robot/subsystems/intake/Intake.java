@@ -125,7 +125,8 @@ public class Intake extends SubsystemBase {
     intakeSensors.getConfigurator().apply(intakeSensorsConfig);
 
     NamedCommands.registerCommand(
-        "IntakeDown", new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
+        "autoIntakeDown",
+        new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
   }
 
   public double getRotationAngle() {

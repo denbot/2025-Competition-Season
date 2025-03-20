@@ -19,67 +19,23 @@
                 "data": {
                   "name": "8L"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoAlign"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ReefToSource8"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "SourceToReef8"
+                  "name": "autoIntakeDown"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "8R"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoAlign"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ReefToSource8"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SourceToReef6Top"
+                  "name": "autoIdle"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "6L"
+                  "name": "autoL4"
                 }
               }
             ]
@@ -89,12 +45,30 @@
           "type": "named",
           "data": {
             "name": "autoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoExtend"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoRetract"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Position1",
+  "folder": "LeftAutos",
   "choreoAuto": false
 }

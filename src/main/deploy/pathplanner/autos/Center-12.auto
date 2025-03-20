@@ -19,67 +19,23 @@
                 "data": {
                   "name": "12L"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoAlign"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ReefToSource12Top"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "SourceToReef10"
+                  "name": "autoL4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "10R"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoAlign"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ReefToSource10"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "SourceToReef10"
+                  "name": "autoIdle"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "10L"
+                  "name": "autoIntakeDown"
                 }
               }
             ]
@@ -89,12 +45,30 @@
           "type": "named",
           "data": {
             "name": "autoAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoExtend"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoRetract"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Position2",
+  "folder": "CenterAutos",
   "choreoAuto": false
 }

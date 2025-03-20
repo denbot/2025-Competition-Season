@@ -21,6 +21,8 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.SetLevelCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
@@ -191,8 +193,11 @@ public class Boathook extends SubsystemBase {
     extensionEncoder.getConfigurator().apply(extensionEncoderConfig);
     limitSensors.getConfigurator().apply(limitSensorsConfig);
 
-    NamedCommands.registerCommand("BoathookExtend", new BoathookExtendMotionPathCommand(this));
-    NamedCommands.registerCommand("BoathookRetract", new BoathookRetractMotionPathCommand(this));
+    NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
+    NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
+    NamedCommands.registerCommand("autoIdle", new AngleIdleBoathookCommand(this));
+    NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
+    NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }
 
   public void setAngle(double angle) {
