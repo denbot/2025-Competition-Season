@@ -1,6 +1,5 @@
 package frc.robot.commands.intakeCommands;
 
-import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,18 +25,15 @@ public class RunIntakeCommand extends Command {
 
   private final Boathook boathook;
   private final Intake intake;
-  private final DSControlWord controlWord;
   private final Direction direction;
-  private final Timer ejectingWait = new Timer();
+  private final Timer runningWait = new Timer();
 
   private final IntakeMoveCommand liftToL1;
   private final HandoffCommand runHandoff;
 
-  public RunIntakeCommand(
-      Intake intake, Direction direction, Boathook boathook, DSControlWord controlWord) {
+  public RunIntakeCommand(Intake intake, Boathook boathook, Direction direction) {
     this.intake = intake;
     this.boathook = boathook;
-    this.controlWord = controlWord;
     this.direction = direction;
     this.liftToL1 = new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2);
     this.runHandoff = new HandoffCommand(boathook, intake);
@@ -47,7 +43,7 @@ public class RunIntakeCommand extends Command {
   /** The initial subroutine of a command. Called once when the command is initially scheduled. */
   @Override
   public void initialize() {
-    ejectingWait.reset();
+    runningWait.reset();
     SmartDashboard.putString("IntakeStatus", "Running");
 
     if (direction == Direction.Intake && intake.isCoralIntaken()) {
@@ -69,15 +65,21 @@ public class RunIntakeCommand extends Command {
 
       if (coralIntaken) {
         Robot.rumble().coralIntaken.schedule();
-        if (boathook.getLevel() == Level.L1) {
-          liftToL1.schedule();
-          intake.flipL1Toggle();
-        } else {
-          runHandoff.schedule();
+        if (!runningWait.isRunning()) {
+          runningWait.restart();
+          return false;
+        }
+
+        if (runningWait.hasElapsed(.2)) {
+          if (boathook.getLevel() == Level.L1) {
+            liftToL1.schedule();
+            intake.flipL1Toggle();
+          } else {
+            runHandoff.schedule();
+          }
+          return true;
         }
       }
-
-      return coralIntaken;
     }
 
     if (direction == Direction.Eject) {
@@ -85,12 +87,12 @@ public class RunIntakeCommand extends Command {
         return false; // Still on the nub, need to wait for it not to be
       }
 
-      if (!ejectingWait.isRunning()) {
-        ejectingWait.restart();
+      if (!runningWait.isRunning()) {
+        runningWait.restart();
         return false;
       }
 
-      if (ejectingWait.hasElapsed(.4)) {
+      if (runningWait.hasElapsed(.4)) {
         Robot.rumble().coralEjected.schedule();
         return true;
       }

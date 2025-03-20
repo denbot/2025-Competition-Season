@@ -31,6 +31,10 @@ import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
+import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
@@ -81,6 +85,11 @@ public class RobotContainer {
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
   private final IntakeMoveCommand moveIntake;
+
+  private final MicroAdjustRotationCommand microRotationAdjustForwards;
+  private final MicroAdjustRotationCommand microRotationAdjustBackwards;
+  private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
+  private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -158,11 +167,18 @@ public class RobotContainer {
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
 
-    pullInCoral =
-        new RunIntakeCommand(intake, RunIntakeCommand.Direction.Intake, boathook, controlWord);
-    rejectCoral =
-        new RunIntakeCommand(intake, RunIntakeCommand.Direction.Eject, boathook, controlWord);
+    pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
+    rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
     moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
+
+    microRotationAdjustForwards =
+        new MicroAdjustRotationCommand(boathook, RotationDirection.OffsetForwards);
+    microRotationAdjustBackwards =
+        new MicroAdjustRotationCommand(boathook, RotationDirection.OffsetBackwards);
+    microExtensionAdjustInwards =
+        new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetInwards);
+    microExtensionAdjustOutwards =
+        new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -252,7 +268,10 @@ public class RobotContainer {
     // boathook.setDefaultCommand(idleBoathook);
     controller.rightBumper().onTrue(extendBoathook);
     controller.rightTrigger().onTrue(retractBoathook);
-
+    controller.povLeft().onTrue(microRotationAdjustBackwards);
+    controller.povRight().onTrue(microRotationAdjustForwards);
+    controller.povDown().onTrue(microExtensionAdjustInwards);
+    controller.povUp().onTrue(microExtensionAdjustOutwards);
     // controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));

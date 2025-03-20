@@ -21,6 +21,8 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.SetLevelCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
@@ -69,6 +71,7 @@ public class Boathook extends SubsystemBase {
   }
 
   private Level level = Level.L1;
+  public double microRotationOffset = 0.0;
 
   private static final TalonFX rotationMotor =
       new TalonFX(BoathookConstants.ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -106,7 +109,7 @@ public class Boathook extends SubsystemBase {
           //         .withMotionMagicCruiseVelocity(1))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(32)
+                  .withKP(20)
                   .withKD(0)
                   .withKS(0)
                   .withKG(0)
@@ -127,7 +130,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.3464)
+                  .withMagnetOffset(-0.36819140625)
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -190,8 +193,11 @@ public class Boathook extends SubsystemBase {
     extensionEncoder.getConfigurator().apply(extensionEncoderConfig);
     limitSensors.getConfigurator().apply(limitSensorsConfig);
 
-    NamedCommands.registerCommand("BoathookExtend", new BoathookExtendMotionPathCommand(this));
-    NamedCommands.registerCommand("BoathookRetract", new BoathookRetractMotionPathCommand(this));
+    NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
+    NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
+    NamedCommands.registerCommand("autoIdle", new AngleIdleBoathookCommand(this));
+    NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
+    NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }
 
   public void setAngle(double angle) {
@@ -210,6 +216,10 @@ public class Boathook extends SubsystemBase {
   public double getLength() {
     StatusSignal<Angle> length = extenderMotor.getPosition();
     return length.getValueAsDouble();
+  }
+
+  public double getLengthSetpoint() {
+    return extenderMotor.getClosedLoopReference().getValueAsDouble();
   }
 
   public void setBrakeExtender() {
@@ -234,5 +244,7 @@ public class Boathook extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());
     SmartDashboard.putNumber("Boathook Extension", getLength());
+    SmartDashboard.putNumber("MicroRotation", microRotationOffset);
+    SmartDashboard.putNumber("MicroExtension", getLengthSetpoint());
   }
 }

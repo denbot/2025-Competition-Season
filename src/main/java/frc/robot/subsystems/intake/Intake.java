@@ -125,7 +125,8 @@ public class Intake extends SubsystemBase {
     intakeSensors.getConfigurator().apply(intakeSensorsConfig);
 
     NamedCommands.registerCommand(
-        "IntakeDown", new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
+        "autoIntakeDown",
+        new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
   }
 
   public double getRotationAngle() {
@@ -171,6 +172,6 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isCoralIntaken() {
-    return intakeSensors.getS2Closed().getValue();
+    return intakeSensors.getS2Closed().getValue() || intakeSensors.getS1Closed().getValue();
   }
 }

@@ -27,7 +27,7 @@ public class AngleIdleBoathookCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boathook.setAngle(BoathookConstants.IDLE_ANGLE);
+    boathook.setAngle(BoathookConstants.IDLE_ANGLE + boathook.microRotationOffset);
     System.out.println("IDLE COMMAND CURRENT ANGLE: " + boathook.getAngle());
   }
 
@@ -40,6 +40,8 @@ public class AngleIdleBoathookCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(boathook.getAngle() - BoathookConstants.IDLE_ANGLE) < 7;
+    return Math.abs(
+            boathook.getAngle() - (BoathookConstants.IDLE_ANGLE + boathook.microRotationOffset))
+        < 7;
   }
 }

@@ -8,9 +8,9 @@
     "Starts"
   ],
   "autoFolders": [
-    "Position3",
-    "Position1",
-    "Position2"
+    "LeftAutos",
+    "CenterAutos",
+    "RightAutos"
   ],
   "defaultMaxVel": 4.0,
   "defaultMaxAccel": 3.0,
