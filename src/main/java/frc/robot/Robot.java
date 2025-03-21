@@ -124,7 +124,7 @@ public class Robot extends LoggedRobot {
     // From
     // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
     visionMatrix.fill(0.5); // X/Y location to 0.5
-    visionMatrix.set(2, 0, 1); // Vision rotation is not to be trusted, apparently
+    visionMatrix.set(2, 0, 999999); // Vision rotation is not to be trusted, apparently
   }
 
   @Override

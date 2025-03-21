@@ -35,7 +35,7 @@ public class RunIntakeCommand extends Command {
     this.intake = intake;
     this.boathook = boathook;
     this.direction = direction;
-    this.liftToL1 = new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2);
+    this.liftToL1 = new IntakeMoveCommand(intake, true, IntakeConstants.intakeL1Angle, 1, 2);
     this.runHandoff = new HandoffCommand(boathook, intake);
     addRequirements(this.intake);
   }
@@ -73,7 +73,6 @@ public class RunIntakeCommand extends Command {
         if (runningWait.hasElapsed(.2)) {
           if (boathook.getLevel() == Level.L1) {
             liftToL1.schedule();
-            intake.flipL1Toggle();
           } else {
             runHandoff.schedule();
           }

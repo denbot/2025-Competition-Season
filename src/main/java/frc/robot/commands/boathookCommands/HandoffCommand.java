@@ -27,7 +27,7 @@ public class HandoffCommand extends SequentialCommandGroup {
         new AngleIdleBoathookCommand(boathook),
         new ExtendBoathookCommandStab(boathook),
         new AngleStabBoathookCommand(boathook),
-        new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 0),
+        new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 8),
         new HandoffPrepIntakeCommand(intake, 0.25),
         new ParallelCommandGroup(
             new AngleIdleBoathookCommand(boathook), new HandoffPrepIntakeCommand(intake, 0.5)),
