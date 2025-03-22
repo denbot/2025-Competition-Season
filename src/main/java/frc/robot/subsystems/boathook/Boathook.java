@@ -117,8 +117,8 @@ public class Boathook extends SubsystemBase {
                   .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign))
           .withHardwareLimitSwitch(
               new HardwareLimitSwitchConfigs()
-                  .withReverseLimitEnable(true)
-                  .withReverseLimitAutosetPositionEnable(true)
+                  .withReverseLimitEnable(false)
+                  .withReverseLimitAutosetPositionEnable(false)
                   .withReverseLimitAutosetPositionValue(BoathookConstants.ROTATOR_REVERSE_LIMIT)
                   .withReverseLimitRemoteSensorID(BoathookConstants.CANDI_ID)
                   .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS1)
@@ -159,8 +159,8 @@ public class Boathook extends SubsystemBase {
           .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
           .withHardwareLimitSwitch(
               new HardwareLimitSwitchConfigs()
-                  .withReverseLimitEnable(true)
-                  .withReverseLimitAutosetPositionEnable(true)
+                  .withReverseLimitEnable(false)
+                  .withReverseLimitAutosetPositionEnable(false)
                   .withReverseLimitAutosetPositionValue(BoathookConstants.EXTENDER_REVERSE_LIMIT)
                   .withReverseLimitRemoteSensorID(BoathookConstants.CANDI_ID)
                   .withReverseLimitSource(ReverseLimitSourceValue.RemoteCANdiS2)

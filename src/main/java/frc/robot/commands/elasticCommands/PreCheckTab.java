@@ -44,7 +44,7 @@ public class PreCheckTab extends Command {
 
     allSystemsGo = isLimelightConnected(Limelights.LEFT) && allSystemsGo;
     allSystemsGo = isLimelightConnected(Limelights.RIGHT) && allSystemsGo;
-    allSystemsGo = isLimelightConnected(Limelights.REAR) && allSystemsGo;
+    // allSystemsGo = isLimelightConnected(Limelights.REAR) && allSystemsGo;
 
     tab.getEntry("All Systems Go!").setBoolean(allSystemsGo);
   }

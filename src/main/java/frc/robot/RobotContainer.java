@@ -29,7 +29,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.DefensePositionCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
+import frc.robot.commands.boathookCommands.LeaveDefensePositionCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -81,6 +83,8 @@ public class RobotContainer {
   private final BoathookExtendMotionPathCommand extendBoathook;
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final HandoffCommand stabBoathook;
+  private final DefensePositionCommand defenseCommand;
+  private final LeaveDefensePositionCommand leaveDefenseCommand;
 
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
@@ -166,6 +170,8 @@ public class RobotContainer {
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
+    defenseCommand = new DefensePositionCommand(boathook, intake);
+    leaveDefenseCommand = new LeaveDefensePositionCommand(boathook, intake);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -291,8 +297,8 @@ public class RobotContainer {
     operatorController2.button(2).onTrue(tenLeft);
     operatorController2.button(3).onTrue(tenRight);
     operatorController2.button(4).onTrue(stabBoathook);
-    // operatorController2.button(5).onTrue(TODO);
-    // operatorController2.button(6).onTrue(TODO);
+    operatorController2.button(5).onTrue(defenseCommand);
+    operatorController2.button(6).onTrue(leaveDefenseCommand);
     // operatorController2.button(7).onTrue(TODO);
     operatorController2.button(8).onTrue(eightLeft);
     operatorController2.button(11).onTrue(eightRight);
