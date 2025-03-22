@@ -14,7 +14,7 @@ import frc.robot.subsystems.intake.Intake;
 public class RunIntakeCommand extends Command {
   public enum Direction {
     Intake(Constants.IntakeConstants.intakeSpeed),
-    Eject(-Constants.IntakeConstants.intakeSpeed);
+    Eject(-Constants.IntakeConstants.intakeSpeed * 1.5);
 
     private final double speed;
 

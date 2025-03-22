@@ -89,8 +89,8 @@ public final class Constants {
     // Extension in rotations
     public static final double STAB_EXTENSION = 0.02;
     public static final double IDLE_EXTENSION = 0.02;
-    public static final double L2_EXTENSION = 0.8;
+    public static final double L2_EXTENSION = 0.7;
     public static final double L3_EXTENSION = 2;
-    public static final double L4_EXTENSION = 4.3;
+    public static final double L4_EXTENSION = 3.8;
   }
 }

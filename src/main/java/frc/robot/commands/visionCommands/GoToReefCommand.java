@@ -139,6 +139,9 @@ public class GoToReefCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (translate == null) {
+      return false;
+    }
     return (Math.abs(lastAngleError) < 3
             && Math.sqrt(Math.pow(translate.getZ(), 2) + Math.pow(translate.getX(), 2)) < 0.1)
         || (framesDropped > 5);
