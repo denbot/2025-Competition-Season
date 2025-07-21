@@ -13,8 +13,8 @@ public class MicroAdjustExtensionCommand extends Command {
   private final Boathook boathook;
 
   public enum ExtensionDirection {
-    OffsetOutwards(0.01),
-    OffsetInwards(-0.01);
+    OffsetOutwards(0.03),
+    OffsetInwards(-0.03);
 
     private final double offsetIncrement;
 

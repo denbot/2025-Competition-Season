@@ -151,12 +151,12 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
-    maybeAddVisionMeasurement(Limelights.LEFT.name);
+    // maybeAddVisionMeasurement(Limelights.LEFT.name);
     maybeAddVisionMeasurement(Limelights.RIGHT.name);
     field.setRobotPose(robotContainer.drive.getPose());
 
-    SmartDashboard.putNumberArray(
-        "Pose", LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name));
+    // SmartDashboard.putNumberArray(
+    //     "Pose", LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name));
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {
