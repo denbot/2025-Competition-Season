@@ -19,10 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
-import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookCommands;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
@@ -195,9 +193,10 @@ public class Boathook extends SubsystemBase {
 
     NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
     NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
-    NamedCommands.registerCommand("autoIdle", new AngleIdleBoathookCommand(this));
-    NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
-    NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
+    NamedCommands.registerCommand("autoIdle", BoathookCommands.newIdleCommand(this));
+    NamedCommands.registerCommand("autoExtend", BoathookCommands.newExtendMotoinPathCommand(this));
+    NamedCommands.registerCommand(
+        "autoRetract", BoathookCommands.newRetractMotionPathCommand(this));
   }
 
   public void setAngle(double angle) {
