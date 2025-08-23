@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
+import frc.robot.commands.ReefTargetPoses;
 import frc.robot.commands.boathookCommands.BoathookCommands;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
@@ -92,6 +93,7 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
   private final OnTheFlyAlignCommand onTheFlyAlignCommand;
+  public static final ReefTargetPoses currentTargetPose = ReefTargetPoses.TWELVE_LEFT;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
