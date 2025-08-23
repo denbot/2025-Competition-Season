@@ -1,5 +1,6 @@
 package frc.robot.game;
 
+/*
 public enum ReefTarget {
   TWO_LEFT(ReefAprilTag.TWO, Direction.LEFT),
   FOUR_LEFT(ReefAprilTag.FOUR, Direction.LEFT),
@@ -23,9 +24,5 @@ public enum ReefTarget {
     this.direction = direction;
     this.angle = aprilTag.angle;
   }
-
-  public enum Direction {
-    LEFT,
-    RIGHT
-  }
 }
+*/

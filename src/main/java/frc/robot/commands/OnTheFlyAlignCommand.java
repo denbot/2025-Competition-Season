@@ -14,9 +14,7 @@ public class OnTheFlyAlignCommand extends Command {
   Command pathFindingCommand;
   public Pose2d targetPose;
 
-  public OnTheFlyAlignCommand(Drive drive, Pose2d targetPose) {
-    System.out.println("Created");
-    this.targetPose = targetPose;
+  public OnTheFlyAlignCommand(Drive drive) {
     addRequirements(drive);
   }
 
@@ -25,8 +23,11 @@ public class OnTheFlyAlignCommand extends Command {
 
   @Override
   public void execute() {
-    System.out.println("Executing On-The-Fly Command");
-
+    System.out.println(
+        "Aligning To: "
+            + RobotContainer.currentTargetPose.x
+            + ", "
+            + RobotContainer.currentTargetPose.y);
     pathFindingCommand =
         AutoBuilder.pathfindToPose(
             new Pose2d(
