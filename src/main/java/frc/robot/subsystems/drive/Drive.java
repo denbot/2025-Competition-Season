@@ -50,9 +50,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.commands.ReefTargetPoses;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
-import frc.robot.game.ReefTarget;
+import frc.robot.game.ReefAprilTag;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -135,18 +136,30 @@ public class Drive extends SubsystemBase {
     PhoenixOdometryThread.getInstance().start();
 
     NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
-    NamedCommands.registerCommand("12L", new TargetChange(ReefTarget.TWELVE_LEFT));
-    NamedCommands.registerCommand("12R", new TargetChange(ReefTarget.TWELVE_RIGHT));
-    NamedCommands.registerCommand("10L", new TargetChange(ReefTarget.TEN_LEFT));
-    NamedCommands.registerCommand("10R", new TargetChange(ReefTarget.TEN_RIGHT));
-    NamedCommands.registerCommand("8L", new TargetChange(ReefTarget.EIGHT_LEFT));
-    NamedCommands.registerCommand("8R", new TargetChange(ReefTarget.EIGHT_RIGHT));
-    NamedCommands.registerCommand("6L", new TargetChange(ReefTarget.SIX_LEFT));
-    NamedCommands.registerCommand("6R", new TargetChange(ReefTarget.SIX_RIGHT));
-    NamedCommands.registerCommand("4L", new TargetChange(ReefTarget.FOUR_LEFT));
-    NamedCommands.registerCommand("4R", new TargetChange(ReefTarget.FOUR_RIGHT));
-    NamedCommands.registerCommand("2L", new TargetChange(ReefTarget.TWO_LEFT));
-    NamedCommands.registerCommand("2R", new TargetChange(ReefTarget.TWO_RIGHT));
+    NamedCommands.registerCommand(
+        "12L", new TargetChange(ReefTargetPoses.TWELVE_LEFT, ReefAprilTag.TWELVE));
+    NamedCommands.registerCommand(
+        "12R", new TargetChange(ReefTargetPoses.TWELVE_RIGHT, ReefAprilTag.TWELVE));
+    NamedCommands.registerCommand(
+        "10L", new TargetChange(ReefTargetPoses.TEN_LEFT, ReefAprilTag.TEN));
+    NamedCommands.registerCommand(
+        "10R", new TargetChange(ReefTargetPoses.TEN_RIGHT, ReefAprilTag.TEN));
+    NamedCommands.registerCommand(
+        "8L", new TargetChange(ReefTargetPoses.EIGHT_LEFT, ReefAprilTag.EIGHT));
+    NamedCommands.registerCommand(
+        "8R", new TargetChange(ReefTargetPoses.EIGHT_RIGHT, ReefAprilTag.EIGHT));
+    NamedCommands.registerCommand(
+        "6L", new TargetChange(ReefTargetPoses.SIX_LEFT, ReefAprilTag.SIX));
+    NamedCommands.registerCommand(
+        "6R", new TargetChange(ReefTargetPoses.SIX_RIGHT, ReefAprilTag.SIX));
+    NamedCommands.registerCommand(
+        "4L", new TargetChange(ReefTargetPoses.FOUR_LEFT, ReefAprilTag.FOUR));
+    NamedCommands.registerCommand(
+        "4R", new TargetChange(ReefTargetPoses.FOUR_RIGHT, ReefAprilTag.FOUR));
+    NamedCommands.registerCommand(
+        "2L", new TargetChange(ReefTargetPoses.TWO_LEFT, ReefAprilTag.TWO));
+    NamedCommands.registerCommand(
+        "2R", new TargetChange(ReefTargetPoses.TWO_RIGHT, ReefAprilTag.TWO));
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(

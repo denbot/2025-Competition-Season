@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
+import frc.robot.commands.ReefTargetPoses;
 import frc.robot.commands.boathookCommands.BoathookCommands;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
@@ -37,8 +38,9 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
+import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
-import frc.robot.game.ReefTarget;
+import frc.robot.game.ReefAprilTag;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -76,7 +78,7 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  // private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
+  private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
   private final SequentialCommandGroup extendBoathook;
   private final SequentialCommandGroup retractBoathook;
@@ -92,27 +94,37 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
   private final OnTheFlyAlignCommand onTheFlyAlignCommand;
+  public static ReefTargetPoses currentTargetPose = ReefTargetPoses.TWELVE_LEFT;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private final TargetChange twelveLeft = new TargetChange(ReefTarget.TWELVE_LEFT);
-  private final TargetChange twelveRight = new TargetChange(ReefTarget.TWELVE_RIGHT);
+  private final TargetChange twelveLeft =
+      new TargetChange(ReefTargetPoses.TWELVE_LEFT, ReefAprilTag.TWELVE);
+  private final TargetChange twelveRight =
+      new TargetChange(ReefTargetPoses.TWELVE_RIGHT, ReefAprilTag.TWELVE);
 
-  private final TargetChange tenLeft = new TargetChange(ReefTarget.TEN_LEFT);
-  private final TargetChange tenRight = new TargetChange(ReefTarget.TEN_RIGHT);
+  private final TargetChange tenLeft = new TargetChange(ReefTargetPoses.TEN_LEFT, ReefAprilTag.TEN);
+  private final TargetChange tenRight =
+      new TargetChange(ReefTargetPoses.TEN_RIGHT, ReefAprilTag.TEN);
 
-  private final TargetChange eightLeft = new TargetChange(ReefTarget.EIGHT_LEFT);
-  private final TargetChange eightRight = new TargetChange(ReefTarget.EIGHT_RIGHT);
+  private final TargetChange eightLeft =
+      new TargetChange(ReefTargetPoses.EIGHT_LEFT, ReefAprilTag.EIGHT);
+  private final TargetChange eightRight =
+      new TargetChange(ReefTargetPoses.EIGHT_RIGHT, ReefAprilTag.EIGHT);
 
-  private final TargetChange sixLeft = new TargetChange(ReefTarget.SIX_LEFT);
-  private final TargetChange sixRight = new TargetChange(ReefTarget.SIX_RIGHT);
+  private final TargetChange sixLeft = new TargetChange(ReefTargetPoses.SIX_LEFT, ReefAprilTag.SIX);
+  private final TargetChange sixRight =
+      new TargetChange(ReefTargetPoses.SIX_RIGHT, ReefAprilTag.SIX);
 
-  private final TargetChange fourLeft = new TargetChange(ReefTarget.FOUR_LEFT);
-  private final TargetChange fourRight = new TargetChange(ReefTarget.FOUR_RIGHT);
+  private final TargetChange fourLeft =
+      new TargetChange(ReefTargetPoses.FOUR_LEFT, ReefAprilTag.FOUR);
+  private final TargetChange fourRight =
+      new TargetChange(ReefTargetPoses.FOUR_RIGHT, ReefAprilTag.FOUR);
 
-  private final TargetChange twoLeft = new TargetChange(ReefTarget.TWO_LEFT);
-  private final TargetChange twoRight = new TargetChange(ReefTarget.TWO_RIGHT);
+  private final TargetChange twoLeft = new TargetChange(ReefTargetPoses.TWO_LEFT, ReefAprilTag.TWO);
+  private final TargetChange twoRight =
+      new TargetChange(ReefTargetPoses.TWO_RIGHT, ReefAprilTag.TWO);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -164,7 +176,7 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
-    // reef = new GoToReefCommand(drive);
+    reef = new GoToReefCommand(drive);
     extendBoathook = BoathookCommands.newExtendMotoinPathCommand(boathook);
     retractBoathook = BoathookCommands.newRetractMotionPathCommand(boathook);
     stabBoathook = BoathookCommands.newHandoffCommand(boathook, intake);
@@ -182,7 +194,7 @@ public class RobotContainer {
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
-    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive, new Pose2d(10, 10, new Rotation2d(0)));
+    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -263,7 +275,8 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(onTheFlyAlignCommand);
+    controller.b().onTrue(reef);
+    controller.x().onTrue(onTheFlyAlignCommand);
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);

@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -51,7 +50,6 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   public static RobotContainer robotContainer;
   private final Matrix<N3, N1> visionMatrix = new Matrix<>(Nat.N3(), Nat.N1());
-  public static ReefTarget reefTarget = ReefTarget.TWELVE_LEFT;
   private Field2d field = new Field2d();
   private final Timer timer = new Timer();
 
@@ -149,6 +147,8 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
+    SmartDashboard.putNumber("Target X", RobotContainer.currentTargetPose.x);
+    SmartDashboard.putNumber("Target Y", RobotContainer.currentTargetPose.y);
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -247,8 +247,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
-    SmartDashboard.putString("Direction", String.valueOf(reefTarget.direction));
-    SmartDashboard.putNumber("Angle", reefTarget.angle);
+    SmartDashboard.putString(
+        "Direction", String.valueOf(RobotContainer.currentTargetPose.direction));
+    SmartDashboard.putNumber("Angle", RobotContainer.currentTargetPose.angle);
   }
 
   /** This function is called once when test mode is enabled. */

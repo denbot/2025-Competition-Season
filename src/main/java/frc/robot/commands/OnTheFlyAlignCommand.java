@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 
 public class OnTheFlyAlignCommand extends Command {
@@ -13,9 +14,7 @@ public class OnTheFlyAlignCommand extends Command {
   Command pathFindingCommand;
   public Pose2d targetPose;
 
-  public OnTheFlyAlignCommand(Drive drive, Pose2d targetPose) {
-    System.out.println("Created");
-    this.targetPose = targetPose;
+  public OnTheFlyAlignCommand(Drive drive) {
     addRequirements(drive);
   }
 
@@ -24,13 +23,19 @@ public class OnTheFlyAlignCommand extends Command {
 
   @Override
   public void execute() {
-    System.out.println("Executing On-The-Fly Command");
-
+    System.out.println(
+        "Aligning To: "
+            + RobotContainer.currentTargetPose.x
+            + ", "
+            + RobotContainer.currentTargetPose.y);
     pathFindingCommand =
         AutoBuilder.pathfindToPose(
-            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(
+                RobotContainer.currentTargetPose.x,
+                RobotContainer.currentTargetPose.y,
+                new Rotation2d(Units.degreesToRadians(RobotContainer.currentTargetPose.angle))),
             new PathConstraints(
-                3.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+                2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
   }
 
   @Override
