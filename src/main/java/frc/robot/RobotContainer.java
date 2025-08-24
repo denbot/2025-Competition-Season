@@ -30,7 +30,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
 import frc.robot.commands.ReefTargetPoses;
-import frc.robot.commands.boathookCommands.BoathookCommands;
+import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -177,9 +179,9 @@ public class RobotContainer {
     rumbleSubsystem = new RumbleSubsystem(controller);
 
     reef = new GoToReefCommand(drive);
-    extendBoathook = BoathookCommands.newExtendMotoinPathCommand(boathook);
-    retractBoathook = BoathookCommands.newRetractMotionPathCommand(boathook);
-    stabBoathook = BoathookCommands.newHandoffCommand(boathook, intake);
+    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
+    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
+    stabBoathook = new HandoffCommand(boathook, intake);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
