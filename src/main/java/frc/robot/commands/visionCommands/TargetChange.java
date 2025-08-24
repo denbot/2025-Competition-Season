@@ -6,14 +6,14 @@ package frc.robot.commands.visionCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.commands.ReefTargetPoses;
+import frc.robot.commands.ReefTargetPose;
 import frc.robot.game.ReefAprilTag;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TargetChange extends Command {
-  private ReefTargetPoses targetPath = null;
+  private ReefTargetPose targetPath = null;
 
-  public TargetChange(ReefTargetPoses targetPath, ReefAprilTag targetApril) {
+  public TargetChange(ReefTargetPose targetPath, ReefAprilTag targetApril) {
     this.targetPath = targetPath;
   }
 
