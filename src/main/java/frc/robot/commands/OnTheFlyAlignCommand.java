@@ -10,8 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 
 public class OnTheFlyAlignCommand extends Command {
-  // private static PathConstraints constraints;
-  Command pathFindingCommand;
+  public Command pathFindingCommand;
   public Pose2d targetPose;
 
   public OnTheFlyAlignCommand(Drive drive) {
@@ -28,6 +27,9 @@ public class OnTheFlyAlignCommand extends Command {
             + RobotContainer.currentTargetPose.x
             + ", "
             + RobotContainer.currentTargetPose.y);
+
+    // initializes new pathFindToPose command which both create a path and has the robot follow said
+    // path
     pathFindingCommand =
         AutoBuilder.pathfindToPose(
             new Pose2d(
@@ -35,13 +37,14 @@ public class OnTheFlyAlignCommand extends Command {
                 RobotContainer.currentTargetPose.y,
                 new Rotation2d(Units.degreesToRadians(RobotContainer.currentTargetPose.angle))),
             new PathConstraints(
-                2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+                6.0, 6.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
   }
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("Ended On-The-Fly Command");
+    // schedule the new command so it will actually move the robot
     pathFindingCommand.schedule();
+    System.out.println("Ended On-The-Fly Command");
   }
 
   @Override
