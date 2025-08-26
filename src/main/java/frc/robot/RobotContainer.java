@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommandScheduler;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
 import frc.robot.commands.ReefTargetPose;
@@ -95,8 +96,9 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  private final OnTheFlyAlignCommand onTheFlyAlignCommand;
+  public final OnTheFlyAlignCommand onTheFlyAlignCommand;
   public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+  public AutoCommandScheduler autoAlign;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -121,6 +123,10 @@ public class RobotContainer {
 
   private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT, ReefAprilTag.TWO);
   private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT, ReefAprilTag.TWO);
+
+  private TargetChange humanLeft = new TargetChange(ReefTargetPose.HUMAN_LEFT, ReefAprilTag.TWELVE);
+  private TargetChange humanRight =
+      new TargetChange(ReefTargetPose.HUMAN_RIGHT, ReefAprilTag.TWELVE);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -209,6 +215,7 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
+    autoAlign = new AutoCommandScheduler(twelveLeft, humanLeft, sixRight);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -335,7 +342,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
+  public AutoCommandScheduler getAutonomousCommand() {
+    return autoAlign;
   }
 }

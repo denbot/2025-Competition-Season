@@ -15,7 +15,10 @@ public enum ReefTargetPose {
   SIX_RIGHT(3.2, 3.86, 0, ReefAprilTag.SIX, Direction.RIGHT),
   EIGHT_RIGHT(3.68, 5.01, -60, ReefAprilTag.EIGHT, Direction.RIGHT),
   TEN_RIGHT(5.16, 5.16, -120, ReefAprilTag.TEN, Direction.RIGHT),
-  TWELVE_RIGHT(5.84, 4.2, 180, ReefAprilTag.TWELVE, Direction.RIGHT);
+  TWELVE_RIGHT(5.84, 4.2, 180, ReefAprilTag.TWELVE, Direction.RIGHT),
+  // Human Player Locations, april tag vars are currently placeholder
+  HUMAN_LEFT(1.3, 1.0, -130, ReefAprilTag.TWELVE, Direction.LEFT),
+  HUMAN_RIGHT(1.3, 6.6, 130, ReefAprilTag.TWELVE, Direction.RIGHT);
 
   // OTF variables
   public double x;
