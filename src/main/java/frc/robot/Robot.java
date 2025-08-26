@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoCommandScheduler;
-import frc.robot.commands.StartPosition;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -125,7 +124,7 @@ public class Robot extends LoggedRobot {
     visionMatrix.fill(0.5); // X/Y location to 0.5
     visionMatrix.set(2, 0, 1); // Vision rotation is not to be trusted, apparently
     // Start robot on a desired starting position
-    robotContainer.drive.setPose(StartPosition.RED_ONE.pose);
+    robotContainer.drive.setPose(robotContainer.RobotStartPos.pose);
   }
 
   @Override

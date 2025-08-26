@@ -30,7 +30,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutoCommandScheduler;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
-import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.OnTheFlyTarget;
+import frc.robot.commands.StartPosition;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
@@ -97,36 +98,38 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
   public final OnTheFlyAlignCommand onTheFlyAlignCommand;
-  public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+  public static OnTheFlyTarget currentTargetPose = OnTheFlyTarget.TWELVE_LEFT;
   public AutoCommandScheduler autoAlign;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
   private TargetChange twelveLeft =
-      new TargetChange(ReefTargetPose.TWELVE_LEFT, ReefAprilTag.TWELVE);
+      new TargetChange(OnTheFlyTarget.TWELVE_LEFT, ReefAprilTag.TWELVE);
   private TargetChange twelveRight =
-      new TargetChange(ReefTargetPose.TWELVE_RIGHT, ReefAprilTag.TWELVE);
+      new TargetChange(OnTheFlyTarget.TWELVE_RIGHT, ReefAprilTag.TWELVE);
 
-  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT, ReefAprilTag.TEN);
-  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT, ReefAprilTag.TEN);
+  private TargetChange tenLeft = new TargetChange(OnTheFlyTarget.TEN_LEFT, ReefAprilTag.TEN);
+  private TargetChange tenRight = new TargetChange(OnTheFlyTarget.TEN_RIGHT, ReefAprilTag.TEN);
 
-  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT, ReefAprilTag.EIGHT);
+  private TargetChange eightLeft = new TargetChange(OnTheFlyTarget.EIGHT_LEFT, ReefAprilTag.EIGHT);
   private TargetChange eightRight =
-      new TargetChange(ReefTargetPose.EIGHT_RIGHT, ReefAprilTag.EIGHT);
+      new TargetChange(OnTheFlyTarget.EIGHT_RIGHT, ReefAprilTag.EIGHT);
 
-  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT, ReefAprilTag.SIX);
-  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT, ReefAprilTag.SIX);
+  private TargetChange sixLeft = new TargetChange(OnTheFlyTarget.SIX_LEFT, ReefAprilTag.SIX);
+  private TargetChange sixRight = new TargetChange(OnTheFlyTarget.SIX_RIGHT, ReefAprilTag.SIX);
 
-  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT, ReefAprilTag.FOUR);
-  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT, ReefAprilTag.FOUR);
+  private TargetChange fourLeft = new TargetChange(OnTheFlyTarget.FOUR_LEFT, ReefAprilTag.FOUR);
+  private TargetChange fourRight = new TargetChange(OnTheFlyTarget.FOUR_RIGHT, ReefAprilTag.FOUR);
 
-  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT, ReefAprilTag.TWO);
-  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT, ReefAprilTag.TWO);
+  private TargetChange twoLeft = new TargetChange(OnTheFlyTarget.TWO_LEFT, ReefAprilTag.TWO);
+  private TargetChange twoRight = new TargetChange(OnTheFlyTarget.TWO_RIGHT, ReefAprilTag.TWO);
 
-  private TargetChange humanLeft = new TargetChange(ReefTargetPose.HUMAN_LEFT, ReefAprilTag.TWELVE);
+  private TargetChange humanLeft = new TargetChange(OnTheFlyTarget.HUMAN_LEFT, ReefAprilTag.TWELVE);
   private TargetChange humanRight =
-      new TargetChange(ReefTargetPose.HUMAN_RIGHT, ReefAprilTag.TWELVE);
+      new TargetChange(OnTheFlyTarget.HUMAN_RIGHT, ReefAprilTag.TWELVE);
+
+  public final StartPosition RobotStartPos = StartPosition.RED_ONE;
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -217,7 +220,17 @@ public class RobotContainer {
     onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
     autoAlign =
         new AutoCommandScheduler(
-            twelveLeft, humanLeft, sixRight, humanLeft, eightLeft, humanRight, tenRight);
+            twelveLeft,
+            humanLeft,
+            sixRight,
+            humanLeft,
+            eightLeft,
+            humanRight,
+            tenRight,
+            humanLeft,
+            twoLeft,
+            humanRight,
+            twelveLeft);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 

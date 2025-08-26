@@ -50,7 +50,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.OnTheFlyTarget;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.game.ReefAprilTag;
@@ -137,29 +137,29 @@ public class Drive extends SubsystemBase {
 
     NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
     NamedCommands.registerCommand(
-        "12L", new TargetChange(ReefTargetPose.TWELVE_LEFT, ReefAprilTag.TWELVE));
+        "12L", new TargetChange(OnTheFlyTarget.TWELVE_LEFT, ReefAprilTag.TWELVE));
     NamedCommands.registerCommand(
-        "12R", new TargetChange(ReefTargetPose.TWELVE_RIGHT, ReefAprilTag.TWELVE));
+        "12R", new TargetChange(OnTheFlyTarget.TWELVE_RIGHT, ReefAprilTag.TWELVE));
     NamedCommands.registerCommand(
-        "10L", new TargetChange(ReefTargetPose.TEN_LEFT, ReefAprilTag.TEN));
+        "10L", new TargetChange(OnTheFlyTarget.TEN_LEFT, ReefAprilTag.TEN));
     NamedCommands.registerCommand(
-        "10R", new TargetChange(ReefTargetPose.TEN_RIGHT, ReefAprilTag.TEN));
+        "10R", new TargetChange(OnTheFlyTarget.TEN_RIGHT, ReefAprilTag.TEN));
     NamedCommands.registerCommand(
-        "8L", new TargetChange(ReefTargetPose.EIGHT_LEFT, ReefAprilTag.EIGHT));
+        "8L", new TargetChange(OnTheFlyTarget.EIGHT_LEFT, ReefAprilTag.EIGHT));
     NamedCommands.registerCommand(
-        "8R", new TargetChange(ReefTargetPose.EIGHT_RIGHT, ReefAprilTag.EIGHT));
+        "8R", new TargetChange(OnTheFlyTarget.EIGHT_RIGHT, ReefAprilTag.EIGHT));
     NamedCommands.registerCommand(
-        "6L", new TargetChange(ReefTargetPose.SIX_LEFT, ReefAprilTag.SIX));
+        "6L", new TargetChange(OnTheFlyTarget.SIX_LEFT, ReefAprilTag.SIX));
     NamedCommands.registerCommand(
-        "6R", new TargetChange(ReefTargetPose.SIX_RIGHT, ReefAprilTag.SIX));
+        "6R", new TargetChange(OnTheFlyTarget.SIX_RIGHT, ReefAprilTag.SIX));
     NamedCommands.registerCommand(
-        "4L", new TargetChange(ReefTargetPose.FOUR_LEFT, ReefAprilTag.FOUR));
+        "4L", new TargetChange(OnTheFlyTarget.FOUR_LEFT, ReefAprilTag.FOUR));
     NamedCommands.registerCommand(
-        "4R", new TargetChange(ReefTargetPose.FOUR_RIGHT, ReefAprilTag.FOUR));
+        "4R", new TargetChange(OnTheFlyTarget.FOUR_RIGHT, ReefAprilTag.FOUR));
     NamedCommands.registerCommand(
-        "2L", new TargetChange(ReefTargetPose.TWO_LEFT, ReefAprilTag.TWO));
+        "2L", new TargetChange(OnTheFlyTarget.TWO_LEFT, ReefAprilTag.TWO));
     NamedCommands.registerCommand(
-        "2R", new TargetChange(ReefTargetPose.TWO_RIGHT, ReefAprilTag.TWO));
+        "2R", new TargetChange(OnTheFlyTarget.TWO_RIGHT, ReefAprilTag.TWO));
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(

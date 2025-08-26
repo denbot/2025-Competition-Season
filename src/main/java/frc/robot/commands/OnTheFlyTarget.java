@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.game.ReefAprilTag;
 
-public enum ReefTargetPose {
+public enum OnTheFlyTarget {
   TWO_LEFT(5.1, 2.82, 120, ReefAprilTag.TWO, Direction.LEFT),
   FOUR_LEFT(3.76, 2.98, 60, ReefAprilTag.FOUR, Direction.LEFT),
   SIX_LEFT(3.2, 4.2, 0, ReefAprilTag.SIX, Direction.LEFT),
@@ -17,8 +17,19 @@ public enum ReefTargetPose {
   TEN_RIGHT(5.16, 5.16, -120, ReefAprilTag.TEN, Direction.RIGHT),
   TWELVE_RIGHT(5.84, 4.2, 180, ReefAprilTag.TWELVE, Direction.RIGHT),
   // Human Player Locations, april tag vars are currently placeholder
-  HUMAN_LEFT(1.3, 1.0, -130, ReefAprilTag.TWELVE, Direction.LEFT),
-  HUMAN_RIGHT(1.3, 6.6, 130, ReefAprilTag.TWELVE, Direction.RIGHT);
+  HUMAN_LEFT(1.3, 1.0, -130),
+  HUMAN_RIGHT(1.3, 6.6, 130),
+  // Start positions
+  BLUE_START_ONE(StartPosition.BLUE_ONE.x, StartPosition.BLUE_ONE.y, 180),
+  BLUE_START_TWO(StartPosition.BLUE_TWO.x, StartPosition.BLUE_TWO.y, 180),
+  BLUE_START_THREE(StartPosition.BLUE_THREE.x, StartPosition.BLUE_THREE.y, 180),
+  RED_START_ONE(StartPosition.RED_ONE.x, StartPosition.RED_ONE.y, 0),
+  RED_START_TWO(StartPosition.RED_TWO.x, StartPosition.RED_TWO.y, 0),
+  RED_START_THREE(StartPosition.RED_THREE.x, StartPosition.RED_THREE.y, 0),
+  // "Lolipop" or coral with algea on top of it positions
+  LOLIPOP_ONE(1.227, 5.8, 180),
+  LOLIPOP_TWO(1.227, 4.0, 180),
+  LOLIPOP_THREE(1.227, 2.2, 180);
 
   // OTF variables
   public double x;
@@ -26,15 +37,32 @@ public enum ReefTargetPose {
   public double angle;
 
   // April Tag Variables
-  public final ReefAprilTag aprilTag;
-  public Direction direction;
+  public ReefAprilTag aprilTag = null;
+  public Direction direction = null;
 
-  ReefTargetPose(double x, double y, double angle, ReefAprilTag aprilTag, Direction direction) {
+  OnTheFlyTarget(double x, double y, double angle, ReefAprilTag aprilTag, Direction direction) {
     this.x = x;
     this.y = y;
     this.angle = angle;
     this.aprilTag = aprilTag;
     this.direction = direction;
+
+    // if the alliance is red, flip positions accordingly
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      // approximate location of top right corner of the reef = 17.6, 7.6
+      this.x = 17.6 - x;
+      this.y = 8.05 - y;
+      this.angle += 180;
+      if (this.angle > 180) this.angle -= 360;
+    }
+  }
+
+  // constructor for alignment poses without explicit april tag information
+  OnTheFlyTarget(double x, double y, double angle) {
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
 
     // if the alliance is red, flip positions accordingly
     if (DriverStation.getAlliance().isPresent()
