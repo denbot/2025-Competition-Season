@@ -215,7 +215,9 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
-    autoAlign = new AutoCommandScheduler(twelveLeft, humanLeft, sixRight);
+    autoAlign =
+        new AutoCommandScheduler(
+            twelveLeft, humanLeft, sixRight, humanLeft, eightLeft, humanRight, tenRight);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
