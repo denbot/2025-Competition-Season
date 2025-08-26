@@ -42,7 +42,6 @@ import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
-import frc.robot.game.ReefAprilTag;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -102,25 +101,25 @@ public class RobotContainer {
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
   private TargetChange twelveLeft =
-      new TargetChange(ReefTargetPose.TWELVE_LEFT, ReefAprilTag.TWELVE);
+      new TargetChange(ReefTargetPose.TWELVE_LEFT);
   private TargetChange twelveRight =
-      new TargetChange(ReefTargetPose.TWELVE_RIGHT, ReefAprilTag.TWELVE);
+      new TargetChange(ReefTargetPose.TWELVE_RIGHT);
 
-  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT, ReefAprilTag.TEN);
-  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT, ReefAprilTag.TEN);
+  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT);
+  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT);
 
-  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT, ReefAprilTag.EIGHT);
+  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT);
   private TargetChange eightRight =
-      new TargetChange(ReefTargetPose.EIGHT_RIGHT, ReefAprilTag.EIGHT);
+      new TargetChange(ReefTargetPose.EIGHT_RIGHT);
 
-  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT, ReefAprilTag.SIX);
-  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT, ReefAprilTag.SIX);
+  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT);
+  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT);
 
-  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT, ReefAprilTag.FOUR);
-  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT, ReefAprilTag.FOUR);
+  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT);
+  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT);
 
-  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT, ReefAprilTag.TWO);
-  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT, ReefAprilTag.TWO);
+  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
+  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
