@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.autoCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.game.ReefAprilTag;
