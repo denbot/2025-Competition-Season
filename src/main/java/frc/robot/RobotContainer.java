@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.AutoCommandScheduler;
+import frc.robot.commands.autoCommands.AutoRoutineConstructor;
 import frc.robot.commands.autoCommands.OnTheFlyAlignCommand;
 import frc.robot.commands.autoCommands.OnTheFlyTarget;
 import frc.robot.commands.autoCommands.StartPosition;
@@ -218,19 +219,8 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
-    autoAlign =
-        new AutoCommandScheduler(
-            twelveLeft,
-            humanLeft,
-            sixRight,
-            humanLeft,
-            eightLeft,
-            humanRight,
-            tenRight,
-            humanLeft,
-            twoLeft,
-            humanRight,
-            twelveLeft);
+    // Basic auto align definition, unused in the case of building-block-autos
+    // autoAlign = new AutoCommandScheduler();
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -265,6 +255,43 @@ public class RobotContainer {
     if (!status.isOK()) {
       // log error
     }
+  }
+
+  public void constructAutoRoutine() {
+    // check button box and which auto routine position to possibly set
+    if (operatorController1.button(1).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(twelveLeft);
+    if (operatorController1.button(2).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(twoRight);
+    if (operatorController1.button(3).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(twoLeft);
+    if (operatorController1.button(8).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(fourRight);
+    if (operatorController1.button(11).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(fourLeft);
+    if (operatorController1.button(12).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(sixRight);
+
+    if (operatorController2.button(1).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(twelveRight);
+    if (operatorController2.button(2).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(tenLeft);
+    if (operatorController2.button(3).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(tenRight);
+    if (operatorController2.button(8).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(eightLeft);
+    if (operatorController2.button(11).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(eightRight);
+    if (operatorController2.button(12).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(sixLeft);
+
+    if (operatorController2.button(6).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(humanLeft);
+    if (operatorController2.button(7).getAsBoolean())
+      AutoRoutineConstructor.addPossibleTarget(humanRight);
+
+    // Stab button confirms the set auto routine
+    if (operatorController2.button(4).getAsBoolean()) AutoRoutineConstructor.confirmTarget();
   }
 
   /**
@@ -358,6 +385,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public AutoCommandScheduler getAutonomousCommand() {
-    return autoAlign;
+    return AutoRoutineConstructor.getAutoRoutine();
   }
 }
