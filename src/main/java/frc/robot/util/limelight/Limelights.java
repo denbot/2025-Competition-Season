@@ -1,27 +1,50 @@
 package frc.robot.util.limelight;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotController;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
+
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public enum Limelights {
-  LEFT("limelight-left", "10.95.86.11"),
-  RIGHT("limelight-right", "10.95.86.13"),
-  REAR("limelight-rear", "10.95.86.12");
+  LEFT(
+      "limelight-left",
+      "10.95.86.11"
+  ),
+  RIGHT(
+      "limelight-right",
+      "10.95.86.13"
+  ),
+  REAR(
+      "limelight-rear",
+      "10.95.86.12"
+  );
 
   private static final Map<String, Boolean> limelightCache = new HashMap<>();
   private static final Map<String, Long> limelightLastCheckTimer = new HashMap<>();
 
   public final String name;
   private final String ip;
+  private boolean pipelinesUploaded = false;
+  private final Map<Integer, File> pipelines;
+
 
   Limelights(String name, String ip) {
     this.name = name;
     this.ip = ip;
+
+    pipelines = new HashMap<>();
+
+    File limelightDirectory = new File(Filesystem.getDeployDirectory(),"limelights" + File.separator + name);
+    for (int pipelineNum = 0; pipelineNum < 10; pipelineNum++) {
+      File pipelineFile = new File(limelightDirectory, String.format("pipeline-%d.json", pipelineNum));
+      if(pipelineFile.exists()) {
+        pipelines.put(pipelineNum, pipelineFile);
+      }
+    }
   }
 
   public void setPipeline(LimelightPipeline pipeline) {
@@ -54,11 +77,15 @@ public enum Limelights {
     limelightCache.put(name, limelightFound);
     limelightLastCheckTimer.put(name, fpgaTime);
 
+    if(limelightFound && ! pipelinesUploaded) {
+      uploadPipelines();
+    }
+
     return limelightFound;
   }
 
   private boolean isLimelightFound() {
-    String url = String.format("http://%s/", ip);
+    String url = String.format("http://%s:5807/", ip);
 
     try {
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -70,6 +97,50 @@ public enum Limelights {
       return responseCode == 200;
     } catch (SocketTimeoutException e) {
       return false;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void uploadPipelines() {
+    for (Map.Entry<Integer, File> entry : pipelines.entrySet()) {
+      boolean wasSuccessful = uploadPipeline(entry.getKey(), entry.getValue());
+
+      if(! wasSuccessful) {
+        return;
+      }
+    }
+
+    pipelinesUploaded = true;
+    // TODO Expose this status for pre-check
+  }
+
+  private boolean uploadPipeline(int pipelineNumber, File file) {
+    // TODO Actually use the pipeline number instead of letting it be hard coded into the pipeline file
+    try {
+      StringBuilder content = new StringBuilder();
+      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          content.append(line).append(System.lineSeparator());
+        }
+      }
+      String jsonData = content.toString();
+
+      String url = String.format("http://%s:5807/upload-pipeline", ip);
+      HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+      connection.setDoOutput(true);
+
+      try (OutputStream outputStream = connection.getOutputStream()) {
+        byte[] input = jsonData.getBytes(StandardCharsets.UTF_8);
+        outputStream.write(input, 0, input.length);
+      }
+
+      int responseCode = connection.getResponseCode();
+      return responseCode == HttpURLConnection.HTTP_OK;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
