@@ -20,7 +20,7 @@ public class TargetChange extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.currentTargetPose = this.targetPath;
+    if (this.targetPath != null) RobotContainer.currentTargetPose = this.targetPath;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
