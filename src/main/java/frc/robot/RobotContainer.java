@@ -28,9 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.autoCommands.AutoCommandScheduler;
 import frc.robot.commands.autoCommands.AutoRoutineConstructor;
-import frc.robot.commands.autoCommands.AutoScoreCommand;
 import frc.robot.commands.autoCommands.OnTheFlyAlignCommand;
 import frc.robot.commands.autoCommands.OnTheFlyTarget;
 import frc.robot.commands.autoCommands.StartPosition;
@@ -101,7 +99,6 @@ public class RobotContainer {
 
   public final OnTheFlyAlignCommand onTheFlyAlignCommand;
   public static OnTheFlyTarget currentTargetPose = OnTheFlyTarget.TWELVE_LEFT;
-  public AutoCommandScheduler autoAlign;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -137,11 +134,6 @@ public class RobotContainer {
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
   private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
   private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
-
-  private final AutoScoreCommand ScoreL1 = new AutoScoreCommand(SetL1);
-  private final AutoScoreCommand ScoreL2 = new AutoScoreCommand(SetL2);
-  private final AutoScoreCommand ScoreL3 = new AutoScoreCommand(SetL3);
-  private final AutoScoreCommand ScoreL4 = new AutoScoreCommand(SetL4);
 
   public final RumblePresets rumblePresets;
 
@@ -227,19 +219,24 @@ public class RobotContainer {
     onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
     // Basic auto align definition, unused in the case of building-block-autos
     // autoAlign = new AutoCommandScheduler();
-    /*  Example Auto Routine With AutoRoutineConstructor syntax
-        AutoRoutineConstructor.addTarget(eightLeft);
-        AutoRoutineConstructor.addScore(ScoreL1);
-        AutoRoutineConstructor.addTarget(twelveLeft);
-        AutoRoutineConstructor.addScore(ScoreL2);
-        AutoRoutineConstructor.addTarget(sixLeft);
-        AutoRoutineConstructor.addScore(ScoreL3);
-        AutoRoutineConstructor.addTarget(tenLeft);
-        AutoRoutineConstructor.addScore(ScoreL4);
-        AutoRoutineConstructor.addTarget(twoLeft);
-        AutoRoutineConstructor.addTarget(fourLeft);
-        AutoRoutineConstructor.addTarget(humanRight);
-    */
+    AutoRoutineConstructor.addPossibleTarget(eightLeft);
+    AutoRoutineConstructor.addPossibleScore(SetL1);
+    AutoRoutineConstructor.confirmCommand();
+    AutoRoutineConstructor.addPossibleTarget(twelveLeft);
+    AutoRoutineConstructor.addPossibleScore(SetL2);
+    AutoRoutineConstructor.confirmCommand();
+    AutoRoutineConstructor.addPossibleTarget(sixLeft);
+    AutoRoutineConstructor.addPossibleScore(SetL3);
+    AutoRoutineConstructor.confirmCommand();
+    AutoRoutineConstructor.addPossibleTarget(tenLeft);
+    AutoRoutineConstructor.addPossibleScore(SetL4);
+    AutoRoutineConstructor.confirmCommand();
+    AutoRoutineConstructor.addPossibleTarget(twoLeft);
+    AutoRoutineConstructor.confirmCommand();
+    AutoRoutineConstructor.addPossibleTarget(fourLeft);
+    AutoRoutineConstructor.confirmCommand();
+    AutoRoutineConstructor.addPossibleTarget(humanRight);
+    AutoRoutineConstructor.confirmCommand();
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -292,7 +289,7 @@ public class RobotContainer {
     if (operatorController1.button(12).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(sixRight);
 
-      // Controller 2 Alignment
+    // Controller 2 Alignment
     if (operatorController2.button(1).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(twelveRight);
     if (operatorController2.button(2).getAsBoolean())
@@ -314,18 +311,18 @@ public class RobotContainer {
 
     // Scoring Commands
     if (operatorController1.button(4).getAsBoolean())
-      AutoRoutineConstructor.addPossibleScore(ScoreL4);
+      AutoRoutineConstructor.addPossibleScore(SetL4);
     if (operatorController1.button(5).getAsBoolean())
-      AutoRoutineConstructor.addPossibleScore(ScoreL3);
+      AutoRoutineConstructor.addPossibleScore(SetL3);
     if (operatorController1.button(6).getAsBoolean())
-      AutoRoutineConstructor.addPossibleScore(ScoreL2);
+      AutoRoutineConstructor.addPossibleScore(SetL2);
 
     // Stab button confirms the set auto routine
     if (operatorController2.button(4).getAsBoolean()) AutoRoutineConstructor.confirmCommand();
 
     // Sets the shouldClearTargets boolean to true, next confirm clears all targets
     // shouldClearTargets is set to false by pressing any other button
-    if (operatorController2.button(7).getAsBoolean()) AutoRoutineConstructor.clearTargets();
+    if (operatorController2.button(7).getAsBoolean()) AutoRoutineConstructor.clearAllCommands();
   }
 
   /**
@@ -418,7 +415,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public AutoCommandScheduler getAutonomousCommand() {
+  public SequentialCommandGroup getAutonomousCommand() {
     return AutoRoutineConstructor.getAutoRoutine();
   }
 }

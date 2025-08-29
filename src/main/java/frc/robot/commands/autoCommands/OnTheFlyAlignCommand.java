@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 
 public class OnTheFlyAlignCommand extends Command {
-  public Command pathFindingCommand;
+  public Command pathFindingCommand = new Command() {};
   public Pose2d targetPose;
 
   public OnTheFlyAlignCommand(Drive drive) {
