@@ -21,15 +21,15 @@ public class AutoScoreCommand extends Command {
   public void initialize() {
     System.out.println("Starting Wait");
     if (this.level != null) this.level.schedule();
-    if(!RobotBase.isReal()) scoreWaitCommand.schedule();
+    if (!RobotBase.isReal()) scoreWaitCommand.schedule();
     else Robot.robotContainer.extendBoathook.schedule();
   }
 
   @Override
   public void execute() {
-    if(RobotBase.isReal()){
-        if (Robot.robotContainer.extendBoathook.isFinished()) scoreWaitCommand.schedule();
-        if (scoreWaitCommand.isFinished()) Robot.robotContainer.retractBoathook.schedule();
+    if (RobotBase.isReal()) {
+      if (Robot.robotContainer.extendBoathook.isFinished()) scoreWaitCommand.schedule();
+      if (scoreWaitCommand.isFinished()) Robot.robotContainer.retractBoathook.schedule();
     }
   }
 
@@ -40,7 +40,7 @@ public class AutoScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    if(RobotBase.isReal()) return Robot.robotContainer.retractBoathook.isFinished();
+    if (RobotBase.isReal()) return Robot.robotContainer.retractBoathook.isFinished();
     return scoreWaitCommand.isFinished() || this.level == null;
   }
 }

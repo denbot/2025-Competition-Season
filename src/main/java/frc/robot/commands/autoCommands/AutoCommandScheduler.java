@@ -23,7 +23,7 @@ public class AutoCommandScheduler {
 
   public AutoCommandScheduler(TargetChange[] targetChanges, AutoScoreCommand[] scoreCommands) {
     // if it is passed in empty arrays, do nothing
-    if(targetChanges.length == 0 || scoreCommands.length == 0) this.commandsRun = true;
+    if (targetChanges.length == 0 || scoreCommands.length == 0) this.commandsRun = true;
     else {
       this.targetChanges = targetChanges;
 
@@ -38,17 +38,18 @@ public class AutoCommandScheduler {
    */
   public void runAutoCommands() {
     if (!commandsRun) {
-      if(this.currentScoreIndex >= this.scoreCommands.length && this.currentTargetIndex >= this.targetChanges.length) {
+      if (this.currentScoreIndex >= this.scoreCommands.length
+          && this.currentTargetIndex >= this.targetChanges.length) {
         commandsRun = true;
         System.out.println("Finished Auto Routine");
       }
-      
-      // Prevent IndexOutOfBounds errors, 
-      // If it is not the initial alignment, 
+
+      // Prevent IndexOutOfBounds errors,
+      // If it is not the initial alignment,
       // if the current command running is an alignment, making the next command a score command
       // if that given alignment is completed
 
-      if (this.currentScoreIndex < this.scoreCommands.length 
+      if (this.currentScoreIndex < this.scoreCommands.length
           && this.currentTargetIndex != 0
           && currentCommandIsTarget
           && Robot.robotContainer.onTheFlyAlignCommand.pathFindingCommand.isFinished() == true) {
@@ -61,17 +62,17 @@ public class AutoCommandScheduler {
         System.out.println("\n");
       }
 
-      // Prevent IndexOutOfBounds errors, 
-      // If it is the initial alignment, 
+      // Prevent IndexOutOfBounds errors,
+      // If it is the initial alignment,
       // if the current command running is a score command, making the next command a score command
       // if that given score is completed
-      
-      if (this.currentTargetIndex < this.targetChanges.length 
+
+      if (this.currentTargetIndex < this.targetChanges.length
           && (this.currentTargetIndex == 0
-          || (!currentCommandIsTarget && this.currentScore.isFinished() == true))) {
+              || (!currentCommandIsTarget && this.currentScore.isFinished() == true))) {
         System.out.println("Called New OTF");
         currentCommandIsTarget = true;
-         // schedule the commands to auto align
+        // schedule the commands to auto align
         this.targetChanges[this.currentTargetIndex].schedule();
         Robot.robotContainer.onTheFlyAlignCommand.schedule();
         this.currentTargetIndex++; // incriment index

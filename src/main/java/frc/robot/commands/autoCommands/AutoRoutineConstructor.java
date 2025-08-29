@@ -20,7 +20,7 @@ public class AutoRoutineConstructor {
    * confirmTarget should be used for building block autos
    */
   public static void addTarget(TargetChange target) {
-    if(lastAddedWasTarget) scores.add(placeholderScore);
+    if (lastAddedWasTarget) scores.add(placeholderScore);
     targets.add(target);
     lastAddedWasTarget = true;
     shouldClearCommands = false;
@@ -30,13 +30,13 @@ public class AutoRoutineConstructor {
     possibleTarget = target;
     // if you have two auto aligns after the other, ensure the scheduler can follow the alternating
     // order
-      System.out.println("Added Placeholder Score");
+    System.out.println("Added Placeholder Score");
     shouldClearCommands = false;
     lastButtonWasTarget = true;
   }
 
   public static void addScore(AutoScoreCommand score) {
-    if(!lastAddedWasTarget) targets.add(placeholderTarget);
+    if (!lastAddedWasTarget) targets.add(placeholderTarget);
     scores.add(score);
     lastAddedWasTarget = false;
     shouldClearCommands = false;

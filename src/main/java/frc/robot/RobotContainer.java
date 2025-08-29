@@ -291,7 +291,7 @@ public class RobotContainer {
       AutoRoutineConstructor.addPossibleTarget(fourLeft);
     if (operatorController1.button(12).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(sixRight);
-    
+
     if (operatorController2.button(1).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(twelveRight);
     if (operatorController2.button(2).getAsBoolean())
@@ -311,11 +311,11 @@ public class RobotContainer {
       AutoRoutineConstructor.addPossibleTarget(humanRight);
 
     if (operatorController1.button(4).getAsBoolean())
-    AutoRoutineConstructor.addPossibleScore(ScoreL4);
+      AutoRoutineConstructor.addPossibleScore(ScoreL4);
     if (operatorController1.button(5).getAsBoolean())
-    AutoRoutineConstructor.addPossibleScore(ScoreL3);
+      AutoRoutineConstructor.addPossibleScore(ScoreL3);
     if (operatorController1.button(6).getAsBoolean())
-    AutoRoutineConstructor.addPossibleScore(ScoreL2);
+      AutoRoutineConstructor.addPossibleScore(ScoreL2);
 
     // Stab button confirms the set auto routine
     if (operatorController2.button(4).getAsBoolean()) AutoRoutineConstructor.confirmCommand();
