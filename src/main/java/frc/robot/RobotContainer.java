@@ -292,6 +292,7 @@ public class RobotContainer {
     if (operatorController1.button(12).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(sixRight);
 
+      // Controller 2 Alignment
     if (operatorController2.button(1).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(twelveRight);
     if (operatorController2.button(2).getAsBoolean())
@@ -305,11 +306,13 @@ public class RobotContainer {
     if (operatorController2.button(12).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(sixLeft);
 
+    // Human player Alignment (Middle Left Buttons)
     if (operatorController2.button(5).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(humanLeft);
     if (operatorController2.button(6).getAsBoolean())
       AutoRoutineConstructor.addPossibleTarget(humanRight);
 
+    // Scoring Commands
     if (operatorController1.button(4).getAsBoolean())
       AutoRoutineConstructor.addPossibleScore(ScoreL4);
     if (operatorController1.button(5).getAsBoolean())

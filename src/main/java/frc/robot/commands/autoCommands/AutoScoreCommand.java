@@ -20,13 +20,15 @@ public class AutoScoreCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("Starting Wait");
-    if (this.level != null) this.level.schedule();
-    if (!RobotBase.isReal()) scoreWaitCommand.schedule();
-    else Robot.robotContainer.extendBoathook.schedule();
-  }
+    if (this.level != null) this.level.schedule(); // level = null when it is a placeholder / formatting command
+
+    if (!RobotBase.isReal()) scoreWaitCommand.schedule(); // if the robot is in sim mode, only schedule wait
+    else Robot.robotContainer.extendBoathook.schedule(); // else, extend the boathooks
+}
 
   @Override
   public void execute() {
+    // extend and retract have no meaning in the sim and as such only cause the command to get stuck in sim mode
     if (RobotBase.isReal()) {
       if (Robot.robotContainer.extendBoathook.isFinished()) scoreWaitCommand.schedule();
       if (scoreWaitCommand.isFinished()) Robot.robotContainer.retractBoathook.schedule();
@@ -40,7 +42,8 @@ public class AutoScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
+    // similarly, we only care about delay in the sim, not the boathooks as they arent simulated
     if (RobotBase.isReal()) return Robot.robotContainer.retractBoathook.isFinished();
-    return scoreWaitCommand.isFinished() || this.level == null;
+    return scoreWaitCommand.isFinished() || this.level == null; // wait is always finished if it is a placeholder commnand
   }
 }

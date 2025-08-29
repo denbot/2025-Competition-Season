@@ -20,7 +20,7 @@ public class AutoRoutineConstructor {
    * confirmTarget should be used for building block autos
    */
   public static void addTarget(TargetChange target) {
-    if (lastAddedWasTarget) scores.add(placeholderScore);
+    if (lastAddedWasTarget) scores.add(placeholderScore); // ensure alternating order for AutoCommandScheduler
     targets.add(target);
     lastAddedWasTarget = true;
     shouldClearCommands = false;
@@ -28,15 +28,12 @@ public class AutoRoutineConstructor {
 
   public static void addPossibleTarget(TargetChange target) {
     possibleTarget = target;
-    // if you have two auto aligns after the other, ensure the scheduler can follow the alternating
-    // order
-    System.out.println("Added Placeholder Score");
     shouldClearCommands = false;
     lastButtonWasTarget = true;
   }
 
   public static void addScore(AutoScoreCommand score) {
-    if (!lastAddedWasTarget) targets.add(placeholderTarget);
+    if (!lastAddedWasTarget) targets.add(placeholderTarget); // ensure alternating order for AutoCommandScheduler
     scores.add(score);
     lastAddedWasTarget = false;
     shouldClearCommands = false;
@@ -44,17 +41,18 @@ public class AutoRoutineConstructor {
 
   public static void addPossibleScore(AutoScoreCommand score) {
     possibleScore = score;
-    // if you have two score commandes after the other, ensure the scheduler can follow the
-    // alternating order
     shouldClearCommands = false;
     lastButtonWasTarget = false;
   }
 
   public static void confirmCommand() {
+    // depending on what was pressed last, either add the last target or the last score position
     if (lastButtonWasTarget) addTarget(possibleTarget);
     else addScore(possibleScore);
+
+    // clear commands if clearTargets was called
     if (shouldClearCommands) targets.clear();
-    shouldClearCommands = false;
+    shouldClearCommands = false; // reset clearTargets
   }
 
   public static void clearTargets() {
@@ -62,10 +60,15 @@ public class AutoRoutineConstructor {
   }
 
   public static AutoCommandScheduler getAutoRoutine() {
+    // define empty arrays specifically with the type TargetChange and AutoScoreCommand
+    // such that they can be input into AutoCommandScheduler, just ArrayList.toArray returns Object[]
+    // which can not be input into AutoCommandScheduler
     TargetChange[] returnTargets = new TargetChange[targets.size()];
     AutoScoreCommand[] returnScores = new AutoScoreCommand[scores.size()];
+    
     targets.toArray(returnTargets);
     scores.toArray(returnScores);
+
     return new AutoCommandScheduler(returnTargets, returnScores);
   }
 }
