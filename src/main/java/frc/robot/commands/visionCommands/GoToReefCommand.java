@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.commands.ReefTargetPoses;
+import frc.robot.commands.ReefTargetPose;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.Limelights;
@@ -24,7 +24,7 @@ public class GoToReefCommand extends Command {
   double kP = 5;
 
   double rotationalKP = 0.3;
-  ReefTargetPoses reefTarget = ReefTargetPoses.TWELVE_LEFT;
+  ReefTargetPose reefTarget = ReefTargetPose.TWELVE_LEFT;
   int framesDropped = 0;
   Translation3d translate;
   double lastAngleError = 0;
@@ -111,7 +111,7 @@ public class GoToReefCommand extends Command {
     // at least thats what I think we are doing, I might have it wrong
 
     double offset =
-        (RobotContainer.currentTargetPose.direction == ReefTargetPoses.Direction.LEFT)
+        (RobotContainer.currentTargetPose.direction == ReefTargetPose.Direction.LEFT)
             ? -0.15
             : 0.15;
     translate = new Translation3d(offset, 0, -0.57);
