@@ -37,7 +37,7 @@ public class OnTheFlyAlignCommand extends Command {
                 RobotContainer.currentTargetPose.y,
                 new Rotation2d(Units.degreesToRadians(RobotContainer.currentTargetPose.angle))),
             new PathConstraints(
-                6.0, 6.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+                2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
   }
 
   @Override
