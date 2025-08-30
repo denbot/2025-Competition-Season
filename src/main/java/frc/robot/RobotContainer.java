@@ -96,17 +96,14 @@ public class RobotContainer {
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private TargetChange twelveLeft =
-      new TargetChange(ReefTargetPose.TWELVE_LEFT);
-  private TargetChange twelveRight =
-      new TargetChange(ReefTargetPose.TWELVE_RIGHT);
+  private TargetChange twelveLeft = new TargetChange(ReefTargetPose.TWELVE_LEFT);
+  private TargetChange twelveRight = new TargetChange(ReefTargetPose.TWELVE_RIGHT);
 
   private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT);
   private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT);
 
   private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT);
-  private TargetChange eightRight =
-      new TargetChange(ReefTargetPose.EIGHT_RIGHT);
+  private TargetChange eightRight = new TargetChange(ReefTargetPose.EIGHT_RIGHT);
 
   private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT);
   private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT);
