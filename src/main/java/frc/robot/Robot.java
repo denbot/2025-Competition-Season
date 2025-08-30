@@ -244,7 +244,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
-    SmartDashboard.putString("Direction", String.valueOf(RobotContainer.currentTargetPose.direction));
+    SmartDashboard.putString(
+        "Direction", String.valueOf(RobotContainer.currentTargetPose.direction));
     SmartDashboard.putNumber("Angle", RobotContainer.currentTargetPose.angle);
   }
 
