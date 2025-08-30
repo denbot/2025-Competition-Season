@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.subsystems.boathook.Boathook;
 
+/**
+ * @param boathook Boathook Class Object To Apply The Command To
+ * @param angle Angle 1->3, idle, or Stab found from the BoathookConstants Class
+ */
 public class BoathookAngleCommand extends Command {
 
   Boathook boathook;

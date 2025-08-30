@@ -30,7 +30,7 @@ public class RunIntakeCommand extends Command {
   private final Timer runningWait = new Timer();
 
   private final IntakeMoveCommand liftToL1;
-  private SequentialCommandGroup runHandoff = BoathookCommands.handoffCommand;
+  private SequentialCommandGroup runHandoff;
 
   public RunIntakeCommand(Intake intake, Boathook boathook, Direction direction) {
     this.intake = intake;
