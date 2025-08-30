@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
-import frc.robot.game.ReefTarget;
+import frc.robot.RobotContainer;
+import frc.robot.commands.ReefTargetPose;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.Limelights;
@@ -24,7 +24,7 @@ public class GoToReefCommand extends Command {
   double kP = 5;
 
   double rotationalKP = 0.3;
-  ReefTarget reefTarget = ReefTarget.TWELVE_LEFT;
+  ReefTargetPose reefTarget = ReefTargetPose.TWELVE_LEFT;
   int framesDropped = 0;
   Translation3d translate;
   double lastAngleError = 0;
@@ -41,11 +41,11 @@ public class GoToReefCommand extends Command {
   @Override
   public void initialize() {
     // We set the reefTarget here from the robot and only use
-    this.reefTarget = Robot.reefTarget;
+    this.reefTarget = RobotContainer.currentTargetPose;
     this.aprilTagTarget =
         DriverStation.getAlliance().get() == Alliance.Red
-            ? Robot.reefTarget.aprilTag.red
-            : Robot.reefTarget.aprilTag.blue;
+            ? RobotContainer.currentTargetPose.aprilTag.red
+            : RobotContainer.currentTargetPose.aprilTag.blue;
     SmartDashboard.putString("commandDirection", String.valueOf(reefTarget.direction));
   }
 
@@ -110,7 +110,10 @@ public class GoToReefCommand extends Command {
     // then rotates and translates the translation so it is relative to the robot
     // at least thats what I think we are doing, I might have it wrong
 
-    double offset = (reefTarget.direction == ReefTarget.Direction.LEFT) ? -0.15 : 0.15;
+    double offset =
+        (RobotContainer.currentTargetPose.direction == ReefTargetPose.Direction.LEFT)
+            ? -0.15
+            : 0.15;
     translate = new Translation3d(offset, 0, -0.57);
 
     translate = translate.rotateBy(pose.getRotation());
