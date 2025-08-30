@@ -199,6 +199,9 @@ public class Boathook extends SubsystemBase {
         "autoRetract", BoathookCommands.newRetractMotionPathCommand(this));
   }
 
+  /**
+   * @param angle Angle In Degrees to set the rotation motor to
+   */
   public void setAngle(double angle) {
     rotationMotor.setControl(new PositionVoltage(angle / 360.0));
   }
@@ -208,6 +211,9 @@ public class Boathook extends SubsystemBase {
     return angle.getValueAsDouble() * 360.0;
   }
 
+  /**
+   * @param length Length In Degrees to set the rotation motor to
+   */
   public void setLength(double length) {
     extenderMotor.setControl(new PositionVoltage(length));
   }
@@ -221,6 +227,7 @@ public class Boathook extends SubsystemBase {
     return extenderMotor.getClosedLoopReference().getValueAsDouble();
   }
 
+  /** Set the extender motor control to be static or "Brake" such that it will resist movement */
   public void setBrakeExtender() {
     extenderMotor.setControl(new StaticBrake());
   }
