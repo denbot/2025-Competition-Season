@@ -135,30 +135,18 @@ public class Drive extends SubsystemBase {
     PhoenixOdometryThread.getInstance().start();
 
     NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
-    NamedCommands.registerCommand(
-        "12L", new TargetChange(ReefTargetPose.TWELVE_LEFT));
-    NamedCommands.registerCommand(
-        "12R", new TargetChange(ReefTargetPose.TWELVE_RIGHT));
-    NamedCommands.registerCommand(
-        "10L", new TargetChange(ReefTargetPose.TEN_LEFT));
-    NamedCommands.registerCommand(
-        "10R", new TargetChange(ReefTargetPose.TEN_RIGHT));
-    NamedCommands.registerCommand(
-        "8L", new TargetChange(ReefTargetPose.EIGHT_LEFT));
-    NamedCommands.registerCommand(
-        "8R", new TargetChange(ReefTargetPose.EIGHT_RIGHT));
-    NamedCommands.registerCommand(
-        "6L", new TargetChange(ReefTargetPose.SIX_LEFT));
-    NamedCommands.registerCommand(
-        "6R", new TargetChange(ReefTargetPose.SIX_RIGHT));
-    NamedCommands.registerCommand(
-        "4L", new TargetChange(ReefTargetPose.FOUR_LEFT));
-    NamedCommands.registerCommand(
-        "4R", new TargetChange(ReefTargetPose.FOUR_RIGHT));
-    NamedCommands.registerCommand(
-        "2L", new TargetChange(ReefTargetPose.TWO_LEFT));
-    NamedCommands.registerCommand(
-        "2R", new TargetChange(ReefTargetPose.TWO_RIGHT));
+    NamedCommands.registerCommand("12L", new TargetChange(ReefTargetPose.TWELVE_LEFT));
+    NamedCommands.registerCommand("12R", new TargetChange(ReefTargetPose.TWELVE_RIGHT));
+    NamedCommands.registerCommand("10L", new TargetChange(ReefTargetPose.TEN_LEFT));
+    NamedCommands.registerCommand("10R", new TargetChange(ReefTargetPose.TEN_RIGHT));
+    NamedCommands.registerCommand("8L", new TargetChange(ReefTargetPose.EIGHT_LEFT));
+    NamedCommands.registerCommand("8R", new TargetChange(ReefTargetPose.EIGHT_RIGHT));
+    NamedCommands.registerCommand("6L", new TargetChange(ReefTargetPose.SIX_LEFT));
+    NamedCommands.registerCommand("6R", new TargetChange(ReefTargetPose.SIX_RIGHT));
+    NamedCommands.registerCommand("4L", new TargetChange(ReefTargetPose.FOUR_LEFT));
+    NamedCommands.registerCommand("4R", new TargetChange(ReefTargetPose.FOUR_RIGHT));
+    NamedCommands.registerCommand("2L", new TargetChange(ReefTargetPose.TWO_LEFT));
+    NamedCommands.registerCommand("2R", new TargetChange(ReefTargetPose.TWO_RIGHT));
 
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
