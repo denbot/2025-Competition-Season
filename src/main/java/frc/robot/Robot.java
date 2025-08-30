@@ -244,8 +244,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
-    SmartDashboard.putString("Direction", String.valueOf(reefTarget.direction));
-    SmartDashboard.putNumber("Angle", reefTarget.angle);
+    SmartDashboard.putString("Direction", String.valueOf(RobotContainer.currentTargetPose.direction));
+    SmartDashboard.putNumber("Angle", RobotContainer.currentTargetPose.angle);
   }
 
   /** This function is called once when test mode is enabled. */

@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.game.ReefAprilTag;
 
-public enum ReefTargetPoses {
+public enum ReefTargetPose {
   TWO_LEFT(5.1, 2.82, 120, ReefAprilTag.TWO, Direction.LEFT),
   FOUR_LEFT(3.76, 2.98, 60, ReefAprilTag.FOUR, Direction.LEFT),
   SIX_LEFT(3.2, 4.2, 0, ReefAprilTag.SIX, Direction.LEFT),
@@ -23,9 +23,9 @@ public enum ReefTargetPoses {
 
   // April Tag Variables
   public final ReefAprilTag aprilTag;
-  public final Direction direction;
+  public Direction direction;
 
-  ReefTargetPoses(double x, double y, double angle, ReefAprilTag aprilTag, Direction direction) {
+  ReefTargetPose(double x, double y, double angle, ReefAprilTag aprilTag, Direction direction) {
     this.x = x;
     this.y = y;
     this.angle = angle;
