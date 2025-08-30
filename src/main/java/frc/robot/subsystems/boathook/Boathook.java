@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
+import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
@@ -192,11 +195,11 @@ public class Boathook extends SubsystemBase {
 
     NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
     NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
+    NamedCommands.registerCommand("autoIdle", new AngleIdleBoathookCommand(this));
+    NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
+    NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }
 
-  /**
-   * @param angle Angle In Degrees to set the rotation motor to
-   */
   public void setAngle(double angle) {
     rotationMotor.setControl(new PositionVoltage(angle / 360.0));
   }
@@ -206,9 +209,6 @@ public class Boathook extends SubsystemBase {
     return angle.getValueAsDouble() * 360.0;
   }
 
-  /**
-   * @param length Length In Degrees to set the rotation motor to
-   */
   public void setLength(double length) {
     extenderMotor.setControl(new PositionVoltage(length));
   }
@@ -222,7 +222,6 @@ public class Boathook extends SubsystemBase {
     return extenderMotor.getClosedLoopReference().getValueAsDouble();
   }
 
-  /** Set the extender motor control to be static or "Brake" such that it will resist movement */
   public void setBrakeExtender() {
     extenderMotor.setControl(new StaticBrake());
   }
