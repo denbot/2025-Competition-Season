@@ -186,7 +186,7 @@ public class RobotContainer {
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
-    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive, new Pose2d(10, 10, new Rotation2d(0)));
+    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -267,7 +267,8 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(onTheFlyAlignCommand);
+    controller.b().onTrue(reef);
+    controller.x().onTrue(onTheFlyAlignCommand);
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
