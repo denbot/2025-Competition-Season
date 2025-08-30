@@ -30,6 +30,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
+import frc.robot.commands.OnTheFlyAlignCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -37,7 +38,6 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
-import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
@@ -77,10 +77,12 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  private final GoToReefCommand reef;
+  //private final GoToReefCommand reef;
   private final BoathookExtendMotionPathCommand extendBoathook;
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final HandoffCommand stabBoathook;
+  // private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
+  // permmanent
 
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
@@ -90,6 +92,8 @@ public class RobotContainer {
   private final MicroAdjustRotationCommand microRotationAdjustBackwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
+
+  private final OnTheFlyAlignCommand onTheFlyAlignCommand;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -162,10 +166,10 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
-    reef = new GoToReefCommand(drive);
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
+    // reef = new GoToReefCommand(drive);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -179,6 +183,8 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetInwards);
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
+
+    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive, new Pose2d(10, 10, new Rotation2d(0)));
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -259,7 +265,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(reef);
+    controller.b().onTrue(onTheFlyAlignCommand);
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
