@@ -23,13 +23,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
-import frc.robot.commands.boathookCommands.BoathookCommands;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -78,9 +76,6 @@ public class RobotContainer {
   // Commands
   // private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
-  private final SequentialCommandGroup extendBoathook;
-  private final SequentialCommandGroup retractBoathook;
-  private final SequentialCommandGroup stabBoathook;
 
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
@@ -165,9 +160,6 @@ public class RobotContainer {
     rumbleSubsystem = new RumbleSubsystem(controller);
 
     // reef = new GoToReefCommand(drive);
-    extendBoathook = BoathookCommands.newExtendMotoinPathCommand(boathook);
-    retractBoathook = BoathookCommands.newRetractMotionPathCommand(boathook);
-    stabBoathook = BoathookCommands.newHandoffCommand(boathook, intake);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -270,8 +262,6 @@ public class RobotContainer {
     controller.y().onTrue(moveIntake);
 
     // boathook.setDefaultCommand(idleBoathook);
-    controller.rightBumper().onTrue(extendBoathook);
-    controller.rightTrigger().onTrue(retractBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
     controller.povRight().onTrue(microRotationAdjustForwards);
     controller.povDown().onTrue(microExtensionAdjustInwards);
@@ -294,7 +284,6 @@ public class RobotContainer {
     operatorController2.button(1).onTrue(twelveRight);
     operatorController2.button(2).onTrue(tenLeft);
     operatorController2.button(3).onTrue(tenRight);
-    operatorController2.button(4).onTrue(stabBoathook);
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);

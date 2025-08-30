@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Robot;
-import frc.robot.commands.boathookCommands.BoathookCommands;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.boathook.Boathook.Level;
 import frc.robot.subsystems.intake.Intake;
@@ -37,7 +36,6 @@ public class RunIntakeCommand extends Command {
     this.boathook = boathook;
     this.direction = direction;
     this.liftToL1 = new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2);
-    this.runHandoff = BoathookCommands.newHandoffCommand(boathook, intake);
     addRequirements(this.intake);
   }
 
