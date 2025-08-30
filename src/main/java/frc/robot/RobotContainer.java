@@ -29,6 +29,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OnTheFlyAlignCommand;
 import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -114,7 +117,6 @@ public class RobotContainer {
   private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
   private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
 
-  public static final ReefTargetPose currentTargetPose = ReefTargetPose.EIGHT_LEFT;
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
