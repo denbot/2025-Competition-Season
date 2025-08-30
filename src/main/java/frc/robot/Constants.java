@@ -92,12 +92,5 @@ public final class Constants {
     public static final double L2_EXTENSION = 0.85;
     public static final double L3_EXTENSION = 1.95;
     public static final double L4_EXTENSION = 4.3;
-
-    // refferences to be input as commandType instead of an angle / length
-    public static final int COMMAND_SET1 = 1;
-    public static final int COMMAND_SET2 = 2;
-    public static final int COMMAND_SET3 = 3;
-    public static final int COMMAND_IDLE = 4;
-    public static final int COMMAND_STAB = 5;
   }
 }
