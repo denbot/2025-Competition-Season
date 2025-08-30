@@ -149,6 +149,8 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
+    SmartDashboard.putNumber("Target X", RobotContainer.currentTargetPose.x);
+    SmartDashboard.putNumber("Target Y", RobotContainer.currentTargetPose.y);
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -247,8 +249,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
-    SmartDashboard.putString("Direction", String.valueOf(reefTarget.direction));
-    SmartDashboard.putNumber("Angle", reefTarget.angle);
+    SmartDashboard.putString(
+        "Direction", String.valueOf(RobotContainer.currentTargetPose.direction));
+    SmartDashboard.putNumber("Angle", RobotContainer.currentTargetPose.angle);
   }
 
   /** This function is called once when test mode is enabled. */
