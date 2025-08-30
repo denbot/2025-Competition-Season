@@ -27,7 +27,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.OnTheFlyAlignCommand;
 import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
+import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
+import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -74,8 +78,10 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  private final GoToReefCommand reef;
-  // private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
+  private final BoathookExtendMotionPathCommand extendBoathook;
+  private final BoathookRetractMotionPathCommand retractBoathook;
+  private final HandoffCommand stabBoathook;
+  private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
 
   private final RunIntakeCommand pullInCoral;
@@ -87,6 +93,7 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
+  private final OnTheFlyAlignCommand onTheFlyAlignCommand;
   public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
 
   // each of these corresponds to a different button on the button board
@@ -109,6 +116,7 @@ public class RobotContainer {
 
   private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
   private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
+
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -160,8 +168,10 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
+    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
+    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
+    stabBoathook = new HandoffCommand(boathook, intake);
     reef = new GoToReefCommand(drive);
-    // reef = new GoToReefCommand(drive);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -175,6 +185,8 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetInwards);
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
+
+    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -256,6 +268,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().onTrue(reef);
+    controller.x().onTrue(onTheFlyAlignCommand);
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);

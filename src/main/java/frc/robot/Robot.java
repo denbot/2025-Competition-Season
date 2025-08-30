@@ -146,6 +146,9 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    SmartDashboard.putData(CommandScheduler.getInstance());
+    SmartDashboard.putNumber("Target X", RobotContainer.currentTargetPose.x);
+    SmartDashboard.putNumber("Target Y", RobotContainer.currentTargetPose.y);
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
