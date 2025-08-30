@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
-import frc.robot.commands.boathookCommands.BoathookCommands;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 
 public class Boathook extends SubsystemBase {
@@ -193,10 +192,6 @@ public class Boathook extends SubsystemBase {
 
     NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
     NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
-    NamedCommands.registerCommand("autoIdle", BoathookCommands.newIdleCommand(this));
-    NamedCommands.registerCommand("autoExtend", BoathookCommands.newExtendMotoinPathCommand(this));
-    NamedCommands.registerCommand(
-        "autoRetract", BoathookCommands.newRetractMotionPathCommand(this));
   }
 
   /**
