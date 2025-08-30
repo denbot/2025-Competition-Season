@@ -31,6 +31,7 @@ import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.OnTheFlyAlignCommand;
+import frc.robot.commands.ReefTargetPose;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -38,6 +39,7 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
+import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
@@ -81,7 +83,7 @@ public class RobotContainer {
   private final BoathookExtendMotionPathCommand extendBoathook;
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final HandoffCommand stabBoathook;
-  // private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
+  private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
 
   private final RunIntakeCommand pullInCoral;
@@ -115,6 +117,8 @@ public class RobotContainer {
 
   private final TargetChange twoLeft = new TargetChange(ReefTarget.TWO_LEFT);
   private final TargetChange twoRight = new TargetChange(ReefTarget.TWO_RIGHT);
+
+  public static final ReefTargetPose currentTargetPose = ReefTargetPose.EIGHT_LEFT;
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -169,7 +173,7 @@ public class RobotContainer {
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
-    // reef = new GoToReefCommand(drive);
+    reef = new GoToReefCommand(drive);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
