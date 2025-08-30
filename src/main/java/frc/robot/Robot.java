@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.visionCommands.AutomaticIntakeCommand;
 import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.elastic.Elastic;
@@ -54,6 +55,7 @@ public class Robot extends LoggedRobot {
   public static ReefTarget reefTarget = ReefTarget.TWELVE_LEFT;
   private Field2d field = new Field2d();
   private final Timer timer = new Timer();
+  private final AutomaticIntakeCommand automaticIntake = new AutomaticIntakeCommand();
 
   public Robot() {
     // Record metadata
@@ -157,6 +159,10 @@ public class Robot extends LoggedRobot {
 
     SmartDashboard.putNumberArray(
         "Pose", LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name));
+
+    if (!automaticIntake.isScheduled()) {
+      CommandScheduler.getInstance().schedule(automaticIntake);
+    }
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {
