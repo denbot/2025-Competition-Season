@@ -94,32 +94,26 @@ public class RobotContainer {
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private final TargetChange twelveLeft =
+  private TargetChange twelveLeft =
       new TargetChange(ReefTargetPose.TWELVE_LEFT, ReefAprilTag.TWELVE);
-  private final TargetChange twelveRight =
+  private TargetChange twelveRight =
       new TargetChange(ReefTargetPose.TWELVE_RIGHT, ReefAprilTag.TWELVE);
 
-  private final TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT, ReefAprilTag.TEN);
-  private final TargetChange tenRight =
-      new TargetChange(ReefTargetPose.TEN_RIGHT, ReefAprilTag.TEN);
+  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT, ReefAprilTag.TEN);
+  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT, ReefAprilTag.TEN);
 
-  private final TargetChange eightLeft =
-      new TargetChange(ReefTargetPose.EIGHT_LEFT, ReefAprilTag.EIGHT);
-  private final TargetChange eightRight =
+  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT, ReefAprilTag.EIGHT);
+  private TargetChange eightRight =
       new TargetChange(ReefTargetPose.EIGHT_RIGHT, ReefAprilTag.EIGHT);
 
-  private final TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT, ReefAprilTag.SIX);
-  private final TargetChange sixRight =
-      new TargetChange(ReefTargetPose.SIX_RIGHT, ReefAprilTag.SIX);
+  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT, ReefAprilTag.SIX);
+  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT, ReefAprilTag.SIX);
 
-  private final TargetChange fourLeft =
-      new TargetChange(ReefTargetPose.FOUR_LEFT, ReefAprilTag.FOUR);
-  private final TargetChange fourRight =
-      new TargetChange(ReefTargetPose.FOUR_RIGHT, ReefAprilTag.FOUR);
+  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT, ReefAprilTag.FOUR);
+  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT, ReefAprilTag.FOUR);
 
-  private final TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT, ReefAprilTag.TWO);
-  private final TargetChange twoRight =
-      new TargetChange(ReefTargetPose.TWO_RIGHT, ReefAprilTag.TWO);
+  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT, ReefAprilTag.TWO);
+  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT, ReefAprilTag.TWO);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -165,6 +159,24 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         break;
+    }
+
+    // if the field is flipped, left and right are flipped so setpoints must also be flipped
+    // TODO less bad way of swapping left/right commands
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      TargetChange tempTargetChange;
+      tempTargetChange = twoLeft;
+      twoLeft = twoRight;
+      twoRight = tempTargetChange;
+
+      tempTargetChange = tenLeft;
+      tenLeft = tenRight;
+      tenRight = tempTargetChange;
+
+      tempTargetChange = twelveLeft;
+      twelveLeft = twelveRight;
+      twelveRight = tempTargetChange;
     }
 
     intake = new Intake();
