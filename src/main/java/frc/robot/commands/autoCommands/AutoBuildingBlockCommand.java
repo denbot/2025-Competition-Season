@@ -57,7 +57,7 @@ public class AutoBuildingBlockCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    if(scoreWaitCommand.isScheduled()) scoreWaitCommand.cancel();
+    if (scoreWaitCommand.isScheduled()) scoreWaitCommand.cancel();
     System.out.println("Ended Auto Building Block CMD");
     currentStep = 0;
   }

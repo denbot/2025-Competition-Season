@@ -84,9 +84,9 @@ public class RobotContainer {
   // Commands
   private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
-  public final SequentialCommandGroup extendBoathook;
-  public final SequentialCommandGroup retractBoathook;
-  public final SequentialCommandGroup stabBoathook;
+  public final BoathookExtendMotionPathCommand extendBoathook;
+  public final BoathookRetractMotionPathCommand retractBoathook;
+  public final HandoffCommand stabBoathook;
 
   private final RunIntakeCommand pullInCoral;
   private final RunIntakeCommand rejectCoral;
