@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ReefTargetPose;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -36,7 +37,6 @@ import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
-import frc.robot.game.ReefTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -87,26 +87,28 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
+  public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private final TargetChange twelveLeft = new TargetChange(ReefTarget.TWELVE_LEFT);
-  private final TargetChange twelveRight = new TargetChange(ReefTarget.TWELVE_RIGHT);
+  private TargetChange twelveLeft = new TargetChange(ReefTargetPose.TWELVE_LEFT);
+  private TargetChange twelveRight = new TargetChange(ReefTargetPose.TWELVE_RIGHT);
 
-  private final TargetChange tenLeft = new TargetChange(ReefTarget.TEN_LEFT);
-  private final TargetChange tenRight = new TargetChange(ReefTarget.TEN_RIGHT);
+  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT);
+  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT);
 
-  private final TargetChange eightLeft = new TargetChange(ReefTarget.EIGHT_LEFT);
-  private final TargetChange eightRight = new TargetChange(ReefTarget.EIGHT_RIGHT);
+  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT);
+  private TargetChange eightRight = new TargetChange(ReefTargetPose.EIGHT_RIGHT);
 
-  private final TargetChange sixLeft = new TargetChange(ReefTarget.SIX_LEFT);
-  private final TargetChange sixRight = new TargetChange(ReefTarget.SIX_RIGHT);
+  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT);
+  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT);
 
-  private final TargetChange fourLeft = new TargetChange(ReefTarget.FOUR_LEFT);
-  private final TargetChange fourRight = new TargetChange(ReefTarget.FOUR_RIGHT);
+  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT);
+  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT);
 
-  private final TargetChange twoLeft = new TargetChange(ReefTarget.TWO_LEFT);
-  private final TargetChange twoRight = new TargetChange(ReefTarget.TWO_RIGHT);
+  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
+  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);

@@ -5,21 +5,21 @@
 package frc.robot.commands.visionCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
-import frc.robot.game.ReefTarget;
+import frc.robot.RobotContainer;
+import frc.robot.commands.ReefTargetPose;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TargetChange extends Command {
-  private final ReefTarget target;
+  private ReefTargetPose targetPath = null;
 
-  public TargetChange(ReefTarget target) {
-    this.target = target;
+  public TargetChange(ReefTargetPose targetPath) {
+    this.targetPath = targetPath;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.reefTarget = this.target;
+    RobotContainer.currentTargetPose = this.targetPath;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
