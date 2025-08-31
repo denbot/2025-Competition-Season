@@ -20,9 +20,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -122,6 +125,9 @@ public class RobotContainer {
   private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
   private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
 
+  private final int scoreWaitTime = 2; // seconds
+  private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
+
   public final RumblePresets rumblePresets;
 
   public final PreCheckTab preCheckTab;
@@ -186,6 +192,14 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
+    autoRoutine.addCommands(
+		constructAutoBuildingBlock(ReefTargetPose.TEN_LEFT, SetL3),
+		constructAutoBuildingBlock(ReefTargetPose.FOUR_LEFT),
+		constructAutoBuildingBlock(ReefTargetPose.SIX_LEFT, SetL2),
+		constructAutoBuildingBlock(ReefTargetPose.EIGHT_LEFT),
+		constructAutoBuildingBlock(ReefTargetPose.TEN_LEFT),
+		constructAutoBuildingBlock(ReefTargetPose.TWELVE_LEFT, SetL2)
+		);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -304,12 +318,39 @@ public class RobotContainer {
     operatorController2.button(12).onTrue(sixLeft);
   }
 
+  // overloading allows for creating building blocks that only align or only score
+  // IE returning to human player doesent need to run a score after it finished auto aligning
+  public SequentialCommandGroup constructAutoBuildingBlock(
+      ReefTargetPose target, SetLevelCommand scoreLevel) {
+    if (RobotBase.isReal())
+      return new SequentialCommandGroup(
+          	OnTheFlyAlignCommand.getOnTheFlyCommand(target),
+          	scoreLevel,
+          	extendBoathook,
+          	new WaitCommand(scoreWaitTime),
+		  	retractBoathook);
+
+    return new SequentialCommandGroup(
+        OnTheFlyAlignCommand.getOnTheFlyCommand(target), new WaitCommand(scoreWaitTime));
+  }
+
+  public SequentialCommandGroup constructAutoBuildingBlock(SetLevelCommand scoreLevel) {
+    if (RobotBase.isReal())
+	  	return new SequentialCommandGroup(
+          	scoreLevel, extendBoathook, new WaitCommand(scoreWaitTime), retractBoathook);
+    return new SequentialCommandGroup(new WaitCommand(scoreWaitTime));
+  }
+
+  public SequentialCommandGroup constructAutoBuildingBlock(ReefTargetPose target) {
+    return new SequentialCommandGroup(OnTheFlyAlignCommand.getOnTheFlyCommand(target));
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
+  public SequentialCommandGroup getAutonomousCommand() {
+    return autoRoutine;
   }
 }

@@ -18,12 +18,7 @@ public class OnTheFlyAlignCommand extends Command {
     addRequirements(drive);
   }
 
-  @Override
-  public void initialize() {}
-
-  @Override
-  public void execute() {
-
+  public static Command getOnTheFlyCommand(ReefTargetPose target) {
     double x = RobotContainer.currentTargetPose.x;
     double y = RobotContainer.currentTargetPose.y;
     double angle = RobotContainer.currentTargetPose.angle;
@@ -36,15 +31,20 @@ public class OnTheFlyAlignCommand extends Command {
       angle += 180;
       if (angle > 180) angle -= 360;
     }
-    System.out.println("Aligning To: " + x + ", " + y);
 
     // initializes new pathFindToPose command which both create a path and has the robot follow said
     // path
-    pathFindingCommand =
-        AutoBuilder.pathfindToPose(
-            new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-            new PathConstraints(
-                2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+    return AutoBuilder.pathfindToPose(
+        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
+        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+  }
+
+  @Override
+  public void initialize() {}
+
+  @Override
+  public void execute() {
+    pathFindingCommand = getOnTheFlyCommand(RobotContainer.currentTargetPose);
   }
 
   @Override
