@@ -16,7 +16,6 @@ package frc.robot;
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -98,7 +97,6 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  // public final OnTheFlyAlignCommand onTheFlyAlignCommand;
   public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
 
   // each of these corresponds to a different button on the button board
@@ -206,7 +204,7 @@ public class RobotContainer {
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
-    // Set up auto routines
+	// Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
@@ -322,9 +320,9 @@ public class RobotContainer {
   }
 
   public static Command getOnTheFlyCommand(ReefTargetPose target) {
-    double x = RobotContainer.currentTargetPose.x;
-    double y = RobotContainer.currentTargetPose.y;
-    double angle = RobotContainer.currentTargetPose.angle;
+    double x = target.x;
+    double y = target.y;
+    double angle = target.angle;
     // if the alliance is red, flip positions accordingly
     if (DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
