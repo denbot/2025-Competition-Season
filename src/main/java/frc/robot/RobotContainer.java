@@ -15,8 +15,11 @@ package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -30,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.autoCommands.OnTheFlyAlignCommand;
 import frc.robot.commands.autoCommands.ReefTargetPose;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
@@ -96,7 +98,7 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  public final OnTheFlyAlignCommand onTheFlyAlignCommand;
+  // public final OnTheFlyAlignCommand onTheFlyAlignCommand;
   public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
 
   // each of these corresponds to a different button on the button board
@@ -191,15 +193,16 @@ public class RobotContainer {
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
-    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
+    // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
     autoRoutine.addCommands(
-		constructAutoBuildingBlock(ReefTargetPose.TEN_LEFT, SetL3),
-		constructAutoBuildingBlock(ReefTargetPose.FOUR_LEFT),
-		constructAutoBuildingBlock(ReefTargetPose.SIX_LEFT, SetL2),
-		constructAutoBuildingBlock(ReefTargetPose.EIGHT_LEFT),
-		constructAutoBuildingBlock(ReefTargetPose.TEN_LEFT),
-		constructAutoBuildingBlock(ReefTargetPose.TWELVE_LEFT, SetL2)
-		);
+        getAutoAlignBuildingBlock(ReefTargetPose.EIGHT_LEFT),
+        getScoringBuildingBlock(SetL2),
+        getAutoAlignBuildingBlock(ReefTargetPose.FOUR_LEFT),
+        getScoringBuildingBlock(SetL3),
+        getAutoAlignBuildingBlock(ReefTargetPose.TEN_LEFT),
+        getScoringBuildingBlock(SetL4),
+        getAutoAlignBuildingBlock(ReefTargetPose.SIX_LEFT),
+        getScoringBuildingBlock(SetL1));
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
@@ -281,7 +284,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().onTrue(reef);
-    controller.x().onTrue(onTheFlyAlignCommand);
+    controller.x().onTrue(getOnTheFlyCommand(currentTargetPose));
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
@@ -318,31 +321,40 @@ public class RobotContainer {
     operatorController2.button(12).onTrue(sixLeft);
   }
 
-  // overloading allows for creating building blocks that only align or only score
-  // IE returning to human player doesent need to run a score after it finished auto aligning
-  public SequentialCommandGroup constructAutoBuildingBlock(
-      ReefTargetPose target, SetLevelCommand scoreLevel) {
-    if (RobotBase.isReal())
-      return new SequentialCommandGroup(
-          	OnTheFlyAlignCommand.getOnTheFlyCommand(target),
-          	scoreLevel,
-          	extendBoathook,
-          	new WaitCommand(scoreWaitTime),
-		  	retractBoathook);
+  public static Command getOnTheFlyCommand(ReefTargetPose target) {
+    double x = RobotContainer.currentTargetPose.x;
+    double y = RobotContainer.currentTargetPose.y;
+    double angle = RobotContainer.currentTargetPose.angle;
+    // if the alliance is red, flip positions accordingly
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      // approximate location of top right corner of the reef = 17.6, 7.6
+      x = 17.6 - x;
+      y = 8.05 - y;
+      angle += 180;
+      if (angle > 180) angle -= 360;
+    }
 
-    return new SequentialCommandGroup(
-        OnTheFlyAlignCommand.getOnTheFlyCommand(target), new WaitCommand(scoreWaitTime));
+    // initializes new pathFindToPose command which both create a path and has the robot follow said
+    // path
+    return AutoBuilder.pathfindToPose(
+        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
+        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
   }
 
-  public SequentialCommandGroup constructAutoBuildingBlock(SetLevelCommand scoreLevel) {
-    if (RobotBase.isReal())
-	  	return new SequentialCommandGroup(
-          	scoreLevel, extendBoathook, new WaitCommand(scoreWaitTime), retractBoathook);
+  // overloading allows for creating building blocks that only align or only score
+  // IE returning to human player doesent need to run a score after it finished auto aligning
+  public SequentialCommandGroup getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+    if (RobotBase.isReal()) {
+      return new SequentialCommandGroup(
+          scoreLevel, extendBoathook, new WaitCommand(scoreWaitTime), retractBoathook);
+    }
+
     return new SequentialCommandGroup(new WaitCommand(scoreWaitTime));
   }
 
-  public SequentialCommandGroup constructAutoBuildingBlock(ReefTargetPose target) {
-    return new SequentialCommandGroup(OnTheFlyAlignCommand.getOnTheFlyCommand(target));
+  public Command getAutoAlignBuildingBlock(ReefTargetPose target) {
+    return getOnTheFlyCommand(target);
   }
 
   /**
