@@ -27,8 +27,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.OnTheFlyAlignCommand;
-import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.autoCommands.OnTheFlyAlignCommand;
+import frc.robot.commands.autoCommands.ReefTargetPose;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
@@ -78,9 +78,9 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  private final BoathookExtendMotionPathCommand extendBoathook;
-  private final BoathookRetractMotionPathCommand retractBoathook;
-  private final HandoffCommand stabBoathook;
+  public final BoathookExtendMotionPathCommand extendBoathook;
+  public final BoathookRetractMotionPathCommand retractBoathook;
+  public final HandoffCommand stabBoathook;
   private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
 
@@ -93,7 +93,7 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  private final OnTheFlyAlignCommand onTheFlyAlignCommand;
+  public final OnTheFlyAlignCommand onTheFlyAlignCommand;
   public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
 
   // each of these corresponds to a different button on the button board
@@ -116,7 +116,6 @@ public class RobotContainer {
 
   private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
   private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
-
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
