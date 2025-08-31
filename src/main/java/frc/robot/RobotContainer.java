@@ -44,7 +44,6 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
-import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -97,28 +96,12 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+  public static ReefTargetPose currentTargetPose = ReefTargetPose.TEN_LEFT;
+  public static Command currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private TargetChange twelveLeft = new TargetChange(ReefTargetPose.TWELVE_LEFT);
-  private TargetChange twelveRight = new TargetChange(ReefTargetPose.TWELVE_RIGHT);
-
-  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT);
-  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT);
-
-  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT);
-  private TargetChange eightRight = new TargetChange(ReefTargetPose.EIGHT_RIGHT);
-
-  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT);
-  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT);
-
-  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT);
-  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT);
-
-  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
-  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
@@ -204,7 +187,7 @@ public class RobotContainer {
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
-	// Set up auto routines
+    // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
@@ -282,7 +265,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().onTrue(reef);
-    controller.x().onTrue(getOnTheFlyCommand(currentTargetPose));
+    controller.x().onTrue(currentOnTheFlyCommand);
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
@@ -297,26 +280,26 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(twelveLeft);
-    operatorController1.button(2).onTrue(twoRight);
-    operatorController1.button(3).onTrue(twoLeft);
+    operatorController1.button(1).onTrue(assignOTFCommand(ReefTargetPose.TWELVE_LEFT));
+    operatorController1.button(2).onTrue(assignOTFCommand(ReefTargetPose.TWO_RIGHT));
+    operatorController1.button(3).onTrue(assignOTFCommand(ReefTargetPose.TWO_LEFT));
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
     operatorController1.button(7).onTrue(SetL1);
-    operatorController1.button(8).onTrue(fourRight);
-    operatorController1.button(11).onTrue(fourLeft);
-    operatorController1.button(12).onTrue(sixRight);
+    operatorController1.button(8).onTrue(assignOTFCommand(ReefTargetPose.FOUR_RIGHT));
+    operatorController1.button(11).onTrue(assignOTFCommand(ReefTargetPose.FOUR_LEFT));
+    operatorController1.button(12).onTrue(assignOTFCommand(ReefTargetPose.SIX_RIGHT));
 
-    operatorController2.button(1).onTrue(twelveRight);
-    operatorController2.button(2).onTrue(tenLeft);
-    operatorController2.button(3).onTrue(tenRight);
+    operatorController2.button(1).onTrue(assignOTFCommand(ReefTargetPose.TWELVE_RIGHT));
+    operatorController2.button(2).onTrue(assignOTFCommand(ReefTargetPose.TEN_LEFT));
+    operatorController2.button(3).onTrue(assignOTFCommand(ReefTargetPose.TEN_RIGHT));
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(eightLeft);
-    operatorController2.button(11).onTrue(eightRight);
-    operatorController2.button(12).onTrue(sixLeft);
+    operatorController2.button(8).onTrue(assignOTFCommand(ReefTargetPose.EIGHT_LEFT));
+    operatorController2.button(11).onTrue(assignOTFCommand(ReefTargetPose.EIGHT_RIGHT));
+    operatorController2.button(12).onTrue(assignOTFCommand(ReefTargetPose.SIX_LEFT));
   }
 
   public static Command getOnTheFlyCommand(ReefTargetPose target) {
@@ -342,7 +325,7 @@ public class RobotContainer {
 
   // overloading allows for creating building blocks that only align or only score
   // IE returning to human player doesent need to run a score after it finished auto aligning
-  public SequentialCommandGroup getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+  private SequentialCommandGroup getScoringBuildingBlock(SetLevelCommand scoreLevel) {
     if (RobotBase.isReal()) {
       return new SequentialCommandGroup(
           scoreLevel, extendBoathook, new WaitCommand(scoreWaitTime), retractBoathook);
@@ -351,8 +334,13 @@ public class RobotContainer {
     return new SequentialCommandGroup(new WaitCommand(scoreWaitTime));
   }
 
-  public Command getAutoAlignBuildingBlock(ReefTargetPose target) {
+  private Command getAutoAlignBuildingBlock(ReefTargetPose target) {
     return getOnTheFlyCommand(target);
+  }
+
+  private static Command assignOTFCommand(ReefTargetPose target) {
+    currentTargetPose = target;
+    return Commands.runOnce(() -> currentOnTheFlyCommand = getOnTheFlyCommand(target));
   }
 
   /**
