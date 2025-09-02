@@ -96,8 +96,8 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  public static ReefTargetPose currentTargetPose = ReefTargetPose.TEN_LEFT;
-  public static Command currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
+  public static ReefTargetPose currentTargetPose;
+  public static Command currentOnTheFlyCommand;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
@@ -108,7 +108,6 @@ public class RobotContainer {
   private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
   private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
 
-  private final int scoreWaitTime = 2; // seconds
   private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
 
   public final RumblePresets rumblePresets;
@@ -186,6 +185,8 @@ public class RobotContainer {
         getScoringBuildingBlock(SetL1));
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
+    currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+    currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -265,7 +266,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().onTrue(reef);
-    controller.x().onTrue(currentOnTheFlyCommand);
+    controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
@@ -280,26 +281,26 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(assignOTFCommand(ReefTargetPose.TWELVE_LEFT));
-    operatorController1.button(2).onTrue(assignOTFCommand(ReefTargetPose.TWO_RIGHT));
-    operatorController1.button(3).onTrue(assignOTFCommand(ReefTargetPose.TWO_LEFT));
+    operatorController1.button(1).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWELVE_LEFT));
+    operatorController1.button(2).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWO_RIGHT));
+    operatorController1.button(3).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWO_LEFT));
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
     operatorController1.button(7).onTrue(SetL1);
-    operatorController1.button(8).onTrue(assignOTFCommand(ReefTargetPose.FOUR_RIGHT));
-    operatorController1.button(11).onTrue(assignOTFCommand(ReefTargetPose.FOUR_LEFT));
-    operatorController1.button(12).onTrue(assignOTFCommand(ReefTargetPose.SIX_RIGHT));
+    operatorController1.button(8).onTrue(assignOnTheFlyCommand(ReefTargetPose.FOUR_RIGHT));
+    operatorController1.button(11).onTrue(assignOnTheFlyCommand(ReefTargetPose.FOUR_LEFT));
+    operatorController1.button(12).onTrue(assignOnTheFlyCommand(ReefTargetPose.SIX_RIGHT));
 
-    operatorController2.button(1).onTrue(assignOTFCommand(ReefTargetPose.TWELVE_RIGHT));
-    operatorController2.button(2).onTrue(assignOTFCommand(ReefTargetPose.TEN_LEFT));
-    operatorController2.button(3).onTrue(assignOTFCommand(ReefTargetPose.TEN_RIGHT));
+    operatorController2.button(1).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWELVE_RIGHT));
+    operatorController2.button(2).onTrue(assignOnTheFlyCommand(ReefTargetPose.TEN_LEFT));
+    operatorController2.button(3).onTrue(assignOnTheFlyCommand(ReefTargetPose.TEN_RIGHT));
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(assignOTFCommand(ReefTargetPose.EIGHT_LEFT));
-    operatorController2.button(11).onTrue(assignOTFCommand(ReefTargetPose.EIGHT_RIGHT));
-    operatorController2.button(12).onTrue(assignOTFCommand(ReefTargetPose.SIX_LEFT));
+    operatorController2.button(8).onTrue(assignOnTheFlyCommand(ReefTargetPose.EIGHT_LEFT));
+    operatorController2.button(11).onTrue(assignOnTheFlyCommand(ReefTargetPose.EIGHT_RIGHT));
+    operatorController2.button(12).onTrue(assignOnTheFlyCommand(ReefTargetPose.SIX_LEFT));
   }
 
   public static Command getOnTheFlyCommand(ReefTargetPose target) {
@@ -325,22 +326,27 @@ public class RobotContainer {
 
   // overloading allows for creating building blocks that only align or only score
   // IE returning to human player doesent need to run a score after it finished auto aligning
-  private SequentialCommandGroup getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+  private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+	Command scoreWaitCommand = new WaitCommand(2);
     if (RobotBase.isReal()) {
       return new SequentialCommandGroup(
-          scoreLevel, extendBoathook, new WaitCommand(scoreWaitTime), retractBoathook);
+          scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
     }
 
-    return new SequentialCommandGroup(new WaitCommand(scoreWaitTime));
+    return scoreWaitCommand;
   }
 
   private Command getAutoAlignBuildingBlock(ReefTargetPose target) {
     return getOnTheFlyCommand(target);
   }
 
-  private static Command assignOTFCommand(ReefTargetPose target) {
-    currentTargetPose = target;
-    return Commands.runOnce(() -> currentOnTheFlyCommand = getOnTheFlyCommand(target));
+  private static Command assignOnTheFlyCommand(ReefTargetPose target) {
+    Runnable updateCurrentTarget =
+        () -> {
+          currentTargetPose = target;
+          currentOnTheFlyCommand = getOnTheFlyCommand(target);
+        };
+    return Commands.runOnce(updateCurrentTarget);
   }
 
   /**
@@ -348,7 +354,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public SequentialCommandGroup getAutonomousCommand() {
+  public Command getAutonomousCommand() {
     return autoRoutine;
   }
 }
