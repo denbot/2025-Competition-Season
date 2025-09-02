@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.autoCommands.ReefTargetPose;
+import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
@@ -96,7 +96,7 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  public static ReefTargetPose currentTargetPose;
+  public static OnTheFlyTargetPose currentTargetPose;
   public static Command currentOnTheFlyCommand;
 
   // each of these corresponds to a different button on the button board
@@ -175,17 +175,17 @@ public class RobotContainer {
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
     autoRoutine.addCommands(
-        getAutoAlignBuildingBlock(ReefTargetPose.EIGHT_LEFT),
+        getAutoAlignBuildingBlock(OnTheFlyTargetPose.EIGHT_LEFT),
         getScoringBuildingBlock(SetL2),
-        getAutoAlignBuildingBlock(ReefTargetPose.FOUR_LEFT),
+        getAutoAlignBuildingBlock(OnTheFlyTargetPose.FOUR_LEFT),
         getScoringBuildingBlock(SetL3),
-        getAutoAlignBuildingBlock(ReefTargetPose.TEN_LEFT),
+        getAutoAlignBuildingBlock(OnTheFlyTargetPose.TEN_LEFT),
         getScoringBuildingBlock(SetL4),
-        getAutoAlignBuildingBlock(ReefTargetPose.SIX_LEFT),
+        getAutoAlignBuildingBlock(OnTheFlyTargetPose.SIX_LEFT),
         getScoringBuildingBlock(SetL1));
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
-    currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+    currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
     currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
 
     // Set up auto routines
@@ -281,29 +281,29 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWELVE_LEFT));
-    operatorController1.button(2).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWO_RIGHT));
-    operatorController1.button(3).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWO_LEFT));
+    operatorController1.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_LEFT));
+    operatorController1.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_RIGHT));
+    operatorController1.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_LEFT));
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
     operatorController1.button(7).onTrue(SetL1);
-    operatorController1.button(8).onTrue(assignOnTheFlyCommand(ReefTargetPose.FOUR_RIGHT));
-    operatorController1.button(11).onTrue(assignOnTheFlyCommand(ReefTargetPose.FOUR_LEFT));
-    operatorController1.button(12).onTrue(assignOnTheFlyCommand(ReefTargetPose.SIX_RIGHT));
+    operatorController1.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_RIGHT));
+    operatorController1.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_LEFT));
+    operatorController1.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_RIGHT));
 
-    operatorController2.button(1).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWELVE_RIGHT));
-    operatorController2.button(2).onTrue(assignOnTheFlyCommand(ReefTargetPose.TEN_LEFT));
-    operatorController2.button(3).onTrue(assignOnTheFlyCommand(ReefTargetPose.TEN_RIGHT));
+    operatorController2.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_RIGHT));
+    operatorController2.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_LEFT));
+    operatorController2.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_RIGHT));
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(assignOnTheFlyCommand(ReefTargetPose.EIGHT_LEFT));
-    operatorController2.button(11).onTrue(assignOnTheFlyCommand(ReefTargetPose.EIGHT_RIGHT));
-    operatorController2.button(12).onTrue(assignOnTheFlyCommand(ReefTargetPose.SIX_LEFT));
+    operatorController2.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_LEFT));
+    operatorController2.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_RIGHT));
+    operatorController2.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_LEFT));
   }
 
-  public static Command getOnTheFlyCommand(ReefTargetPose target) {
+  public static Command getOnTheFlyCommand(OnTheFlyTargetPose target) {
     double x = target.x;
     double y = target.y;
     double angle = target.angle;
@@ -336,11 +336,11 @@ public class RobotContainer {
     return scoreWaitCommand;
   }
 
-  private Command getAutoAlignBuildingBlock(ReefTargetPose target) {
+  private Command getAutoAlignBuildingBlock(OnTheFlyTargetPose target) {
     return getOnTheFlyCommand(target);
   }
 
-  private static Command assignOnTheFlyCommand(ReefTargetPose target) {
+  private static Command assignOnTheFlyCommand(OnTheFlyTargetPose target) {
     Runnable updateCurrentTarget =
         () -> {
           currentTargetPose = target;
