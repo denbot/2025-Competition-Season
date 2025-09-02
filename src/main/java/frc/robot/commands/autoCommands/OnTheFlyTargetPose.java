@@ -1,6 +1,5 @@
 package frc.robot.commands.autoCommands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.game.ReefAprilTag;
 
 public enum OnTheFlyTargetPose {
@@ -46,16 +45,6 @@ public enum OnTheFlyTargetPose {
     this.angle = angle;
     this.aprilTag = aprilTag;
     this.direction = direction;
-
-    // if the alliance is red, flip positions accordingly
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // approximate location of top right corner of the reef = 17.6, 7.6
-      this.x = 17.6 - x;
-      this.y = 8.05 - y;
-      this.angle += 180;
-      if (this.angle > 180) this.angle -= 360;
-    }
   }
 
   // constructor for alignment poses without explicit april tag information
@@ -63,16 +52,6 @@ public enum OnTheFlyTargetPose {
     this.x = x;
     this.y = y;
     this.angle = angle;
-
-    // if the alliance is red, flip positions accordingly
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // approximate location of top right corner of the reef = 17.6, 7.6
-      this.x = 17.6 - x;
-      this.y = 8.05 - y;
-      this.angle += 180;
-      if (this.angle > 180) this.angle -= 360;
-    }
   }
 
   public enum Direction {
