@@ -6,14 +6,14 @@ package frc.robot.commands.visionCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.commands.autoCommands.ReefTargetPose;
+import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 @Deprecated
 public class TargetChange extends Command {
-  private ReefTargetPose targetPath = null;
+  private OnTheFlyTargetPose targetPath = null;
 
-  public TargetChange(ReefTargetPose targetPath) {
+  public TargetChange(OnTheFlyTargetPose targetPath) {
     this.targetPath = targetPath;
   }
 
