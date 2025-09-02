@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.autoCommands.ReefTargetPose;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.Limelights;

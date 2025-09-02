@@ -15,20 +15,24 @@ package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.OnTheFlyAlignCommand;
-import frc.robot.commands.ReefTargetPose;
+import frc.robot.commands.autoCommands.ReefTargetPose;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
@@ -40,7 +44,6 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
-import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -78,9 +81,9 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  private final BoathookExtendMotionPathCommand extendBoathook;
-  private final BoathookRetractMotionPathCommand retractBoathook;
-  private final HandoffCommand stabBoathook;
+  public final BoathookExtendMotionPathCommand extendBoathook;
+  public final BoathookRetractMotionPathCommand retractBoathook;
+  public final HandoffCommand stabBoathook;
   private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
 
@@ -93,35 +96,19 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  private final OnTheFlyAlignCommand onTheFlyAlignCommand;
-  public static ReefTargetPose currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+  public static ReefTargetPose currentTargetPose;
+  public static Command currentOnTheFlyCommand;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  private TargetChange twelveLeft = new TargetChange(ReefTargetPose.TWELVE_LEFT);
-  private TargetChange twelveRight = new TargetChange(ReefTargetPose.TWELVE_RIGHT);
-
-  private TargetChange tenLeft = new TargetChange(ReefTargetPose.TEN_LEFT);
-  private TargetChange tenRight = new TargetChange(ReefTargetPose.TEN_RIGHT);
-
-  private TargetChange eightLeft = new TargetChange(ReefTargetPose.EIGHT_LEFT);
-  private TargetChange eightRight = new TargetChange(ReefTargetPose.EIGHT_RIGHT);
-
-  private TargetChange sixLeft = new TargetChange(ReefTargetPose.SIX_LEFT);
-  private TargetChange sixRight = new TargetChange(ReefTargetPose.SIX_RIGHT);
-
-  private TargetChange fourLeft = new TargetChange(ReefTargetPose.FOUR_LEFT);
-  private TargetChange fourRight = new TargetChange(ReefTargetPose.FOUR_RIGHT);
-
-  private TargetChange twoLeft = new TargetChange(ReefTargetPose.TWO_LEFT);
-  private TargetChange twoRight = new TargetChange(ReefTargetPose.TWO_RIGHT);
-
 
   private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
   private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
   private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
   private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
+
+  private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
 
   public final RumblePresets rumblePresets;
 
@@ -186,9 +173,20 @@ public class RobotContainer {
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
-    onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
+    // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
+    autoRoutine.addCommands(
+        getAutoAlignBuildingBlock(ReefTargetPose.EIGHT_LEFT),
+        getScoringBuildingBlock(SetL2),
+        getAutoAlignBuildingBlock(ReefTargetPose.FOUR_LEFT),
+        getScoringBuildingBlock(SetL3),
+        getAutoAlignBuildingBlock(ReefTargetPose.TEN_LEFT),
+        getScoringBuildingBlock(SetL4),
+        getAutoAlignBuildingBlock(ReefTargetPose.SIX_LEFT),
+        getScoringBuildingBlock(SetL1));
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
+    currentTargetPose = ReefTargetPose.TWELVE_LEFT;
+    currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -268,7 +266,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.b().onTrue(reef);
-    controller.x().onTrue(onTheFlyAlignCommand);
+    controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
@@ -283,26 +281,72 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(twelveLeft);
-    operatorController1.button(2).onTrue(twoRight);
-    operatorController1.button(3).onTrue(twoLeft);
+    operatorController1.button(1).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWELVE_LEFT));
+    operatorController1.button(2).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWO_RIGHT));
+    operatorController1.button(3).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWO_LEFT));
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
     operatorController1.button(7).onTrue(SetL1);
-    operatorController1.button(8).onTrue(fourRight);
-    operatorController1.button(11).onTrue(fourLeft);
-    operatorController1.button(12).onTrue(sixRight);
+    operatorController1.button(8).onTrue(assignOnTheFlyCommand(ReefTargetPose.FOUR_RIGHT));
+    operatorController1.button(11).onTrue(assignOnTheFlyCommand(ReefTargetPose.FOUR_LEFT));
+    operatorController1.button(12).onTrue(assignOnTheFlyCommand(ReefTargetPose.SIX_RIGHT));
 
-    operatorController2.button(1).onTrue(twelveRight);
-    operatorController2.button(2).onTrue(tenLeft);
-    operatorController2.button(3).onTrue(tenRight);
+    operatorController2.button(1).onTrue(assignOnTheFlyCommand(ReefTargetPose.TWELVE_RIGHT));
+    operatorController2.button(2).onTrue(assignOnTheFlyCommand(ReefTargetPose.TEN_LEFT));
+    operatorController2.button(3).onTrue(assignOnTheFlyCommand(ReefTargetPose.TEN_RIGHT));
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(eightLeft);
-    operatorController2.button(11).onTrue(eightRight);
-    operatorController2.button(12).onTrue(sixLeft);
+    operatorController2.button(8).onTrue(assignOnTheFlyCommand(ReefTargetPose.EIGHT_LEFT));
+    operatorController2.button(11).onTrue(assignOnTheFlyCommand(ReefTargetPose.EIGHT_RIGHT));
+    operatorController2.button(12).onTrue(assignOnTheFlyCommand(ReefTargetPose.SIX_LEFT));
+  }
+
+  public static Command getOnTheFlyCommand(ReefTargetPose target) {
+    double x = target.x;
+    double y = target.y;
+    double angle = target.angle;
+    // if the alliance is red, flip positions accordingly
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+      // approximate location of top right corner of the reef = 17.6, 7.6
+      x = 17.6 - x;
+      y = 8.05 - y;
+      angle += 180;
+      if (angle > 180) angle -= 360;
+    }
+
+    // initializes new pathFindToPose command which both create a path and has the robot follow said
+    // path
+    return AutoBuilder.pathfindToPose(
+        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
+        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+  }
+
+  // overloading allows for creating building blocks that only align or only score
+  // IE returning to human player doesent need to run a score after it finished auto aligning
+  private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+	Command scoreWaitCommand = new WaitCommand(2);
+    if (RobotBase.isReal()) {
+      return new SequentialCommandGroup(
+          scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
+    }
+
+    return scoreWaitCommand;
+  }
+
+  private Command getAutoAlignBuildingBlock(ReefTargetPose target) {
+    return getOnTheFlyCommand(target);
+  }
+
+  private static Command assignOnTheFlyCommand(ReefTargetPose target) {
+    Runnable updateCurrentTarget =
+        () -> {
+          currentTargetPose = target;
+          currentOnTheFlyCommand = getOnTheFlyCommand(target);
+        };
+    return Commands.runOnce(updateCurrentTarget);
   }
 
   /**
@@ -311,6 +355,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return autoRoutine;
   }
 }
