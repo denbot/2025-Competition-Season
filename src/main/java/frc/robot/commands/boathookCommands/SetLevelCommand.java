@@ -18,6 +18,10 @@ public class SetLevelCommand extends Command {
     this.level = level;
   }
 
+  public SetLevelCommand getNew() {
+    return new SetLevelCommand(this.level);
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {

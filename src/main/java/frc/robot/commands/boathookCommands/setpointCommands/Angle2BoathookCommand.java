@@ -38,6 +38,6 @@ public class Angle2BoathookCommand extends Command {
   public boolean isFinished() {
     return Math.abs(
             boathook.getAngle() - (boathook.getLevel().angle2 + boathook.microRotationOffset))
-        < 5;
+        < 8;
   }
 }
