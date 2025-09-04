@@ -7,9 +7,9 @@ package frc.robot.commands.boathookCommands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleStabBoathookCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommandStab;
+import frc.robot.commands.boathookCommands.setpointCommands.setBoathookStateCommand;
+import frc.robot.commands.boathookCommands.setpointCommands.setBoathookStateCommand.boathookAngle;
+import frc.robot.commands.boathookCommands.setpointCommands.setBoathookStateCommand.boathookLength;
 import frc.robot.commands.intakeCommands.HandoffPrepIntakeCommand;
 import frc.robot.commands.intakeCommands.IntakeMoveCommand;
 import frc.robot.subsystems.boathook.Boathook;
@@ -24,13 +24,18 @@ public class HandoffCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new AngleIdleBoathookCommand(boathook),
-        new ExtendBoathookCommandStab(boathook),
-        new AngleStabBoathookCommand(boathook),
+        new setBoathookStateCommand(
+            boathook, boathookAngle.idleAngle, boathookLength.noChangeLength),
+        new setBoathookStateCommand(
+            boathook, boathookAngle.noChangeAngle, boathookLength.stabLength),
+        new setBoathookStateCommand(
+            boathook, boathookAngle.stabAngle, boathookLength.noChangeLength),
         new IntakeMoveCommand(intake, false, IntakeConstants.intakeSpearAngle, 2, 0),
         new HandoffPrepIntakeCommand(intake, 0.25),
         new ParallelCommandGroup(
-            new AngleIdleBoathookCommand(boathook), new HandoffPrepIntakeCommand(intake, 0.5)),
+            new setBoathookStateCommand(
+                boathook, boathookAngle.idleAngle, boathookLength.noChangeLength),
+            new HandoffPrepIntakeCommand(intake, 0.5)),
         new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2),
         new IntakeMoveCommand(intake, false, IntakeConstants.intakeDownAngle, 0, -3));
   }

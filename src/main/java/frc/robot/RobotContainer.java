@@ -47,7 +47,7 @@ import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
-import frc.robot.subsystems.boathook.Boathook.Level;
+import frc.robot.subsystems.boathook.Boathook.boathookInfo;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -103,10 +103,10 @@ public class RobotContainer {
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
-  private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
-  private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
-  private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
+  private final SetLevelCommand SetL1 = new SetLevelCommand(boathookInfo.L1);
+  private final SetLevelCommand SetL2 = new SetLevelCommand(boathookInfo.L2);
+  private final SetLevelCommand SetL3 = new SetLevelCommand(boathookInfo.L3);
+  private final SetLevelCommand SetL4 = new SetLevelCommand(boathookInfo.L4);
 
   private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
 
@@ -327,7 +327,7 @@ public class RobotContainer {
   // overloading allows for creating building blocks that only align or only score
   // IE returning to human player doesent need to run a score after it finished auto aligning
   private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
-	Command scoreWaitCommand = new WaitCommand(2);
+    Command scoreWaitCommand = new WaitCommand(2);
     if (RobotBase.isReal()) {
       return new SequentialCommandGroup(
           scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);

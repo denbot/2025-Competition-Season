@@ -8,7 +8,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.subsystems.boathook.Boathook;
-import frc.robot.subsystems.boathook.Boathook.Level;
+import frc.robot.subsystems.boathook.Boathook.boathookInfo;
 import frc.robot.subsystems.intake.Intake;
 
 public class RunIntakeCommand extends Command {
@@ -71,7 +71,7 @@ public class RunIntakeCommand extends Command {
         }
 
         if (runningWait.hasElapsed(.2)) {
-          if (boathook.getLevel() == Level.L1) {
+          if (boathook.getLevel() == boathookInfo.L1) {
             liftToL1.schedule();
             intake.flipL1Toggle();
           } else {

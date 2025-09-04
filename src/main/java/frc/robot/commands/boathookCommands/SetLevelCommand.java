@@ -6,14 +6,14 @@ package frc.robot.commands.boathookCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.boathook.Boathook.Level;
+import frc.robot.subsystems.boathook.Boathook.boathookInfo;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetLevelCommand extends Command {
   /** Creates a new SetLevel. */
-  private final Level level;
+  private final boathookInfo level;
 
-  public SetLevelCommand(Level level) {
+  public SetLevelCommand(boathookInfo level) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.level = level;
   }

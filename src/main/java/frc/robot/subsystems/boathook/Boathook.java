@@ -22,11 +22,10 @@ import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.SetLevelCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
-  public enum Level {
+  public enum boathookInfo {
     L1(
         BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
         BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
@@ -47,30 +46,30 @@ public class Boathook extends SubsystemBase {
         BoathookConstants.IDLE_ANGLE,
         BoathookConstants.IDLE_EXTENSION);
 
-    public double angle1;
-    public double length1;
-    public double angle2;
-    public double length2;
-    public double angle3;
-    public double length3;
+    public double startAngle;
+    public double startLength;
+    public double setupAngle;
+    public double setupLength;
+    public double scoreAngle;
+    public double scoreLength;
 
-    Level(
-        double angle1,
-        double length1,
-        double angle2,
-        double length2,
-        double angle3,
-        double length3) {
-      this.angle1 = angle1;
-      this.length1 = length1;
-      this.angle2 = angle2;
-      this.length2 = length2;
-      this.angle3 = angle3;
-      this.length3 = length3;
+    boathookInfo(
+        double startAngle,
+        double startLength,
+        double setupAngle,
+        double setupLength,
+        double scoreAngle,
+        double scoreLength) {
+      this.startAngle = startAngle;
+      this.startLength = startLength;
+      this.setupAngle = setupAngle;
+      this.setupLength = setupLength;
+      this.scoreAngle = scoreAngle;
+      this.scoreLength = scoreLength;
     }
   }
 
-  private Level level = Level.L1;
+  private boathookInfo level = boathookInfo.L1;
   public double microRotationOffset = 0.0;
 
   private static final TalonFX rotationMotor =
@@ -193,9 +192,8 @@ public class Boathook extends SubsystemBase {
     extensionEncoder.getConfigurator().apply(extensionEncoderConfig);
     limitSensors.getConfigurator().apply(limitSensorsConfig);
 
-    NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
-    NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
-    NamedCommands.registerCommand("autoIdle", new AngleIdleBoathookCommand(this));
+    NamedCommands.registerCommand("autoL2", new SetLevelCommand(boathookInfo.L2));
+    NamedCommands.registerCommand("autoL4", new SetLevelCommand(boathookInfo.L4));
     NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
     NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }
@@ -226,11 +224,11 @@ public class Boathook extends SubsystemBase {
     extenderMotor.setControl(new StaticBrake());
   }
 
-  public void setLevel(Level incomingLevel) {
+  public void setLevel(boathookInfo incomingLevel) {
     this.level = incomingLevel;
   }
 
-  public Level getLevel() {
+  public boathookInfo getLevel() {
     return level;
   }
 
