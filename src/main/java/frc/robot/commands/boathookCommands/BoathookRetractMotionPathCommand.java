@@ -5,11 +5,9 @@
 package frc.robot.commands.boathookCommands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.boathookCommands.setpointCommands.Angle3BoathookCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommand2;
-import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommand3;
 import frc.robot.commands.boathookCommands.setpointCommands.ExtendBoathookCommandIdle;
+import frc.robot.commands.boathookCommands.setpointCommands.RetractBoathookCommand;
 import frc.robot.subsystems.boathook.Boathook;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -21,10 +19,8 @@ public class BoathookRetractMotionPathCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new ExtendBoathookCommand2(boathook),
-        new Angle3BoathookCommand(boathook),
-        new ExtendBoathookCommand3(boathook),
+        new RetractBoathookCommand(boathook),
+        new ExtendBoathookCommandIdle(boathook),
         new AngleIdleBoathookCommand(boathook));
-    new ExtendBoathookCommandIdle(boathook);
   }
 }

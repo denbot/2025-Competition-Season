@@ -209,6 +209,11 @@ public class Boathook extends SubsystemBase {
     return angle.getValueAsDouble() * 360.0;
   }
 
+  public double getAngleSetpoint() {
+    StatusSignal<Double> angle = rotationMotor.getClosedLoopReference();
+    return angle.getValueAsDouble() * 360;
+  }
+
   public void setLength(double length) {
     extenderMotor.setControl(new PositionVoltage(length));
   }

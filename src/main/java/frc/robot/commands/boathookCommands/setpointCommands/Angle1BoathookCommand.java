@@ -27,6 +27,7 @@ public class Angle1BoathookCommand extends Command {
     boathook.setAngle(boathook.getLevel().angle1 + boathook.microRotationOffset);
     System.out.println("CURRENT ANGLE: " + boathook.getAngle());
     System.out.println("SET ANGLE: " + (boathook.getLevel().angle1 + boathook.microRotationOffset));
+    System.out.println("SET POINT ANGLE: " + boathook.getAngleSetpoint());
   }
 
   // Called once the command ends or is interrupted.
