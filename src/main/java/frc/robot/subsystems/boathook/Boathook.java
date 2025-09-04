@@ -21,7 +21,6 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
-import frc.robot.commands.boathookCommands.SetLevelCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
@@ -192,8 +191,6 @@ public class Boathook extends SubsystemBase {
     extensionEncoder.getConfigurator().apply(extensionEncoderConfig);
     limitSensors.getConfigurator().apply(limitSensorsConfig);
 
-    NamedCommands.registerCommand("autoL2", new SetLevelCommand(boathookInfo.L2));
-    NamedCommands.registerCommand("autoL4", new SetLevelCommand(boathookInfo.L4));
     NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
     NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }

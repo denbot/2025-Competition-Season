@@ -36,7 +36,6 @@ import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
 import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
 import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
-import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
@@ -103,10 +102,10 @@ public class RobotContainer {
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  private final SetLevelCommand SetL1 = new SetLevelCommand(boathookInfo.L1);
-  private final SetLevelCommand SetL2 = new SetLevelCommand(boathookInfo.L2);
-  private final SetLevelCommand SetL3 = new SetLevelCommand(boathookInfo.L3);
-  private final SetLevelCommand SetL4 = new SetLevelCommand(boathookInfo.L4);
+  private final Command SetL1;
+  private final Command SetL2;
+  private final Command SetL3;
+  private final Command SetL4;
 
   private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
 
@@ -155,10 +154,16 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
-    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
+	SetL1 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L1));
+	SetL2 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L2));
+	SetL3 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L3));
+	SetL4 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L4));
+
+	extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
     reef = new GoToReefCommand(drive);
+
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -326,7 +331,7 @@ public class RobotContainer {
 
   // overloading allows for creating building blocks that only align or only score
   // IE returning to human player doesent need to run a score after it finished auto aligning
-  private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+  private Command getScoringBuildingBlock(Command scoreLevel) {
     Command scoreWaitCommand = new WaitCommand(2);
     if (RobotBase.isReal()) {
       return new SequentialCommandGroup(
