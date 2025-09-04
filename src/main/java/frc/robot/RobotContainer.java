@@ -268,6 +268,9 @@ public class RobotContainer {
     controller.b().onTrue(reef);
     controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
+    controller.rightBumper().onTrue(extendBoathook);
+    controller.rightTrigger().onTrue(retractBoathook);
+
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
     controller.y().onTrue(moveIntake);
@@ -317,6 +320,9 @@ public class RobotContainer {
       if (angle > 180) angle -= 360;
     }
 
+    System.out.println("Target X: " + x);
+    System.out.println("Target Y: " + y);
+
     // initializes new pathFindToPose command which both create a path and has the robot follow said
     // path
     return AutoBuilder.pathfindToPose(
@@ -327,10 +333,13 @@ public class RobotContainer {
   // overloading allows for creating building blocks that only align or only score
   // IE returning to human player doesent need to run a score after it finished auto aligning
   private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
-	Command scoreWaitCommand = new WaitCommand(2);
+    Command scoreWaitCommand = new WaitCommand(2);
     if (RobotBase.isReal()) {
       return new SequentialCommandGroup(
-          scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
+          scoreLevel.getNew(),
+          new BoathookExtendMotionPathCommand(boathook),
+          scoreWaitCommand,
+          new BoathookRetractMotionPathCommand(boathook));
     }
 
     return scoreWaitCommand;

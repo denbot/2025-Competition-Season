@@ -27,6 +27,7 @@ public class Angle2BoathookCommand extends Command {
     boathook.setAngle(boathook.getLevel().angle2 + boathook.microRotationOffset);
     System.out.println("CURRENT ANGLE: " + boathook.getAngle());
     System.out.println("SET ANGLE: " + (boathook.getLevel().angle2 + boathook.microRotationOffset));
+    System.out.println("SET POINT ANGLE: " + boathook.getAngleSetpoint());
   }
 
   // Called once the command ends or is interrupted.
@@ -38,6 +39,6 @@ public class Angle2BoathookCommand extends Command {
   public boolean isFinished() {
     return Math.abs(
             boathook.getAngle() - (boathook.getLevel().angle2 + boathook.microRotationOffset))
-        < 5;
+        < 8;
   }
 }
