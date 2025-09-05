@@ -12,15 +12,12 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
-import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
@@ -190,9 +187,6 @@ public class Boathook extends SubsystemBase {
     extenderMotor.getConfigurator().apply(extenderConfig);
     extensionEncoder.getConfigurator().apply(extensionEncoderConfig);
     limitSensors.getConfigurator().apply(limitSensorsConfig);
-
-    NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
-    NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }
 
   public void setAngle(double angle) {

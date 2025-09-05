@@ -154,16 +154,15 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
-	SetL1 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L1));
-	SetL2 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L2));
-	SetL3 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L3));
-	SetL4 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L4));
+    SetL1 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L1));
+    SetL2 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L2));
+    SetL3 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L3));
+    SetL4 = Commands.runOnce(() -> boathook.setLevel(boathookInfo.L4));
 
-	extendBoathook = new BoathookExtendMotionPathCommand(boathook);
+    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
     reef = new GoToReefCommand(drive);
-
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);

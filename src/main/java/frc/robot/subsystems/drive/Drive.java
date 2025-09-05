@@ -17,7 +17,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -50,9 +49,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
-import frc.robot.commands.visionCommands.GoToReefCommand;
-import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -133,21 +129,6 @@ public class Drive extends SubsystemBase {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
-
-    NamedCommands.registerCommand("autoAlign", new GoToReefCommand(this));
-    NamedCommands.registerCommand("12L", new TargetChange(OnTheFlyTargetPose.TWELVE_LEFT));
-    NamedCommands.registerCommand("12R", new TargetChange(OnTheFlyTargetPose.TWELVE_RIGHT));
-    NamedCommands.registerCommand("10L", new TargetChange(OnTheFlyTargetPose.TEN_LEFT));
-    NamedCommands.registerCommand("10R", new TargetChange(OnTheFlyTargetPose.TEN_RIGHT));
-    NamedCommands.registerCommand("8L", new TargetChange(OnTheFlyTargetPose.EIGHT_LEFT));
-    NamedCommands.registerCommand("8R", new TargetChange(OnTheFlyTargetPose.EIGHT_RIGHT));
-    NamedCommands.registerCommand("6L", new TargetChange(OnTheFlyTargetPose.SIX_LEFT));
-    NamedCommands.registerCommand("6R", new TargetChange(OnTheFlyTargetPose.SIX_RIGHT));
-    NamedCommands.registerCommand("4L", new TargetChange(OnTheFlyTargetPose.FOUR_LEFT));
-    NamedCommands.registerCommand("4R", new TargetChange(OnTheFlyTargetPose.FOUR_RIGHT));
-    NamedCommands.registerCommand("2L", new TargetChange(OnTheFlyTargetPose.TWO_LEFT));
-    NamedCommands.registerCommand("2R", new TargetChange(OnTheFlyTargetPose.TWO_RIGHT));
-
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
         this::getPose,
