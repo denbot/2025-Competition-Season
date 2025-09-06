@@ -22,21 +22,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
-import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
 import frc.robot.commands.boathookCommands.HandoffCommand;
-import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
@@ -47,7 +42,6 @@ import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
-import frc.robot.subsystems.boathook.Boathook.Level;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -81,8 +75,8 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  public final BoathookExtendMotionPathCommand extendBoathook;
-  public final BoathookRetractMotionPathCommand retractBoathook;
+  public Command extendBoathook;
+  public Command retractBoathook;
   public final HandoffCommand stabBoathook;
   private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
@@ -99,16 +93,31 @@ public class RobotContainer {
   public static OnTheFlyTargetPose currentTargetPose;
   public static Command currentOnTheFlyCommand;
 
+  public BoathookCommands boathookCommands;
+
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
-  private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
-  private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
-  private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
-
-  private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
+  // private final Command SetL1 = new SetLevelCommand(Level.L1);
+  private final Command SetL2 =
+      Commands.runOnce(
+          () -> {
+            extendBoathook = boathookCommands.extendL2();
+            retractBoathook = boathookCommands.retractL2();
+          });
+  private final Command SetL3 =
+      Commands.runOnce(
+          () -> {
+            extendBoathook = boathookCommands.extendL3();
+            retractBoathook = boathookCommands.retractL3();
+          });
+  private final Command SetL4 =
+      Commands.runOnce(
+          () -> {
+            extendBoathook = boathookCommands.extendL4();
+            retractBoathook = boathookCommands.retractL4();
+          });
 
   public final RumblePresets rumblePresets;
 
@@ -155,8 +164,10 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
-    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
-    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
+    boathookCommands = new BoathookCommands(boathook);
+
+    extendBoathook = boathookCommands.extendL2();
+    retractBoathook = boathookCommands.retractL2();
     stabBoathook = new HandoffCommand(boathook, intake);
     reef = new GoToReefCommand(drive);
 
@@ -174,15 +185,6 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
-    autoRoutine.addCommands(
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.EIGHT_LEFT),
-        getScoringBuildingBlock(SetL2),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.FOUR_LEFT),
-        getScoringBuildingBlock(SetL3),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.TEN_LEFT),
-        getScoringBuildingBlock(SetL4),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.SIX_LEFT),
-        getScoringBuildingBlock(SetL1));
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
     currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
@@ -268,6 +270,9 @@ public class RobotContainer {
     controller.b().onTrue(reef);
     controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
+    controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
+
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
     controller.y().onTrue(moveIntake);
@@ -281,13 +286,20 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
+    operatorController1
+        .button(1)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(() -> System.out.println("Placeholder Building Block"))
+                .ignoringDisable(true));
+
     operatorController1.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_LEFT));
     operatorController1.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_RIGHT));
     operatorController1.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_LEFT));
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
-    operatorController1.button(7).onTrue(SetL1);
+    // operatorController1.button(7).onTrue(SetL1); Not Functional Until New Intake
     operatorController1.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_RIGHT));
     operatorController1.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_LEFT));
     operatorController1.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_RIGHT));
@@ -317,27 +329,14 @@ public class RobotContainer {
       if (angle > 180) angle -= 360;
     }
 
+    System.out.println("Target X: " + x);
+    System.out.println("Target Y: " + y);
+
     // initializes new pathFindToPose command which both create a path and has the robot follow said
     // path
     return AutoBuilder.pathfindToPose(
         new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
         new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
-  }
-
-  // overloading allows for creating building blocks that only align or only score
-  // IE returning to human player doesent need to run a score after it finished auto aligning
-  private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
-	Command scoreWaitCommand = new WaitCommand(2);
-    if (RobotBase.isReal()) {
-      return new SequentialCommandGroup(
-          scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
-    }
-
-    return scoreWaitCommand;
-  }
-
-  private Command getAutoAlignBuildingBlock(OnTheFlyTargetPose target) {
-    return getOnTheFlyCommand(target);
   }
 
   private static Command assignOnTheFlyCommand(OnTheFlyTargetPose target) {
@@ -355,6 +354,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoRoutine;
+    return null;
   }
 }
