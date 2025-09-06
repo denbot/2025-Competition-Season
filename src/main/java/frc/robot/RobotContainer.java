@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
-import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
@@ -37,7 +36,6 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
-import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -77,7 +75,6 @@ public class RobotContainer {
   public Command extendBoathook;
   public Command retractBoathook;
   public final HandoffCommand stabBoathook;
-  private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
 
   private final RunIntakeCommand pullInCoral;
@@ -89,7 +86,6 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  public static OnTheFlyTargetPose currentTargetPose;
   public static Command currentOnTheFlyCommand;
 
   public BoathookCommands boathookCommands;
@@ -168,7 +164,6 @@ public class RobotContainer {
     extendBoathook = boathookCommands.extendL2();
     retractBoathook = boathookCommands.retractL2();
     stabBoathook = new HandoffCommand(boathook, intake);
-    reef = new GoToReefCommand(drive);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -186,7 +181,6 @@ public class RobotContainer {
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
-    currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
     currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft();
 
     // Set up auto routines
@@ -266,7 +260,6 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(reef);
     controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
     controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
