@@ -15,39 +15,29 @@ package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.autoCommands.AlignScoreCommandBuilder;
 import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
-import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
-import frc.robot.commands.boathookCommands.HandoffCommand;
-import frc.robot.commands.boathookCommands.SetLevelCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
-import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
-import frc.robot.subsystems.boathook.Boathook.Level;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -79,12 +69,6 @@ public class RobotContainer {
   public DSControlWord controlWord = new DSControlWord();
   private final LoggedDashboardChooser<Command> autoChooser;
   public Orchestra m_orchestra = new Orchestra();
-
-  // Commands
-  public final BoathookExtendMotionPathCommand extendBoathook;
-  public final BoathookRetractMotionPathCommand retractBoathook;
-  public final HandoffCommand stabBoathook;
-  private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
   // permmanent
 
   private final RunIntakeCommand pullInCoral;
@@ -96,19 +80,12 @@ public class RobotContainer {
   private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
   private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
 
-  public static OnTheFlyTargetPose currentTargetPose;
-  public static Command currentOnTheFlyCommand;
-
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
-  private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
-  private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
-  private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
-
-  private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
+  private AlignScoreCommandBuilder commandBuilder;
+  private AlignScoreCommandBuilder autoCommandBuilder;
 
   public final RumblePresets rumblePresets;
 
@@ -155,10 +132,8 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
-    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
-    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
-    stabBoathook = new HandoffCommand(boathook, intake);
-    reef = new GoToReefCommand(drive);
+    commandBuilder = new AlignScoreCommandBuilder(boathook, intake);
+    autoCommandBuilder = new AlignScoreCommandBuilder(boathook, intake);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -173,21 +148,12 @@ public class RobotContainer {
     microExtensionAdjustOutwards =
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
-    // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
-    autoRoutine.addCommands(
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.EIGHT_LEFT),
-        getScoringBuildingBlock(SetL2),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.FOUR_LEFT),
-        getScoringBuildingBlock(SetL3),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.TEN_LEFT),
-        getScoringBuildingBlock(SetL4),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.SIX_LEFT),
-        getScoringBuildingBlock(SetL1));
-
     rumblePresets = new RumblePresets(rumbleSubsystem);
-    currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
-    currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
 
+    autoCommandBuilder
+        .addAutoAlign(OnTheFlyTargetPose.BLUE_CLIMB_ONE)
+        .addScoreL1()
+        .addAutoAlign(OnTheFlyTargetPose.EIGHT_LEFT);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -265,8 +231,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(reef);
-    controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
+    // TODO: Provide an OTF Target class for the GoToReefCommand to function sourced from button box
+    // controller.b().onTrue(new GoToReefCommand(drive, null));
+    controller.x().onTrue(Commands.runOnce(() -> commandBuilder.build(false).schedule()));
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
@@ -281,80 +248,60 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_LEFT));
-    operatorController1.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_RIGHT));
-    operatorController1.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_LEFT));
-    operatorController1.button(4).onTrue(SetL4);
-    operatorController1.button(5).onTrue(SetL3);
-    operatorController1.button(6).onTrue(SetL2);
-    operatorController1.button(7).onTrue(SetL1);
-    operatorController1.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_RIGHT));
-    operatorController1.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_LEFT));
-    operatorController1.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_RIGHT));
+    operatorController1
+        .button(1)
+        .onTrue(
+            Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.TWELVE_LEFT)));
+    operatorController1
+        .button(2)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.TWO_RIGHT)));
+    operatorController1
+        .button(3)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.TWO_LEFT)));
+    operatorController1.button(4).onTrue(Commands.runOnce(() -> commandBuilder.addScoreL4()));
+    operatorController1.button(5).onTrue(Commands.runOnce(() -> commandBuilder.addScoreL4()));
+    operatorController1.button(6).onTrue(Commands.runOnce(() -> commandBuilder.addScoreL4()));
+    operatorController1.button(7).onTrue(Commands.runOnce(() -> commandBuilder.addScoreL4()));
+    operatorController1
+        .button(8)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.FOUR_RIGHT)));
+    operatorController1
+        .button(11)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.FOUR_LEFT)));
+    operatorController1
+        .button(12)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.SIX_RIGHT)));
 
-    operatorController2.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_RIGHT));
-    operatorController2.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_LEFT));
-    operatorController2.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_RIGHT));
-    // operatorController2.button(5).onTrue(TODO);
-    // operatorController2.button(6).onTrue(TODO);
-    // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_LEFT));
-    operatorController2.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_RIGHT));
-    operatorController2.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_LEFT));
+    operatorController2
+        .button(1)
+        .onTrue(
+            Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.TWELVE_RIGHT)));
+    operatorController2
+        .button(2)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.TEN_LEFT)));
+    operatorController2
+        .button(3)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.TEN_RIGHT)));
+    operatorController2.button(5).onTrue(Commands.runOnce(() -> commandBuilder.addHandoff()));
+    operatorController2.button(6).onTrue(Commands.runOnce(() -> commandBuilder.addIntakePiece()));
+    operatorController2.button(7).onTrue(Commands.runOnce(() -> commandBuilder.clearCommands()));
+    operatorController2
+        .button(8)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.EIGHT_LEFT)));
+    operatorController2
+        .button(11)
+        .onTrue(
+            Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.EIGHT_RIGHT)));
+    operatorController2
+        .button(12)
+        .onTrue(Commands.runOnce(() -> commandBuilder.addAutoAlign(OnTheFlyTargetPose.SIX_LEFT)));
   }
-
-  public static Command getOnTheFlyCommand(OnTheFlyTargetPose target) {
-    double x = target.x;
-    double y = target.y;
-    double angle = target.angle;
-    // if the alliance is red, flip positions accordingly
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // approximate location of top right corner of the reef = 17.6, 7.6
-      x = 17.6 - x;
-      y = 8.05 - y;
-      angle += 180;
-      if (angle > 180) angle -= 360;
-    }
-
-    // initializes new pathFindToPose command which both create a path and has the robot follow said
-    // path
-    return AutoBuilder.pathfindToPose(
-        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
-  }
-
-  // overloading allows for creating building blocks that only align or only score
-  // IE returning to human player doesent need to run a score after it finished auto aligning
-  private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
-	Command scoreWaitCommand = new WaitCommand(2);
-    if (RobotBase.isReal()) {
-      return new SequentialCommandGroup(
-          scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
-    }
-
-    return scoreWaitCommand;
-  }
-
-  private Command getAutoAlignBuildingBlock(OnTheFlyTargetPose target) {
-    return getOnTheFlyCommand(target);
-  }
-
-  private static Command assignOnTheFlyCommand(OnTheFlyTargetPose target) {
-    Runnable updateCurrentTarget =
-        () -> {
-          currentTargetPose = target;
-          currentOnTheFlyCommand = getOnTheFlyCommand(target);
-        };
-    return Commands.runOnce(updateCurrentTarget);
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoRoutine;
+    return autoCommandBuilder.build(false);
   }
 }

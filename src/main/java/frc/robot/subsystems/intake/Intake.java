@@ -13,13 +13,11 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
-import frc.robot.commands.intakeCommands.IntakeMoveCommand;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -123,10 +121,6 @@ public class Intake extends SubsystemBase {
     rotation.getConfigurator().apply(intakeRotationConfig);
     rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig);
     intakeSensors.getConfigurator().apply(intakeSensorsConfig);
-
-    NamedCommands.registerCommand(
-        "autoIntakeDown",
-        new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
   }
 
   public double getRotationAngle() {
