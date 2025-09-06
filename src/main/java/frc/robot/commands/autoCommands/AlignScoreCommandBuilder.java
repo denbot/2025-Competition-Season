@@ -25,11 +25,16 @@ public class AlignScoreCommandBuilder {
     this.intake = intake;
   }
 
+  public AlignScoreCommandBuilder reset() {
+    return new AlignScoreCommandBuilder(boathook, intake);
+  }
+
   public Command build(boolean clearCommands) {
     SequentialCommandGroup buildGroup = new SequentialCommandGroup();
     for (Command c : commands) {
       buildGroup.addCommands(c);
     }
+    if(clearCommands) commands.clear();
     return buildGroup;
   }
 

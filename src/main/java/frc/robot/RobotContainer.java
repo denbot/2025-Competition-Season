@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -85,9 +84,8 @@ public class RobotContainer {
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  private final AlignScoreCommandBuilder commandBuilder;
-
-  private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
+  private AlignScoreCommandBuilder commandBuilder;
+  private AlignScoreCommandBuilder autoCommandBuilder;
 
   public final RumblePresets rumblePresets;
 
@@ -135,6 +133,7 @@ public class RobotContainer {
     rumbleSubsystem = new RumbleSubsystem(controller);
 
     commandBuilder = new AlignScoreCommandBuilder(boathook, intake);
+    autoCommandBuilder = new AlignScoreCommandBuilder(boathook, intake);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -151,8 +150,10 @@ public class RobotContainer {
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
 
-    commandBuilder.addAutoAlign(OnTheFlyTargetPose.BLUE_CLIMB_ONE).build(false);
-
+    autoCommandBuilder
+        .addAutoAlign(OnTheFlyTargetPose.BLUE_CLIMB_ONE)
+        .addScoreL1()
+        .addAutoAlign(OnTheFlyTargetPose.EIGHT_LEFT);
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -232,7 +233,7 @@ public class RobotContainer {
 
     // TODO: Provide an OTF Target class for the GoToReefCommand to function sourced from button box
     // controller.b().onTrue(new GoToReefCommand(drive, null));
-    controller.x().onTrue(commandBuilder.build(true));
+    controller.x().onTrue(Commands.runOnce(() -> commandBuilder.build(false).schedule()));
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
@@ -301,6 +302,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoRoutine;
+    return autoCommandBuilder.build(false);
   }
 }
