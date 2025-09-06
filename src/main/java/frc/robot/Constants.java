@@ -77,6 +77,7 @@ public final class Constants {
     public static final double EXTENDER_REVERSE_LIMIT = 0;
 
     // Rotation in degrees
+    /*
     public static final double STAB_ANGLE = 35;
     public static final double IDLE_ANGLE = 93;
     public static final double L2_SETUP_ANGLE = 115;
@@ -93,5 +94,6 @@ public final class Constants {
     public static final double L3_EXTENSION = 2.1;
 
     public static final double L4_EXTENSION = 4.3;
+    */
   }
 }
