@@ -103,7 +103,7 @@ public class Intake extends SubsystemBase {
           .withCurrentLimits(
               new CurrentLimitsConfigs()
                   .withStatorCurrentLimitEnable(true)
-                  .withStatorCurrentLimit(30))
+                  .withStatorCurrentLimit(60))
           .withSlot0(new Slot0Configs().withKS(5.4).withKP(3));
 
   private static final NeutralOut motorStop = new NeutralOut();

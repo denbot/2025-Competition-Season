@@ -28,8 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.BoathookCommands;
+import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
-import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
@@ -74,7 +74,7 @@ public class RobotContainer {
   // Commands
   public Command extendBoathook;
   public Command retractBoathook;
-  public final HandoffCommand stabBoathook;
+  public Command scorePrepCommand;
   // permmanent
 
   private final RunIntakeCommand pullInCoral;
@@ -89,29 +89,37 @@ public class RobotContainer {
   public static Command currentOnTheFlyCommand;
 
   public BoathookCommands boathookCommands;
+  public IntakeCommands intakeCommands;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  // private final Command SetL1 = new SetLevelCommand(Level.L1);
+  private final Command SetL1 =
+      Commands.runOnce(
+          () -> {
+            scorePrepCommand = intakeCommands.intakeL1Command();
+          });
   private final Command SetL2 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL2();
             retractBoathook = boathookCommands.retractL2();
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
   private final Command SetL3 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL3();
             retractBoathook = boathookCommands.retractL3();
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
   private final Command SetL4 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL4();
             retractBoathook = boathookCommands.retractL4();
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
 
   public final RumblePresets rumblePresets;
@@ -159,11 +167,12 @@ public class RobotContainer {
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
 
+    intakeCommands = new IntakeCommands(intake);
     boathookCommands = new BoathookCommands(boathook);
 
     extendBoathook = boathookCommands.extendL2();
     retractBoathook = boathookCommands.retractL2();
-    stabBoathook = new HandoffCommand(boathook, intake);
+    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
 
     pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
     rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
@@ -300,7 +309,7 @@ public class RobotContainer {
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
-    // operatorController1.button(7).onTrue(SetL1); Not Functional Until New Intake
+    operatorController1.button(7).onTrue(SetL1);
     operatorController1
         .button(8)
         .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourRight()));
@@ -321,6 +330,7 @@ public class RobotContainer {
     operatorController2
         .button(3)
         .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenRight()));
+    operatorController2.button(4).onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
