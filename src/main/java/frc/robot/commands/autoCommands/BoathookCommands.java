@@ -60,6 +60,16 @@ public class BoathookCommands {
     return new SequentialCommandGroup(setLengthCommand(0.4), setAngleCommand(35));
   }
 
+  public Command handoffCommand(IntakeCommands intakeCommands) {
+    return new SequentialCommandGroup(
+        setAngleCommand(93),
+        setLengthCommand(0.02),
+        setAngleCommand(35),
+        intakeCommands.intakeSpearCommand(),
+        setAngleCommand(93),
+        intakeCommands.intakeDownCommand());
+  }
+
   public Command setAngleCommand(double angle) {
     System.out.println("Setting Angle To: " + angle);
     return (Commands.run(() -> boathook.setAngle(angle))).until(isAngleFinished());
