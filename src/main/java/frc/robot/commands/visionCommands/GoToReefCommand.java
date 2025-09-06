@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -29,23 +28,25 @@ public class GoToReefCommand extends Command {
   Translation3d translate;
   double lastAngleError = 0;
   int aprilTagTarget = 0;
+  OnTheFlyTargetPose targetPose;
 
   Drive drive;
 
-  public GoToReefCommand(Drive drive) {
+  public GoToReefCommand(Drive drive, OnTheFlyTargetPose targetPose) {
     this.drive = drive;
     addRequirements(drive);
+    this.targetPose = targetPose;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     // We set the reefTarget here from the robot and only use
-    this.reefTarget = RobotContainer.currentTargetPose;
+    this.reefTarget = this.targetPose;
     this.aprilTagTarget =
         DriverStation.getAlliance().get() == Alliance.Red
-            ? RobotContainer.currentTargetPose.aprilTag.red
-            : RobotContainer.currentTargetPose.aprilTag.blue;
+            ? this.targetPose.aprilTag.red
+            : this.targetPose.aprilTag.blue;
     SmartDashboard.putString("commandDirection", String.valueOf(reefTarget.direction));
   }
 
@@ -110,10 +111,7 @@ public class GoToReefCommand extends Command {
     // then rotates and translates the translation so it is relative to the robot
     // at least thats what I think we are doing, I might have it wrong
 
-    double offset =
-        (RobotContainer.currentTargetPose.direction == OnTheFlyTargetPose.Direction.LEFT)
-            ? -0.15
-            : 0.15;
+    double offset = (this.targetPose.direction == OnTheFlyTargetPose.Direction.LEFT) ? -0.15 : 0.15;
     translate = new Translation3d(offset, 0, -0.57);
 
     translate = translate.rotateBy(pose.getRotation());

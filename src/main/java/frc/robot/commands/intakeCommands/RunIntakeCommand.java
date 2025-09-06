@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Robot;
-import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.boathook.Boathook.boathookInfo;
 import frc.robot.subsystems.intake.Intake;
@@ -29,14 +28,12 @@ public class RunIntakeCommand extends Command {
   private final Timer runningWait = new Timer();
 
   private final IntakeMoveCommand liftToL1;
-  private final HandoffCommand runHandoff;
 
   public RunIntakeCommand(Intake intake, Boathook boathook, Direction direction) {
     this.intake = intake;
     this.boathook = boathook;
     this.direction = direction;
     this.liftToL1 = new IntakeMoveCommand(intake, false, IntakeConstants.intakeL1Angle, 1, 2);
-    this.runHandoff = new HandoffCommand(boathook, intake);
     addRequirements(this.intake);
   }
 
@@ -75,7 +72,7 @@ public class RunIntakeCommand extends Command {
             liftToL1.schedule();
             intake.flipL1Toggle();
           } else {
-            runHandoff.schedule();
+            // Handoff Command
           }
           return true;
         }
