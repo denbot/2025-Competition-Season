@@ -15,10 +15,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -30,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.BoathookCommands;
+import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
 import frc.robot.commands.boathookCommands.HandoffCommand;
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
@@ -188,7 +187,7 @@ public class RobotContainer {
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
     currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
-    currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
+    currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -293,59 +292,55 @@ public class RobotContainer {
             Commands.runOnce(() -> System.out.println("Placeholder Building Block"))
                 .ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_LEFT));
-    operatorController1.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_RIGHT));
-    operatorController1.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_LEFT));
+    // TODO Consolidate operatorController 1 & 2 into One class
+
+    operatorController1
+        .button(1)
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveLeft()));
+    operatorController1
+        .button(2)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoRight()));
+    operatorController1
+        .button(3)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft()));
     operatorController1.button(4).onTrue(SetL4);
     operatorController1.button(5).onTrue(SetL3);
     operatorController1.button(6).onTrue(SetL2);
     // operatorController1.button(7).onTrue(SetL1); Not Functional Until New Intake
-    operatorController1.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_RIGHT));
-    operatorController1.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_LEFT));
-    operatorController1.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_RIGHT));
+    operatorController1
+        .button(8)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourRight()));
+    operatorController1
+        .button(11)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourLeft()));
+    operatorController1
+        .button(12)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight()));
 
-    operatorController2.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_RIGHT));
-    operatorController2.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_LEFT));
-    operatorController2.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_RIGHT));
+    operatorController2
+        .button(1)
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelverRight()));
+    operatorController2
+        .button(2)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenLeft()));
+    operatorController2
+        .button(3)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenRight()));
     // operatorController2.button(5).onTrue(TODO);
     // operatorController2.button(6).onTrue(TODO);
     // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_LEFT));
-    operatorController2.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_RIGHT));
-    operatorController2.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_LEFT));
-  }
-
-  public static Command getOnTheFlyCommand(OnTheFlyTargetPose target) {
-    double x = target.x;
-    double y = target.y;
-    double angle = target.angle;
-    // if the alliance is red, flip positions accordingly
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // approximate location of top right corner of the reef = 17.6, 7.6
-      x = 17.6 - x;
-      y = 8.05 - y;
-      angle += 180;
-      if (angle > 180) angle -= 360;
-    }
-
-    System.out.println("Target X: " + x);
-    System.out.println("Target Y: " + y);
-
-    // initializes new pathFindToPose command which both create a path and has the robot follow said
-    // path
-    return AutoBuilder.pathfindToPose(
-        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
-  }
-
-  private static Command assignOnTheFlyCommand(OnTheFlyTargetPose target) {
-    Runnable updateCurrentTarget =
-        () -> {
-          currentTargetPose = target;
-          currentOnTheFlyCommand = getOnTheFlyCommand(target);
-        };
-    return Commands.runOnce(updateCurrentTarget);
+    operatorController2
+        .button(8)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightLeft()));
+    operatorController2
+        .button(11)
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightRight()));
+    operatorController2
+        .button(12)
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixLeft()));
   }
 
   /**

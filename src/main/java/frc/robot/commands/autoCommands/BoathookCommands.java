@@ -60,29 +60,6 @@ public class BoathookCommands {
     return new SequentialCommandGroup(setLengthCommand(0.4), setAngleCommand(35));
   }
 
-  /* UNUSED
-  public Command getAutoAlignCommand(OnTheFlyTargetPose targetPose) {
-     double x = targetPose.x;
-     double y = targetPose.y;
-     double angle = targetPose.angle;
-     // if the alliance is red, flip positions accordingly
-     if (DriverStation.getAlliance().isPresent()
-         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-       // approximate location of top right corner of the reef = 17.6, 7.6
-       x = 17.6 - x;
-       y = 8.05 - y;
-       angle += 180;
-       if (angle > 180) angle -= 360;
-     }
-
-     // initializes new pathFindToPose command which both create a path and has the robot follow said
-     // path
-     return AutoBuilder.pathfindToPose(
-         new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-         new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
-   }
-  			*/
-
   public Command setAngleCommand(double angle) {
     System.out.println("Setting Angle To: " + angle);
     return (Commands.run(() -> boathook.setAngle(angle))).until(isAngleFinished());
