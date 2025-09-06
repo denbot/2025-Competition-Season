@@ -129,7 +129,6 @@ public class Drive extends SubsystemBase {
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
-
     // Configure AutoBuilder for PathPlanner
     AutoBuilder.configure(
         this::getPose,
