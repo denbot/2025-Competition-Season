@@ -22,12 +22,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -45,6 +43,7 @@ import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.boathook.Boathook.Level;
@@ -69,6 +68,7 @@ public class RobotContainer {
   public final Intake intake;
   public final Boathook boathook;
   public final RumbleSubsystem rumbleSubsystem;
+  public final Leds leds;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -154,6 +154,7 @@ public class RobotContainer {
     intake = new Intake();
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
+    leds = new Leds();
 
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
@@ -176,13 +177,14 @@ public class RobotContainer {
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
     autoRoutine.addCommands(
         getAutoAlignBuildingBlock(OnTheFlyTargetPose.EIGHT_LEFT),
-        getScoringBuildingBlock(SetL2),
+        // getScoringBuildingBlock(SetL2),
         getAutoAlignBuildingBlock(OnTheFlyTargetPose.FOUR_LEFT),
-        getScoringBuildingBlock(SetL3),
+        // getScoringBuildingBlock(SetL3),
         getAutoAlignBuildingBlock(OnTheFlyTargetPose.TEN_LEFT),
-        getScoringBuildingBlock(SetL4),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.SIX_LEFT),
-        getScoringBuildingBlock(SetL1));
+        // getScoringBuildingBlock(SetL4),
+        getAutoAlignBuildingBlock(OnTheFlyTargetPose.SIX_LEFT)
+        // getScoringBuildingBlock(SetL1)
+        );
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
     currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
@@ -326,15 +328,15 @@ public class RobotContainer {
 
   // overloading allows for creating building blocks that only align or only score
   // IE returning to human player doesent need to run a score after it finished auto aligning
-  private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
-	Command scoreWaitCommand = new WaitCommand(2);
-    if (RobotBase.isReal()) {
-      return new SequentialCommandGroup(
-          scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
-    }
+  //   private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
+  //     Command scoreWaitCommand = new WaitCommand(2);
+  //     if (RobotBase.isReal()) {
+  //       return new SequentialCommandGroup(
+  //           scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
+  //     }
 
-    return scoreWaitCommand;
-  }
+  //     return scoreWaitCommand;
+  //   }
 
   private Command getAutoAlignBuildingBlock(OnTheFlyTargetPose target) {
     return getOnTheFlyCommand(target);

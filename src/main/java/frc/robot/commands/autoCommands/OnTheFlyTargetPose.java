@@ -3,7 +3,7 @@ package frc.robot.commands.autoCommands;
 import frc.robot.game.ReefAprilTag;
 
 public enum OnTheFlyTargetPose {
-  // all defined as x/y locations on the field 
+  // all defined as x/y locations on the field
   // the relative (0, 0) is the right corner of the blue driver station
   TWO_LEFT(5.1, 2.82, 120, ReefAprilTag.TWO, Direction.LEFT),
   FOUR_LEFT(3.76, 2.98, 60, ReefAprilTag.FOUR, Direction.LEFT),
