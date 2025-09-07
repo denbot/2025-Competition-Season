@@ -1,5 +1,6 @@
 package frc.robot.commands.autoCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,6 +27,10 @@ public class BoathookCommands {
         setAngleCommand(133), setLengthCommand(0.4), setAngleCommand(93));
   }
 
+  public Command scoreL2() {
+    return new SequentialCommandGroup(extendL2(), new ScoreWaitCommand(2), retractL2());
+  }
+
   public Command extendL3() {
     System.out.println("Extending L3");
     return new SequentialCommandGroup(
@@ -38,6 +43,10 @@ public class BoathookCommands {
         setAngleCommand(115), setLengthCommand(0.4), setAngleCommand(93));
   }
 
+  public Command scoreL3() {
+    return new SequentialCommandGroup(extendL3(), new ScoreWaitCommand(2), retractL3());
+  }
+
   public Command extendL4() {
     System.out.println("Extending L4");
     return new SequentialCommandGroup(
@@ -48,6 +57,10 @@ public class BoathookCommands {
     System.out.println("Retracting L4");
     return new SequentialCommandGroup(
         setLengthCommand(1.95), setAngleCommand(93), setLengthCommand(0.4));
+  }
+
+  public Command scoreL4() {
+    return extendL4().andThen(retractL4());
   }
 
   public Command setBoathookIdle() {
@@ -68,6 +81,14 @@ public class BoathookCommands {
         intakeCommands.intakeSpearCommand(),
         setAngleCommand(93),
         intakeCommands.intakeDownCommand());
+  }
+
+  public Command getScoreWaitCommand() {
+    return Commands.run(
+        () -> {
+          Timer timer = new Timer();
+          timer.start();
+        });
   }
 
   public Command setAngleCommand(double angle) {

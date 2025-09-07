@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.autoCommands.AutoRoutineBuilder;
 import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
@@ -122,6 +123,8 @@ public class RobotContainer {
             scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
 
+  public final AutoRoutineBuilder autoRoutineBuilder;
+
   public final RumblePresets rumblePresets;
 
   public final PreCheckTab preCheckTab;
@@ -188,6 +191,12 @@ public class RobotContainer {
         new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
+
+    autoRoutineBuilder =
+        new AutoRoutineBuilder()
+            .addBuildingBlock(OnTheFlyCommands.alignEightLeft(), SetL2)
+            .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), SetL3)
+            .addBuildingBlock(OnTheFlyCommands.alignFourRight(), SetL4);
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
     currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft();
@@ -287,12 +296,7 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1
-        .button(1)
-        .and(operatorController1.button(4))
-        .onTrue(
-            Commands.runOnce(() -> System.out.println("Placeholder Building Block"))
-                .ignoringDisable(true));
+    configureAutoBuilderBindings();
 
     // TODO Consolidate operatorController 1 & 2 into One class
 
@@ -346,12 +350,347 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixLeft()));
   }
 
+  public void configureAutoBuilderBindings() {
+    // Score L4 Bindings
+    operatorController1
+        .button(1)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwelveLeft(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(2)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwoRight(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(3)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwoLeft(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(8)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(11)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignFourLeft(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(12)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignSixRight(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+
+    operatorController2
+        .button(1)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwelverRight(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(2)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTenLeft(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(3)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTenRight(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(8)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(11)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignEightRight(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(12)
+        .and(operatorController1.button(4))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL4()))
+                .ignoringDisable(true));
+
+    // L3 Commands
+    operatorController1
+        .button(1)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwelveLeft(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(2)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwoRight(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(3)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwoLeft(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(8)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(11)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignFourLeft(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(12)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignSixRight(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+
+    operatorController2
+        .button(1)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwelverRight(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(2)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTenLeft(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(3)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTenRight(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(8)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(11)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignEightRight(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(12)
+        .and(operatorController1.button(5))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3()))
+                .ignoringDisable(true));
+
+    // L2 Commands
+    operatorController1
+        .button(1)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwelveLeft(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(2)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwoRight(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(3)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwoLeft(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(8)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(11)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignFourLeft(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController1
+        .button(12)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignSixRight(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+
+    operatorController2
+        .button(1)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTwelverRight(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(2)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTenLeft(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(3)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignTenRight(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(8)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(11)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignEightRight(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+    operatorController2
+        .button(12)
+        .and(operatorController1.button(6))
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addBuildingBlock(
+                            OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL2()))
+                .ignoringDisable(true));
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    return autoRoutineBuilder.build();
   }
 }
