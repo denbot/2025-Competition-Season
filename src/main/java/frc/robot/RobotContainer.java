@@ -186,11 +186,12 @@ public class RobotContainer {
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
-    autoRoutineBuilder =
-        new AutoRoutineBuilder()
-            .addBuildingBlock(OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2())
-            .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
-            .addBuildingBlock(OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL4());
+    autoRoutineBuilder = new AutoRoutineBuilder();
+    /* Test Auto Routine Builder Pattern 
+        .addBuildingBlock(OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2())
+        .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
+        .addBuildingBlock(OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL4());
+    */
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
     currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft();
