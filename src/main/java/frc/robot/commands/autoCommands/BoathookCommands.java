@@ -74,19 +74,19 @@ public class BoathookCommands {
   }
 
   public Command MicroAdjustExtensionForward() {
-    return Commands.runOnce(() -> boathook.setLength(boathook.getLength() + 0.01));
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() + 0.01));
   }
 
   public Command MicroAdjustExtensionBackward() {
-    return Commands.runOnce(() -> boathook.setLength(boathook.getLength() - 0.01));
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() - 0.01));
   }
 
   public Command MicroAdjustAngleForward() {
-    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngle() + 0.01));
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() + 0.01));
   }
 
   public Command MicroAdjustAngleBackward() {
-    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngle() - 0.01));
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() - 0.01));
   }
 
   public Command handoffCommand(IntakeCommands intakeCommands) {
