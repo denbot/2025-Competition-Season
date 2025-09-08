@@ -26,17 +26,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.AutoRoutineBuilder;
 import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
-import frc.robot.commands.intakeCommands.*;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -78,14 +74,15 @@ public class RobotContainer {
   public Command scorePrepCommand;
   // permmanent
 
-  private final RunIntakeCommand pullInCoral;
-  private final RunIntakeCommand rejectCoral;
-  private final IntakeMoveCommand moveIntake;
+  private final Command pullInCoral;
+  private final Command rejectCoral;
+  private final Command setIntakeDown;
+  private final Command setIntakeL1;
 
-  private final MicroAdjustRotationCommand microRotationAdjustForwards;
-  private final MicroAdjustRotationCommand microRotationAdjustBackwards;
-  private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
-  private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
+  private final Command microRotationAdjustForwards;
+  private final Command microRotationAdjustBackwards;
+  private final Command microExtensionAdjustInwards;
+  private final Command microExtensionAdjustOutwards;
 
   public static Command currentOnTheFlyCommand;
 
@@ -177,18 +174,15 @@ public class RobotContainer {
     retractBoathook = boathookCommands.retractL2();
     scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
 
-    pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
-    rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
-    moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
+    pullInCoral = intakeCommands.runIntakeCommand();
+    rejectCoral = intakeCommands.runRejectCommand();
+    setIntakeDown = intakeCommands.intakeDownCommand();
+    setIntakeL1 = intakeCommands.intakeL1Command();
 
-    microRotationAdjustForwards =
-        new MicroAdjustRotationCommand(boathook, RotationDirection.OffsetForwards);
-    microRotationAdjustBackwards =
-        new MicroAdjustRotationCommand(boathook, RotationDirection.OffsetBackwards);
-    microExtensionAdjustInwards =
-        new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetInwards);
-    microExtensionAdjustOutwards =
-        new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
+    microRotationAdjustForwards = boathookCommands.MicroAdjustAngleForward();
+    microRotationAdjustBackwards = boathookCommands.MicroAdjustAngleBackward();
+    microExtensionAdjustInwards = boathookCommands.MicroAdjustExtensionBackward();
+    microExtensionAdjustOutwards = boathookCommands.MicroAdjustExtensionForward();
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
@@ -285,7 +279,12 @@ public class RobotContainer {
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
-    controller.y().onTrue(moveIntake);
+    controller
+        .y()
+        .onTrue(
+            intake.getRotationAngle() == IntakeConstants.intakeL1Angle
+                ? setIntakeDown
+                : setIntakeL1);
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);

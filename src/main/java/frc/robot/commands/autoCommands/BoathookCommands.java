@@ -1,9 +1,9 @@
 package frc.robot.commands.autoCommands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.boathook.Boathook;
 import java.util.function.BooleanSupplier;
 
@@ -28,7 +28,7 @@ public class BoathookCommands {
   }
 
   public Command scoreL2() {
-    return new SequentialCommandGroup(extendL2(), new ScoreWaitCommand(2), retractL2());
+    return new SequentialCommandGroup(extendL2(), new WaitCommand(2), retractL2());
   }
 
   public Command extendL3() {
@@ -44,7 +44,7 @@ public class BoathookCommands {
   }
 
   public Command scoreL3() {
-    return new SequentialCommandGroup(extendL3(), new ScoreWaitCommand(2), retractL3());
+    return new SequentialCommandGroup(extendL3(), new WaitCommand(2), retractL3());
   }
 
   public Command extendL4() {
@@ -73,6 +73,22 @@ public class BoathookCommands {
     return new SequentialCommandGroup(setLengthCommand(0.4), setAngleCommand(35));
   }
 
+  public Command MicroAdjustExtensionForward() {
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLength() + 0.01));
+  }
+
+  public Command MicroAdjustExtensionBackward() {
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLength() - 0.01));
+  }
+
+  public Command MicroAdjustAngleForward() {
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngle() + 0.01));
+  }
+
+  public Command MicroAdjustAngleBackward() {
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngle() - 0.01));
+  }
+
   public Command handoffCommand(IntakeCommands intakeCommands) {
     return new SequentialCommandGroup(
         setAngleCommand(93),
@@ -81,14 +97,6 @@ public class BoathookCommands {
         intakeCommands.intakeSpearCommand(),
         setAngleCommand(93),
         intakeCommands.intakeDownCommand());
-  }
-
-  public Command getScoreWaitCommand() {
-    return Commands.run(
-        () -> {
-          Timer timer = new Timer();
-          timer.start();
-        });
   }
 
   public Command setAngleCommand(double angle) {
