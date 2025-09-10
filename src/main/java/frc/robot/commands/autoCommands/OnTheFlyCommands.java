@@ -96,7 +96,7 @@ public class OnTheFlyCommands {
     return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT);
   }
 
-  public static Command alignTwelverRight() {
+  public static Command alignTwelveRight() {
     return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT);
   }
 
