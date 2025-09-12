@@ -74,4 +74,16 @@ public class ButtonBoxController {
   public Trigger twelveRightTrigger() {
     return controller2.button(1);
   }
+
+  public Trigger lollipopLeftTrigger() {
+    return controller2.button(5);
+  }
+
+  public Trigger lollipopCenterTrigger() {
+    return controller2.button(6);
+  }
+
+  public Trigger lollipopRightTrigger() {
+    return controller2.button(7);
+  }
 }

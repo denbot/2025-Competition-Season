@@ -7,24 +7,27 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class OnTheFlyCommands {
 
   private enum OnTheFlyTargetPose {
     // all defined as x/y locations on the field
     // the relative (0, 0) is the right corner of the blue driver station
-    TWO_LEFT(5.33, 2.88, 120),
+    TWO_LEFT(5.05, 2.72, 120),
     FOUR_LEFT(3.64, 2.89, 60),
     SIX_LEFT(3.08, 4.20, 0),
     EIGHT_LEFT(3.93, 5.33, -60),
-    TEN_LEFT(5.06, 5.32, -120),
-    TWELVE_LEFT(5.9, 4.18, 180),
-    TWO_RIGHT(5.05, 2.72, 120),
+    TEN_LEFT(5.34, 5.16, -120),
+    TWELVE_LEFT(5.9, 3.86, 180),
+    TWO_RIGHT(5.33, 2.88, 120),
     FOUR_RIGHT(3.92, 2.73, 60),
     SIX_RIGHT(3.08, 3.87, 0),
     EIGHT_RIGHT(3.65, 5.17, -60),
-    TEN_RIGHT(5.34, 5.16, -120),
-    TWELVE_RIGHT(5.9, 3.86, 180),
+    TEN_RIGHT(5.06, 5.32, -120),
+    TWELVE_RIGHT(5.9, 4.18, 180),
     // Human Player Locations
     HUMAN_LEFT(1.3, 1.0, -130),
     HUMAN_RIGHT(1.3, 6.6, 130),
@@ -36,9 +39,12 @@ public class OnTheFlyCommands {
     RED_CLIMB_TWO(8.8, 1.9, 180),
     RED_CLIMB_THREE(8.8, 2.95, 180),
     // "Lolipop" or coral with algea on top of it positions
-    LOLIPOP_ONE(1.227, 5.8, 180),
-    LOLIPOP_TWO(1.227, 4.0, 180),
-    LOLIPOP_THREE(1.227, 2.2, 180);
+    LOLLIPOP_RIGHT_SETUP(2.5, 5.8, 180),
+    LOLLIPOP_CENTER_SETUP(2.5, 4.0, 180),
+    LOLLIPOP_LEFT_SETUP(2.5, 2.2, 180),
+    LOLLIPOP_RIGHT(1.227, 5.8, 180),
+    LOLLIPOP_CENTER(1.227, 4.0, 180),
+    LOLLIPOP_LEFT(1.227, 2.2, 180);
 
     // OTF variables
     public final double x;
@@ -98,6 +104,34 @@ public class OnTheFlyCommands {
 
   public static Command alignTwelveRight() {
     return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT);
+  }
+
+  public static Command pickupLollipopLeft(IntakeCommands intake) {
+    return new SequentialCommandGroup(
+        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
+        new ParallelCommandGroup(
+            // intake.intakeDownCommand(),
+            // intake.runIntakeCommand(),
+            Commands.runOnce(() -> System.out.println("Running Align To Lollipop")),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)));
+  }
+
+  public static Command pickupLollipopRight(IntakeCommands intake) {
+    return new SequentialCommandGroup(
+        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
+        new ParallelCommandGroup(
+            // intake.intakeDownCommand(),
+            // intake.runIntakeCommand(),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)));
+  }
+
+  public static Command pickupLollipopCenter(IntakeCommands intake) {
+    return new SequentialCommandGroup(
+        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
+        new ParallelCommandGroup(
+            // intake.intakeDownCommand(),
+            // intake.runIntakeCommand(),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)));
   }
 
   private static Command getAutoAlignCommand(OnTheFlyTargetPose targetPose) {

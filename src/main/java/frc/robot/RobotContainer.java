@@ -343,6 +343,36 @@ public class RobotContainer {
     buttonBoxController.L2Trigger().onTrue(SetL2);
     buttonBoxController.L3Trigger().onTrue(SetL3);
     buttonBoxController.L4Trigger().onTrue(SetL4);
+
+    buttonBoxController
+        .lollipopLeftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addPickupPieceBlock(
+                            OnTheFlyCommands.pickupLollipopLeft(intakeCommands)))
+                .ignoringDisable(true));
+    buttonBoxController
+        .lollipopCenterTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addPickupPieceBlock(
+                            OnTheFlyCommands.pickupLollipopCenter(intakeCommands)))
+                .ignoringDisable(true));
+    buttonBoxController
+        .lollipopRightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addPickupPieceBlock(
+                            OnTheFlyCommands.pickupLollipopRight(intakeCommands)))
+                .ignoringDisable(true));
+
+    // Clear Commands
+    buttonBoxController
+        .spearTrigger()
+        .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true));
   }
 
   public void configureAutoBuilderBindings() {
