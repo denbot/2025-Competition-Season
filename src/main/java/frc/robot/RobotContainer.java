@@ -372,7 +372,8 @@ public class RobotContainer {
     // Clear Commands
     buttonBoxController
         .spearTrigger()
-        .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true));
+        .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true))
+        .onTrue(boathookCommands.handoffCommand(intakeCommands));
   }
 
   public void configureAutoBuilderBindings() {
