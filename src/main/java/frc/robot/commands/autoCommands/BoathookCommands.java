@@ -3,6 +3,7 @@ package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.boathook.Boathook;
 import java.util.function.BooleanSupplier;
 
@@ -26,6 +27,10 @@ public class BoathookCommands {
         setAngleCommand(133), setLengthCommand(0.4), setAngleCommand(93));
   }
 
+  public Command scoreL2() {
+    return new SequentialCommandGroup(extendL2(), new WaitCommand(2), retractL2());
+  }
+
   public Command extendL3() {
     System.out.println("Extending L3");
     return new SequentialCommandGroup(
@@ -36,6 +41,10 @@ public class BoathookCommands {
     System.out.println("Retracting L3");
     return new SequentialCommandGroup(
         setAngleCommand(115), setLengthCommand(0.4), setAngleCommand(93));
+  }
+
+  public Command scoreL3() {
+    return new SequentialCommandGroup(extendL3(), new WaitCommand(2), retractL3());
   }
 
   public Command extendL4() {
@@ -50,6 +59,10 @@ public class BoathookCommands {
         setLengthCommand(1.95), setAngleCommand(93), setLengthCommand(0.4));
   }
 
+  public Command scoreL4() {
+    return extendL4().andThen(retractL4());
+  }
+
   public Command setBoathookIdle() {
     System.out.println("Setting Boathook Idle");
     return new SequentialCommandGroup(setAngleCommand(93), setLengthCommand(0.4));
@@ -58,6 +71,22 @@ public class BoathookCommands {
   public Command setBoathookStab() {
     System.out.println("Setting Boathook Stab");
     return new SequentialCommandGroup(setLengthCommand(0.4), setAngleCommand(35));
+  }
+
+  public Command MicroAdjustExtensionForward() {
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() + 0.01));
+  }
+
+  public Command MicroAdjustExtensionBackward() {
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() - 0.01));
+  }
+
+  public Command MicroAdjustAngleForward() {
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() + 0.01));
+  }
+
+  public Command MicroAdjustAngleBackward() {
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() - 0.01));
   }
 
   public Command handoffCommand(IntakeCommands intakeCommands) {
