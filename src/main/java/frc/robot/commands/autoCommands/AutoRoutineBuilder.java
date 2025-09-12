@@ -17,7 +17,7 @@ public class AutoRoutineBuilder {
   }
 
   public AutoRoutineBuilder addBuildingBlock(Command autoAlign, Command scoreCommand) {
-    autoRoutine.addCommands(autoAlign);
+    autoRoutine.addCommands(autoAlign, scoreCommand);
     return this;
   }
 

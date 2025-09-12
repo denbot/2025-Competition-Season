@@ -110,8 +110,8 @@ public class OnTheFlyCommands {
     return new SequentialCommandGroup(
         getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
         new ParallelCommandGroup(
-            // intake.intakeDownCommand(),
-            // intake.runIntakeCommand(),
+            intake.intakeDownCommand(),
+            intake.runIntakeCommand(),
             Commands.runOnce(() -> System.out.println("Running Align To Lollipop")),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)));
   }
@@ -120,8 +120,8 @@ public class OnTheFlyCommands {
     return new SequentialCommandGroup(
         getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
         new ParallelCommandGroup(
-            // intake.intakeDownCommand(),
-            // intake.runIntakeCommand(),
+            intake.intakeDownCommand(),
+            intake.runIntakeCommand(),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)));
   }
 
@@ -129,8 +129,8 @@ public class OnTheFlyCommands {
     return new SequentialCommandGroup(
         getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
         new ParallelCommandGroup(
-            // intake.intakeDownCommand(),
-            // intake.runIntakeCommand(),
+            intake.intakeDownCommand(),
+            intake.runIntakeCommand(),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)));
   }
 
