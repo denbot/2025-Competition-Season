@@ -18,13 +18,13 @@ public class BoathookCommands {
   public Command extendL2() {
     System.out.println("Extending L2");
     return new SequentialCommandGroup(
-        setLengthCommand(0.4), setAngleCommand(93), setLengthCommand(0.85), setAngleCommand(115));
+        setLengthCommand(-0.4), setAngleCommand(93), setLengthCommand(0.5), setAngleCommand(120));
   }
 
   public Command retractL2() {
     System.out.println("Retracting L2");
     return new SequentialCommandGroup(
-        setAngleCommand(133), setLengthCommand(0.4), setAngleCommand(93));
+        setLengthCommand(0.33), setAngleCommand(144), setLengthCommand(-0.4), setAngleCommand(93));
   }
 
   public Command scoreL2() {
@@ -34,13 +34,13 @@ public class BoathookCommands {
   public Command extendL3() {
     System.out.println("Extending L3");
     return new SequentialCommandGroup(
-        setLengthCommand(0.4), setAngleCommand(93), setLengthCommand(1.95), setAngleCommand(108));
+        setLengthCommand(-0.4), setAngleCommand(93), setLengthCommand(1.95), setAngleCommand(108));
   }
 
   public Command retractL3() {
     System.out.println("Retracting L3");
     return new SequentialCommandGroup(
-        setAngleCommand(115), setLengthCommand(0.4), setAngleCommand(93));
+        setLengthCommand(0.5), setAngleCommand(115), setLengthCommand(-0.4), setAngleCommand(93));
   }
 
   public Command scoreL3() {
@@ -50,13 +50,17 @@ public class BoathookCommands {
   public Command extendL4() {
     System.out.println("Extending L4");
     return new SequentialCommandGroup(
-        setLengthCommand(0.4), setAngleCommand(91), setLengthCommand(4.3), setAngleCommand(97));
+        setLengthCommand(1.95),
+        setLengthCommand(-0.4),
+        setAngleCommand(91),
+        setLengthCommand(4.3),
+        setAngleCommand(97));
   }
 
   public Command retractL4() {
     System.out.println("Retracting L4");
     return new SequentialCommandGroup(
-        setLengthCommand(1.95), setAngleCommand(93), setLengthCommand(0.4));
+        setLengthCommand(1.95), setAngleCommand(93), setLengthCommand(-0.4));
   }
 
   public Command scoreL4() {
@@ -65,12 +69,12 @@ public class BoathookCommands {
 
   public Command setBoathookIdle() {
     System.out.println("Setting Boathook Idle");
-    return new SequentialCommandGroup(setAngleCommand(93), setLengthCommand(0.4));
+    return new SequentialCommandGroup(setAngleCommand(93), setLengthCommand(-0.4));
   }
 
   public Command setBoathookStab() {
     System.out.println("Setting Boathook Stab");
-    return new SequentialCommandGroup(setLengthCommand(0.4), setAngleCommand(35));
+    return new SequentialCommandGroup(setLengthCommand(-0.4), setAngleCommand(35));
   }
 
   public Command MicroAdjustExtensionForward() {
@@ -92,7 +96,7 @@ public class BoathookCommands {
   public Command handoffCommand(IntakeCommands intakeCommands) {
     return new SequentialCommandGroup(
         setAngleCommand(93),
-        setLengthCommand(0.1),
+        setLengthCommand(-0.4),
         setAngleCommand(35),
         intakeCommands.intakeSpearCommand(),
         setAngleCommand(93),
@@ -111,11 +115,11 @@ public class BoathookCommands {
 
   public BooleanSupplier isExtendFinished() {
     System.out.println("Length" + boathook.getLengthSetpoint() + ", " + boathook.getLength());
-    return () -> (boathook.getLengthSetpoint() - boathook.getLength() < 0.1);
+    return () -> (Math.abs(boathook.getLengthSetpoint() - boathook.getLength()) < 0.1);
   }
 
   public BooleanSupplier isAngleFinished() {
     System.out.println("Angle" + boathook.getAngleSetpoint() + ", " + boathook.getAngle());
-    return () -> (boathook.getAngleSetpoint() - boathook.getAngle() < 5);
+    return () -> (Math.abs(boathook.getAngleSetpoint() - boathook.getAngle()) < 5);
   }
 }
