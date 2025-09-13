@@ -37,6 +37,7 @@ import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationC
 import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.commands.intakeCommands.*;
+import frc.robot.commands.visionCommands.AutomaticIntakeCommand;
 import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.commands.visionCommands.TargetChange;
 import frc.robot.game.ReefTarget;
@@ -78,6 +79,7 @@ public class RobotContainer {
 
   // Commands
   private final GoToReefCommand reef;
+  private final AutomaticIntakeCommand automaticIntake;
   private final BoathookExtendMotionPathCommand extendBoathook;
   private final BoathookRetractMotionPathCommand retractBoathook;
   private final HandoffCommand stabBoathook;
@@ -163,6 +165,7 @@ public class RobotContainer {
     rumbleSubsystem = new RumbleSubsystem(controller);
 
     reef = new GoToReefCommand(drive);
+    automaticIntake = new AutomaticIntakeCommand(drive);
     extendBoathook = new BoathookExtendMotionPathCommand(boathook);
     retractBoathook = new BoathookRetractMotionPathCommand(boathook);
     stabBoathook = new HandoffCommand(boathook, intake);
@@ -259,7 +262,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(reef);
+    controller.b().onTrue(automaticIntake);
 
     controller.leftBumper().whileTrue(rejectCoral);
     controller.leftTrigger().whileTrue(pullInCoral);
