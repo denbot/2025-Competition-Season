@@ -373,7 +373,7 @@ public class RobotContainer {
     buttonBoxController
         .spearTrigger()
         .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true))
-        .onTrue(boathookCommands.handoffCommand(intakeCommands));
+        .onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
   }
 
   public void configureAutoBuilderBindings() {

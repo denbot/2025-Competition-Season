@@ -6,7 +6,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -60,29 +60,16 @@ public class Intake extends SubsystemBase {
                   .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(20)
-                  .withKD(13)
-                  .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine))
-          .withSlot1(
-              new Slot1Configs()
-                  .withKP(63.5)
-                  .withKD(12)
-                  .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine))
-          .withSlot2(
-              new Slot2Configs()
-                  .withKP(20.1)
-                  .withKS(1.8)
-                  .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine)
-                  .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign));
+                  .withKP(35)
+                  .withKD(0)
+                  .withKG(0.2)
+                  .withGravityType(GravityTypeValue.Arm_Cosine));
 
   public static final CANcoderConfiguration intakeRotationSensorConfig =
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0.085)
+                  .withMagnetOffset(0.5777609375)
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   public boolean up = false;
@@ -108,7 +95,7 @@ public class Intake extends SubsystemBase {
   private static final VelocityTorqueCurrentFOC intakeSpin =
       new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
 
-  private static final PositionTorqueCurrentFOC intakeMove = new PositionTorqueCurrentFOC(0);
+  private static final PositionVoltage intakeMove = new PositionVoltage(0);
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
@@ -131,8 +118,8 @@ public class Intake extends SubsystemBase {
     return rotation.getVelocity().getValueAsDouble();
   }
 
-  public void setAngle(double angle, int slot, double feedForward) {
-    rotation.setControl(intakeMove.withPosition(angle).withSlot(slot).withFeedForward(feedForward));
+  public void setAngle(double angle) {
+    rotation.setControl(intakeMove.withPosition(angle));
   }
 
   public void setIntakeSpeed(double velocity) {
