@@ -92,7 +92,7 @@ public class BoathookCommands {
   public Command handoffCommand(IntakeCommands intakeCommands) {
     return new SequentialCommandGroup(
         setAngleCommand(93),
-        setLengthCommand(0.02),
+        setLengthCommand(0.1),
         setAngleCommand(35),
         intakeCommands.intakeSpearCommand(),
         setAngleCommand(93),

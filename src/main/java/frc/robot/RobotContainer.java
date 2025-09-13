@@ -191,7 +191,7 @@ public class RobotContainer {
     */
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
-    currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft();
+    currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
