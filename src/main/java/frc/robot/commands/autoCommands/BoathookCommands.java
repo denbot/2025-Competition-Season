@@ -34,13 +34,13 @@ public class BoathookCommands {
   public Command extendL3() {
     System.out.println("Extending L3");
     return new SequentialCommandGroup(
-        setLengthCommand(-0.4), setAngleCommand(93), setLengthCommand(1.95), setAngleCommand(108));
+        setLengthCommand(-0.4), setAngleCommand(93), setLengthCommand(1.8), setAngleCommand(108));
   }
 
   public Command retractL3() {
     System.out.println("Retracting L3");
     return new SequentialCommandGroup(
-        setLengthCommand(0.5), setAngleCommand(115), setLengthCommand(-0.4), setAngleCommand(93));
+        setLengthCommand(1.6), setAngleCommand(125), setLengthCommand(-0.4), setAngleCommand(93));
   }
 
   public Command scoreL3() {
@@ -50,7 +50,7 @@ public class BoathookCommands {
   public Command extendL4() {
     System.out.println("Extending L4");
     return new SequentialCommandGroup(
-        setLengthCommand(1.95),
+        setLengthCommand(1.8),
         setLengthCommand(-0.4),
         setAngleCommand(91),
         setLengthCommand(4.3),
