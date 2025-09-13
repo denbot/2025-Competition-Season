@@ -11,10 +11,18 @@ public class AutoRoutineBuilder {
     autoRoutine = new SequentialCommandGroup();
   }
 
+  public AutoRoutineBuilder addPickupPieceBlock(Command pickupPieceCommand) {
+    autoRoutine.addCommands(pickupPieceCommand);
+    return this;
+  }
+
   public AutoRoutineBuilder addBuildingBlock(Command autoAlign, Command scoreCommand) {
-    System.out.println("Adding Building Block");
     autoRoutine.addCommands(autoAlign, scoreCommand);
     return this;
+  }
+
+  public void clearCommands() {
+    this.autoRoutine = new SequentialCommandGroup();
   }
 
   public SequentialCommandGroup build() {
