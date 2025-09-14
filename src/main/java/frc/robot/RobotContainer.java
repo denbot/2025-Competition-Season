@@ -183,7 +183,7 @@ public class RobotContainer {
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
-    autoRoutineBuilder = new AutoRoutineBuilder();
+    autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intakeCommands);
     /* Test Auto Routine Builder Pattern
         .addBuildingBlock(OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2())
         .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
