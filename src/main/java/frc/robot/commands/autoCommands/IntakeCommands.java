@@ -32,7 +32,7 @@ public class IntakeCommands {
   }
 
   public Command intakeSpearCommand() {
-    return Commands.run(() -> intake.setAngle(0.55))
+    return Commands.run(() -> intake.setAngle(0.45))
         .until(() -> intake.getRotationVelocity() < 0.01);
   }
 }
