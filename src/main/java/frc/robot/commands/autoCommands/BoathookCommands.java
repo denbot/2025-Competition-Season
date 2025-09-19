@@ -94,9 +94,9 @@ public class BoathookCommands {
         setAngleCommand(93),
         setLengthCommand(0.06),
         setAngleCommand(25),
-        intakeCommands.intakeSpearCommand());
-    // setAngleCommand(93),
-    // intakeCommands.intakeDownCommand());
+        intakeCommands.intakeSpearCommand(),
+        intakeCommands.intakeDownCommand(),
+        setAngleCommand(93));
   }
 
   public Command setAngleCommand(double angle) {

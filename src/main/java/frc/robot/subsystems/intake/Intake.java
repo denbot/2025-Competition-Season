@@ -95,8 +95,6 @@ public class Intake extends SubsystemBase {
   private static final VelocityTorqueCurrentFOC intakeSpin =
       new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
 
-  private static final PositionVoltage intakeMove = new PositionVoltage(0);
-
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
     intakeLeft.setNeutralMode(NeutralModeValue.Coast);
@@ -111,7 +109,16 @@ public class Intake extends SubsystemBase {
   }
 
   public double getRotationAngle() {
-    return rotation.getRotorPosition().getValueAsDouble() * 360.0;
+    return rotation.getPosition().getValueAsDouble();
+  }
+
+  public double getClosedLoopError() {
+    return rotation.getClosedLoopError().getValueAsDouble();
+  }
+
+  public double getRotationSetpoint() {
+    double rotationReference = rotation.getClosedLoopReference().getValueAsDouble();
+    return rotationReference;
   }
 
   public double getRotationVelocity() {
@@ -119,7 +126,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setAngle(double angle) {
-    rotation.setControl(intakeMove.withPosition(angle));
+    rotation.setControl(new PositionVoltage(angle));
   }
 
   public void setIntakeSpeed(double velocity) {
