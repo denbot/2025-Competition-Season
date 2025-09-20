@@ -277,7 +277,23 @@ public class RobotContainer {
     controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
     controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
 
+    controller
+        .povUp()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionForward().schedule()));
+    controller
+        .povDown()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionBackward().schedule()));
+    controller
+        .povLeft()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleForward().schedule()));
+    controller
+        .povRight()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
+
     controller.leftBumper().whileTrue(rejectCoral);
+    controller
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule()));
     controller.leftTrigger().whileTrue(pullInCoral);
     controller.y().onTrue(setIntakeDown);
 

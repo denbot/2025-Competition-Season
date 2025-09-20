@@ -2,6 +2,7 @@ package frc.robot.commands.autoCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.boathook.Boathook;
@@ -95,8 +96,7 @@ public class BoathookCommands {
         setLengthCommand(0.06),
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
-        intakeCommands.intakeDownCommand(),
-        setAngleCommand(93));
+        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()));
   }
 
   public Command setAngleCommand(double angle) {

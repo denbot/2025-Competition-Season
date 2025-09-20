@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -60,7 +61,7 @@ public class Intake extends SubsystemBase {
                   .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(35)
+                  .withKP(40)
                   .withKD(0)
                   .withKG(0.2)
                   .withGravityType(GravityTypeValue.Arm_Cosine));
@@ -108,8 +109,21 @@ public class Intake extends SubsystemBase {
     intakeSensors.getConfigurator().apply(intakeSensorsConfig);
   }
 
+  public void setIntakeHoldingVoltage(double voltage) {
+    intakeLeft.setControl(new VoltageOut(voltage));
+    intakeRight.setControl(new VoltageOut(-voltage));
+  }
+
   public double getRotationAngle() {
     return rotation.getPosition().getValueAsDouble();
+  }
+
+  public boolean getIntakeIsStalled() {
+    boolean returnCondition =
+        intakeRight.getStatorCurrent().getValueAsDouble() > 40
+            && intakeRight.getVelocity().getValueAsDouble() < 1;
+    if (returnCondition) System.out.println("Motor Is Stalled!!!");
+    return returnCondition;
   }
 
   public double getClosedLoopError() {
