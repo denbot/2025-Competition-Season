@@ -6,20 +6,19 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
-import frc.robot.commands.intakeCommands.IntakeMoveCommand;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -62,29 +61,16 @@ public class Intake extends SubsystemBase {
                   .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(20)
-                  .withKD(13)
-                  .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine))
-          .withSlot1(
-              new Slot1Configs()
-                  .withKP(63.5)
-                  .withKD(12)
-                  .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine))
-          .withSlot2(
-              new Slot2Configs()
-                  .withKP(20.1)
-                  .withKS(1.8)
-                  .withKG(2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine)
-                  .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign));
+                  .withKP(40)
+                  .withKD(0)
+                  .withKG(0.2)
+                  .withGravityType(GravityTypeValue.Arm_Cosine));
 
   public static final CANcoderConfiguration intakeRotationSensorConfig =
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0.085)
+                  .withMagnetOffset(0.5777609375)
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   public boolean up = false;
@@ -103,14 +89,12 @@ public class Intake extends SubsystemBase {
           .withCurrentLimits(
               new CurrentLimitsConfigs()
                   .withStatorCurrentLimitEnable(true)
-                  .withStatorCurrentLimit(30))
+                  .withStatorCurrentLimit(60))
           .withSlot0(new Slot0Configs().withKS(5.4).withKP(3));
 
   private static final NeutralOut motorStop = new NeutralOut();
   private static final VelocityTorqueCurrentFOC intakeSpin =
       new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
-
-  private static final PositionTorqueCurrentFOC intakeMove = new PositionTorqueCurrentFOC(0);
 
   public Intake() {
     rotation.setNeutralMode(NeutralModeValue.Brake);
@@ -123,22 +107,40 @@ public class Intake extends SubsystemBase {
     rotation.getConfigurator().apply(intakeRotationConfig);
     rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig);
     intakeSensors.getConfigurator().apply(intakeSensorsConfig);
+  }
 
-    NamedCommands.registerCommand(
-        "autoIntakeDown",
-        new IntakeMoveCommand(this, false, IntakeConstants.intakeDownAngle, 1, -3));
+  public void setIntakeHoldingVoltage(double voltage) {
+    intakeLeft.setControl(new VoltageOut(voltage));
+    intakeRight.setControl(new VoltageOut(-voltage));
   }
 
   public double getRotationAngle() {
-    return rotation.getRotorPosition().getValueAsDouble() * 360.0;
+    return rotation.getPosition().getValueAsDouble();
+  }
+
+  public boolean getIntakeIsStalled() {
+    boolean returnCondition =
+        intakeRight.getStatorCurrent().getValueAsDouble() > 40
+            && intakeRight.getVelocity().getValueAsDouble() < 1;
+    if (returnCondition) System.out.println("Motor Is Stalled!!!");
+    return returnCondition;
+  }
+
+  public double getClosedLoopError() {
+    return rotation.getClosedLoopError().getValueAsDouble();
+  }
+
+  public double getRotationSetpoint() {
+    double rotationReference = rotation.getClosedLoopReference().getValueAsDouble();
+    return rotationReference;
   }
 
   public double getRotationVelocity() {
     return rotation.getVelocity().getValueAsDouble();
   }
 
-  public void setAngle(double angle, int slot, double feedForward) {
-    rotation.setControl(intakeMove.withPosition(angle).withSlot(slot).withFeedForward(feedForward));
+  public void setAngle(double angle) {
+    rotation.setControl(new PositionVoltage(angle));
   }
 
   public void setIntakeSpeed(double velocity) {

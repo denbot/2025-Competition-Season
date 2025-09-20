@@ -15,38 +15,27 @@ package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.autoCommands.OnTheFlyTargetPose;
-import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
-import frc.robot.commands.boathookCommands.HandoffCommand;
-import frc.robot.commands.boathookCommands.SetLevelCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustExtensionCommand.ExtensionDirection;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.MicroAdjustRotationCommand.RotationDirection;
+import frc.robot.commands.autoCommands.AutoRoutineBuilder;
+import frc.robot.commands.autoCommands.BoathookCommands;
+import frc.robot.commands.autoCommands.IntakeCommands;
+import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.commands.elasticCommands.PreCheckTab;
-import frc.robot.commands.intakeCommands.*;
-import frc.robot.commands.visionCommands.GoToReefCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
-import frc.robot.subsystems.boathook.Boathook.Level;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -54,6 +43,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.util.ButtonBoxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,8 +62,7 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandGenericHID operatorController1 = new CommandGenericHID(1);
-  private final CommandGenericHID operatorController2 = new CommandGenericHID(2);
+  private final ButtonBoxController buttonBoxController = new ButtonBoxController();
 
   // Dashboard inputs
   public DSControlWord controlWord = new DSControlWord();
@@ -81,34 +70,57 @@ public class RobotContainer {
   public Orchestra m_orchestra = new Orchestra();
 
   // Commands
-  public final BoathookExtendMotionPathCommand extendBoathook;
-  public final BoathookRetractMotionPathCommand retractBoathook;
-  public final HandoffCommand stabBoathook;
-  private final GoToReefCommand reef; // TODO replaced by OnTheFlyCommand currently, not
+  public Command extendBoathook;
+  public Command retractBoathook;
+  public Command scorePrepCommand;
   // permmanent
 
-  private final RunIntakeCommand pullInCoral;
-  private final RunIntakeCommand rejectCoral;
-  private final IntakeMoveCommand moveIntake;
+  private final Command pullInCoral;
+  private final Command rejectCoral;
+  private final Command setIntakeDown;
 
-  private final MicroAdjustRotationCommand microRotationAdjustForwards;
-  private final MicroAdjustRotationCommand microRotationAdjustBackwards;
-  private final MicroAdjustExtensionCommand microExtensionAdjustInwards;
-  private final MicroAdjustExtensionCommand microExtensionAdjustOutwards;
+  private final Command microRotationAdjustForwards;
+  private final Command microRotationAdjustBackwards;
+  private final Command microExtensionAdjustInwards;
+  private final Command microExtensionAdjustOutwards;
 
-  public static OnTheFlyTargetPose currentTargetPose;
   public static Command currentOnTheFlyCommand;
+
+  public BoathookCommands boathookCommands;
+  public IntakeCommands intakeCommands;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
 
-  private final SetLevelCommand SetL1 = new SetLevelCommand(Level.L1);
-  private final SetLevelCommand SetL2 = new SetLevelCommand(Level.L2);
-  private final SetLevelCommand SetL3 = new SetLevelCommand(Level.L3);
-  private final SetLevelCommand SetL4 = new SetLevelCommand(Level.L4);
+  private final Command SetL1 =
+      Commands.runOnce(
+          () -> {
+            scorePrepCommand = intakeCommands.intakeL1Command();
+          });
+  private final Command SetL2 =
+      Commands.runOnce(
+          () -> {
+            extendBoathook = boathookCommands.extendL2();
+            retractBoathook = boathookCommands.retractL2();
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+          });
+  private final Command SetL3 =
+      Commands.runOnce(
+          () -> {
+            extendBoathook = boathookCommands.extendL3();
+            retractBoathook = boathookCommands.retractL3();
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+          });
+  private final Command SetL4 =
+      Commands.runOnce(
+          () -> {
+            extendBoathook = boathookCommands.extendL4();
+            retractBoathook = boathookCommands.retractL4();
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+          });
 
-  private final SequentialCommandGroup autoRoutine = new SequentialCommandGroup();
+  public final AutoRoutineBuilder autoRoutineBuilder;
 
   public final RumblePresets rumblePresets;
 
@@ -156,39 +168,33 @@ public class RobotContainer {
     rumbleSubsystem = new RumbleSubsystem(controller);
     leds = new Leds();
 
-    extendBoathook = new BoathookExtendMotionPathCommand(boathook);
-    retractBoathook = new BoathookRetractMotionPathCommand(boathook);
-    stabBoathook = new HandoffCommand(boathook, intake);
-    reef = new GoToReefCommand(drive);
+    intakeCommands = new IntakeCommands(intake);
+    boathookCommands = new BoathookCommands(boathook);
 
-    pullInCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Intake);
-    rejectCoral = new RunIntakeCommand(intake, boathook, RunIntakeCommand.Direction.Eject);
-    moveIntake = new IntakeMoveCommand(intake, true, 0, 0, 0);
+    extendBoathook = boathookCommands.extendL2();
+    retractBoathook = boathookCommands.retractL2();
+    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
 
-    microRotationAdjustForwards =
-        new MicroAdjustRotationCommand(boathook, RotationDirection.OffsetForwards);
-    microRotationAdjustBackwards =
-        new MicroAdjustRotationCommand(boathook, RotationDirection.OffsetBackwards);
-    microExtensionAdjustInwards =
-        new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetInwards);
-    microExtensionAdjustOutwards =
-        new MicroAdjustExtensionCommand(boathook, ExtensionDirection.OffsetOutwards);
+    pullInCoral = intakeCommands.runIntakeCommand();
+    rejectCoral = intakeCommands.runRejectCommand();
+    setIntakeDown = intakeCommands.intakeDownCommand();
+
+    microRotationAdjustForwards = boathookCommands.MicroAdjustAngleForward();
+    microRotationAdjustBackwards = boathookCommands.MicroAdjustAngleBackward();
+    microExtensionAdjustInwards = boathookCommands.MicroAdjustExtensionBackward();
+    microExtensionAdjustOutwards = boathookCommands.MicroAdjustExtensionForward();
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
-    autoRoutine.addCommands(
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.EIGHT_LEFT),
-        // getScoringBuildingBlock(SetL2),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.FOUR_LEFT),
-        // getScoringBuildingBlock(SetL3),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.TEN_LEFT),
-        // getScoringBuildingBlock(SetL4),
-        getAutoAlignBuildingBlock(OnTheFlyTargetPose.SIX_LEFT)
-        // getScoringBuildingBlock(SetL1)
-        );
+
+    autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intakeCommands);
+    /* Test Auto Routine Builder Pattern
+        .addBuildingBlock(OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2())
+        .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
+        .addBuildingBlock(OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL4());
+    */
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
-    currentTargetPose = OnTheFlyTargetPose.TWELVE_LEFT;
-    currentOnTheFlyCommand = getOnTheFlyCommand(currentTargetPose);
+    currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -212,7 +218,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    preCheckTab = new PreCheckTab(controller, operatorController1, operatorController2);
+    preCheckTab =
+        new PreCheckTab(
+            controller, ButtonBoxController.controller1, ButtonBoxController.controller2);
     preCheckTab.schedule();
 
     // Attempt to load the chrp
@@ -267,12 +275,30 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.b().onTrue(reef);
     controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
+    controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
+
+    controller
+        .povUp()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionForward().schedule()));
+    controller
+        .povDown()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionBackward().schedule()));
+    controller
+        .povLeft()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleForward().schedule()));
+    controller
+        .povRight()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
+
     controller.leftBumper().whileTrue(rejectCoral);
+    controller
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule()));
     controller.leftTrigger().whileTrue(pullInCoral);
-    controller.y().onTrue(moveIntake);
+    controller.y().onTrue(setIntakeDown);
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
@@ -283,72 +309,320 @@ public class RobotContainer {
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
 
-    operatorController1.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_LEFT));
-    operatorController1.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_RIGHT));
-    operatorController1.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWO_LEFT));
-    operatorController1.button(4).onTrue(SetL4);
-    operatorController1.button(5).onTrue(SetL3);
-    operatorController1.button(6).onTrue(SetL2);
-    operatorController1.button(7).onTrue(SetL1);
-    operatorController1.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_RIGHT));
-    operatorController1.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.FOUR_LEFT));
-    operatorController1.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_RIGHT));
+    configureAutoBuilderBindings();
 
-    operatorController2.button(1).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TWELVE_RIGHT));
-    operatorController2.button(2).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_LEFT));
-    operatorController2.button(3).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.TEN_RIGHT));
-    // operatorController2.button(5).onTrue(TODO);
-    // operatorController2.button(6).onTrue(TODO);
-    // operatorController2.button(7).onTrue(TODO);
-    operatorController2.button(8).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_LEFT));
-    operatorController2.button(11).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.EIGHT_RIGHT));
-    operatorController2.button(12).onTrue(assignOnTheFlyCommand(OnTheFlyTargetPose.SIX_LEFT));
+    // TODO Consolidate operatorController 1 & 2 into One class
+
+    buttonBoxController
+        .twoLeftTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft()));
+    buttonBoxController
+        .twoRightTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoRight()));
+
+    buttonBoxController
+        .fourLeftTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourLeft()));
+    buttonBoxController
+        .fourRightTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourRight()));
+
+    buttonBoxController
+        .sixLeftTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixLeft()));
+    buttonBoxController
+        .sixRightTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight()));
+
+    buttonBoxController
+        .eightLeftTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightLeft()));
+    buttonBoxController
+        .eightRightTrigger()
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightRight()));
+
+    buttonBoxController
+        .tenLeftTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenLeft()));
+    buttonBoxController
+        .tenRightTrigger()
+        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenRight()));
+
+    buttonBoxController
+        .twelveLeftTrigger()
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveLeft()));
+    buttonBoxController
+        .twelveRightTrigger()
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveRight()));
+
+    buttonBoxController.L1Trigger().onTrue(SetL1);
+    buttonBoxController.L2Trigger().onTrue(SetL2);
+    buttonBoxController.L3Trigger().onTrue(SetL3);
+    buttonBoxController.L4Trigger().onTrue(SetL4);
+
+    buttonBoxController
+        .lollipopLeftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addPickupPieceBlock(
+                            OnTheFlyCommands.pickupLollipopLeft(intakeCommands)))
+                .ignoringDisable(true));
+    buttonBoxController
+        .lollipopCenterTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addPickupPieceBlock(
+                            OnTheFlyCommands.pickupLollipopCenter(intakeCommands)))
+                .ignoringDisable(true));
+    buttonBoxController
+        .lollipopRightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        autoRoutineBuilder.addPickupPieceBlock(
+                            OnTheFlyCommands.pickupLollipopRight(intakeCommands)))
+                .ignoringDisable(true));
+
+    // Clear Commands
+    buttonBoxController
+        .spearTrigger()
+        .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true))
+        .onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
   }
 
-  public static Command getOnTheFlyCommand(OnTheFlyTargetPose target) {
-    double x = target.x;
-    double y = target.y;
-    double angle = target.angle;
-    // if the alliance is red, flip positions accordingly
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-      // approximate location of top right corner of the reef = 17.6, 7.6
-      x = 17.6 - x;
-      y = 8.05 - y;
-      angle += 180;
-      if (angle > 180) angle -= 360;
-    }
+  public void configureAutoBuilderBindings() {
+    // Score L4 Bindings
+    assignButtonBinding(
+        buttonBoxController.twelveLeftTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignTwelveLeft(),
+        boathookCommands.scoreL4());
 
-    // initializes new pathFindToPose command which both create a path and has the robot follow said
-    // path
-    return AutoBuilder.pathfindToPose(
-        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+    assignButtonBinding(
+        buttonBoxController.twelveRightTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignTwelveRight(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.tenLeftTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignTenLeft(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.tenRightTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignTenRight(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.eightLeftTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignEightLeft(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.eightRightTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignEightRight(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.sixLeftTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignSixLeft(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.sixRightTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignSixRight(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.fourLeftTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignFourLeft(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.fourRightTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignFourRight(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.twoLeftTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignTwoLeft(),
+        boathookCommands.scoreL4());
+
+    assignButtonBinding(
+        buttonBoxController.twoRightTrigger(),
+        buttonBoxController.L4Trigger(),
+        OnTheFlyCommands.alignTwoRight(),
+        boathookCommands.scoreL4());
+
+    // Score L3 Bindings
+    assignButtonBinding(
+        buttonBoxController.twelveLeftTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignTwelveLeft(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.twelveRightTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignTwelveRight(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.tenLeftTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignTenLeft(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.tenRightTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignTenRight(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.eightLeftTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignEightLeft(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.eightRightTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignEightRight(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.sixLeftTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignSixLeft(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.sixRightTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignSixRight(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.fourLeftTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignFourLeft(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.fourRightTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignFourRight(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.twoLeftTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignTwoLeft(),
+        boathookCommands.scoreL3());
+
+    assignButtonBinding(
+        buttonBoxController.twoRightTrigger(),
+        buttonBoxController.L3Trigger(),
+        OnTheFlyCommands.alignTwoRight(),
+        boathookCommands.scoreL3());
+
+    // L2 Bindings
+    assignButtonBinding(
+        buttonBoxController.twelveLeftTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignTwelveLeft(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.twelveRightTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignTwelveRight(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.tenLeftTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignTenLeft(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.tenRightTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignTenRight(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.eightLeftTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignEightLeft(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.eightRightTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignEightRight(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.sixLeftTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignSixLeft(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.sixRightTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignSixRight(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.fourLeftTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignFourLeft(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.fourRightTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignFourRight(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.twoLeftTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignTwoLeft(),
+        boathookCommands.scoreL2());
+
+    assignButtonBinding(
+        buttonBoxController.twoRightTrigger(),
+        buttonBoxController.L2Trigger(),
+        OnTheFlyCommands.alignTwoRight(),
+        boathookCommands.scoreL2());
   }
 
-  // overloading allows for creating building blocks that only align or only score
-  // IE returning to human player doesent need to run a score after it finished auto aligning
-  //   private Command getScoringBuildingBlock(SetLevelCommand scoreLevel) {
-  //     Command scoreWaitCommand = new WaitCommand(2);
-  //     if (RobotBase.isReal()) {
-  //       return new SequentialCommandGroup(
-  //           scoreLevel, extendBoathook, scoreWaitCommand, retractBoathook);
-  //     }
-
-  //     return scoreWaitCommand;
-  //   }
-
-  private Command getAutoAlignBuildingBlock(OnTheFlyTargetPose target) {
-    return getOnTheFlyCommand(target);
-  }
-
-  private static Command assignOnTheFlyCommand(OnTheFlyTargetPose target) {
-    Runnable updateCurrentTarget =
-        () -> {
-          currentTargetPose = target;
-          currentOnTheFlyCommand = getOnTheFlyCommand(target);
-        };
-    return Commands.runOnce(updateCurrentTarget);
+  public void assignButtonBinding(
+      Trigger alignButton, Trigger scoreButton, Command alignCommand, Command scoreCommand) {
+    alignButton
+        .and(scoreButton)
+        .onTrue(
+            Commands.runOnce(() -> autoRoutineBuilder.addBuildingBlock(alignCommand, scoreCommand))
+                .ignoringDisable(true));
   }
 
   /**
@@ -357,6 +631,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoRoutine;
+    return autoRoutineBuilder.build();
   }
 }

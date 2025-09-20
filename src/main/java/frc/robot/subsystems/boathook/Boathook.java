@@ -12,20 +12,17 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
-import frc.robot.commands.boathookCommands.BoathookExtendMotionPathCommand;
-import frc.robot.commands.boathookCommands.BoathookRetractMotionPathCommand;
-import frc.robot.commands.boathookCommands.SetLevelCommand;
-import frc.robot.commands.boathookCommands.setpointCommands.AngleIdleBoathookCommand;
 
 public class Boathook extends SubsystemBase {
   /** Creates a new Boathook. */
+
+  // ONLY HERE UNTIL INTAKE IS FINISHED, currently only refferenced in runIntakeCommand.java
   public enum Level {
     L1(
         BoathookConstants.IDLE_ANGLE, BoathookConstants.IDLE_EXTENSION,
@@ -130,7 +127,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.36819140625)
+                  .withMagnetOffset(-0.3911640625)
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -172,7 +169,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.18) // 0.372
+                  .withMagnetOffset(0.142115625) // 0.372
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   CANdiConfiguration limitSensorsConfig =
@@ -192,12 +189,6 @@ public class Boathook extends SubsystemBase {
     extenderMotor.getConfigurator().apply(extenderConfig);
     extensionEncoder.getConfigurator().apply(extensionEncoderConfig);
     limitSensors.getConfigurator().apply(limitSensorsConfig);
-
-    NamedCommands.registerCommand("autoL2", new SetLevelCommand(Level.L2));
-    NamedCommands.registerCommand("autoL4", new SetLevelCommand(Level.L4));
-    NamedCommands.registerCommand("autoIdle", new AngleIdleBoathookCommand(this));
-    NamedCommands.registerCommand("autoExtend", new BoathookExtendMotionPathCommand(this));
-    NamedCommands.registerCommand("autoRetract", new BoathookRetractMotionPathCommand(this));
   }
 
   public void setAngle(double angle) {
@@ -207,6 +198,11 @@ public class Boathook extends SubsystemBase {
   public double getAngle() {
     StatusSignal<Angle> angle = rotationMotor.getPosition();
     return angle.getValueAsDouble() * 360.0;
+  }
+
+  public double getAngleSetpoint() {
+    StatusSignal<Double> angle = rotationMotor.getClosedLoopReference();
+    return angle.getValueAsDouble() * 360;
   }
 
   public void setLength(double length) {
@@ -244,7 +240,5 @@ public class Boathook extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Boathook Angle", getAngle());
     SmartDashboard.putNumber("Boathook Extension", getLength());
-    SmartDashboard.putNumber("MicroRotation", microRotationOffset);
-    SmartDashboard.putNumber("MicroExtension", getLengthSetpoint());
   }
 }

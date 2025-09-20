@@ -67,7 +67,7 @@ public final class Constants {
     public static final int EXTENDER_ENCODER_ID = 16;
     public static final int CANDI_ID = 17; // S1 is rotation, S2 is extension
     public static final double ROTATOR_GEAR_RATIO = 25;
-    public static final double ROTATOR_FORWARD_LIMIT = 0.34;
+    public static final double ROTATOR_FORWARD_LIMIT = 0.388;
     public static final double ROTATOR_REVERSE_LIMIT = 0.0;
     //    public static final double EXTENDER_CANCODER_RATIO = 101.6 / 40;
     //    public static final double EXTENDER_GEAR_RATIO = 25;
@@ -77,20 +77,22 @@ public final class Constants {
     public static final double EXTENDER_REVERSE_LIMIT = 0;
 
     // Rotation in degrees
+
     public static final double STAB_ANGLE = 35;
     public static final double IDLE_ANGLE = 93;
     public static final double L2_SETUP_ANGLE = 115;
     public static final double L3_SETUP_ANGLE = 108;
     public static final double L4_SETUP_ANGLE = 97;
-    public static final double L2_SCORE_ANGLE = 133;
+    public static final double L2_SCORE_ANGLE = 135;
     public static final double L3_SCORE_ANGLE = 115;
     public static final double L4_SCORE_ANGLE = 97;
 
     // Extension in rotations
     public static final double STAB_EXTENSION = 0.02;
     public static final double IDLE_EXTENSION = 0.02;
-    public static final double L2_EXTENSION = 0.85;
-    public static final double L3_EXTENSION = 1.95;
+    public static final double L2_EXTENSION = 0.8;
+    public static final double L3_EXTENSION = 2.1;
+
     public static final double L4_EXTENSION = 4.3;
   }
 }
