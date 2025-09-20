@@ -298,6 +298,7 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule()));
     controller.leftTrigger().whileTrue(pullInCoral);
+    controller.leftTrigger().whileTrue(Commands.run(() -> leds.flash(120, 255, 255, 0.5)));
     controller.y().onTrue(setIntakeDown);
 
     // boathook.setDefaultCommand(idleBoathook);

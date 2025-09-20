@@ -248,7 +248,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    robotContainer.leds.solid(0, 21, 30, 255, 255);
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
     // SmartDashboard.putString(
     //     "Direction", String.valueOf(RobotContainer.currentTargetPose.direction));

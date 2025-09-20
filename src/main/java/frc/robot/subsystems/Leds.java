@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Leds extends SubsystemBase {
@@ -12,7 +13,7 @@ public class Leds extends SubsystemBase {
 
   public Leds() {
     ledString = new AddressableLED(0);
-    this.amountOfLights = 24;
+    this.amountOfLights = 21;
     ledBuffer = new AddressableLEDBuffer(this.amountOfLights);
 
     ledString.setLength(this.amountOfLights);
@@ -28,6 +29,20 @@ public class Leds extends SubsystemBase {
     for (var i = start; i < finish; i++) {
       ledBuffer.setHSV(i, hue, sat, val);
     }
+    update();
+  }
+
+  public void flash(int hue, int sat, int val, double flashRate) {
+    if (Timer.getFPGATimestamp() % flashRate < flashRate / 2) {
+      for (var i = 0; i < 21; i++) {
+        ledBuffer.setHSV(i, hue, sat, val);
+      }
+    } else {
+      for (var i = 0; i < 21; i++) {
+        ledBuffer.setHSV(i, hue, 0, 255);
+      }
+    }
+
     update();
   }
 
