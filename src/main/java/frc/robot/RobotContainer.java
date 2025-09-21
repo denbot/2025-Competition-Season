@@ -58,7 +58,7 @@ public class RobotContainer {
   public final Intake intake;
   public final Boathook boathook;
   public final RumbleSubsystem rumbleSubsystem;
-  public final Leds leds;
+  public Leds leds;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -102,21 +102,21 @@ public class RobotContainer {
           () -> {
             extendBoathook = boathookCommands.extendL2();
             retractBoathook = boathookCommands.retractL2();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
           });
   private final Command SetL3 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL3();
             retractBoathook = boathookCommands.retractL3();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
           });
   private final Command SetL4 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL4();
             retractBoathook = boathookCommands.retractL4();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
           });
 
   public final AutoRoutineBuilder autoRoutineBuilder;
@@ -172,7 +172,7 @@ public class RobotContainer {
 
     extendBoathook = boathookCommands.extendL2();
     retractBoathook = boathookCommands.retractL2();
-    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
 
     pullInCoral = intakeCommands.runIntakeCommand();
     rejectCoral = intakeCommands.runRejectCommand();
