@@ -7,8 +7,9 @@ public class AutoRoutineBuilder {
 
   private SequentialCommandGroup autoRoutine;
 
-  public AutoRoutineBuilder() {
+  public AutoRoutineBuilder(BoathookCommands boathookCommands, IntakeCommands intakeCommands) {
     autoRoutine = new SequentialCommandGroup();
+    autoRoutine.addCommands(boathookCommands.setBoathookIdle(), intakeCommands.intakeL1Command());
   }
 
   public AutoRoutineBuilder addPickupPieceBlock(Command pickupPieceCommand) {

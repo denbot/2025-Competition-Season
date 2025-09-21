@@ -17,23 +17,30 @@ public class IntakeCommands {
     return Commands.runEnd(() -> intake.setIntakeSpeed(60), () -> intake.setIntakeSpeed(0));
   }
 
+  public Command runSoftIntakeCommand() {
+    return Commands.runOnce(() -> intake.setIntakeSpeed(5));
+  }
+
   public Command runRejectCommand() {
     return Commands.runEnd(() -> intake.setIntakeSpeed(-60), () -> intake.setIntakeSpeed(0))
         .raceWith(new WaitCommand(0.5));
   }
 
   public Command intakeDownCommand() {
-    return Commands.run(() -> intake.setAngle(0, 0, -3))
-        .until(() -> intake.getRotationVelocity() < 0.01);
+    return Commands.run(() -> intake.setAngle(0))
+        .until(() -> Math.abs(0 - intake.getRotationAngle()) < 0.01);
   }
 
   public Command intakeL1Command() {
-    return Commands.run(() -> intake.setAngle(0.2, 0, -3))
-        .until(() -> intake.getRotationVelocity() < 0.01);
+    return Commands.run(() -> intake.setAngle(0.2))
+        .until(() -> Math.abs(0.2 - intake.getRotationAngle()) < 0.01);
   }
 
   public Command intakeSpearCommand() {
-    return Commands.run(() -> intake.setAngle(0.55, 0, -3))
-        .until(() -> intake.getRotationVelocity() < 0.01);
+    return Commands.run(() -> intake.setAngle(0.45))
+        .until(
+            () ->
+                Math.abs(0.45 - intake.getRotationAngle()) < 0.025
+                    && Math.abs(intake.getRotationVelocity()) < 0.01);
   }
 }

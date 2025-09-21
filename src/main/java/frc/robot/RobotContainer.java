@@ -183,7 +183,7 @@ public class RobotContainer {
 
     // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
 
-    autoRoutineBuilder = new AutoRoutineBuilder();
+    autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intakeCommands);
     /* Test Auto Routine Builder Pattern
         .addBuildingBlock(OnTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2())
         .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
@@ -191,7 +191,7 @@ public class RobotContainer {
     */
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
-    currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft();
+    currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -277,7 +277,23 @@ public class RobotContainer {
     controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
     controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
 
+    controller
+        .povUp()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionForward().schedule()));
+    controller
+        .povDown()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionBackward().schedule()));
+    controller
+        .povLeft()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleForward().schedule()));
+    controller
+        .povRight()
+        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
+
     controller.leftBumper().whileTrue(rejectCoral);
+    controller
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule()));
     controller.leftTrigger().whileTrue(pullInCoral);
     controller.y().onTrue(setIntakeDown);
 
@@ -373,7 +389,7 @@ public class RobotContainer {
     buttonBoxController
         .spearTrigger()
         .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true))
-        .onTrue(boathookCommands.handoffCommand(intakeCommands));
+        .onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
   }
 
   public void configureAutoBuilderBindings() {
