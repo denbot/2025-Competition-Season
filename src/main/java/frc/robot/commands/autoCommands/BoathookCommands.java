@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Robot;
 import frc.robot.subsystems.boathook.Boathook;
 import java.util.function.BooleanSupplier;
 
@@ -96,7 +97,8 @@ public class BoathookCommands {
         setLengthCommand(0.06),
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
-        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()));
+        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()),
+        Commands.runOnce(() -> Robot.robotContainer.leds.solid(0, 21, 60, 255, 255)));
   }
 
   public Command setAngleCommand(double angle) {

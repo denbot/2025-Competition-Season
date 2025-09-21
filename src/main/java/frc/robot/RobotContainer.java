@@ -77,7 +77,6 @@ public class RobotContainer {
 
   private final Command pullInCoral;
   private final Command rejectCoral;
-  private final Command setIntakeDown;
 
   private final Command microRotationAdjustForwards;
   private final Command microRotationAdjustBackwards;
@@ -177,7 +176,6 @@ public class RobotContainer {
 
     pullInCoral = intakeCommands.runIntakeCommand();
     rejectCoral = intakeCommands.runRejectCommand();
-    setIntakeDown = intakeCommands.intakeDownCommand();
 
     microRotationAdjustForwards = boathookCommands.MicroAdjustAngleForward();
     microRotationAdjustBackwards = boathookCommands.MicroAdjustAngleBackward();
@@ -299,7 +297,6 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule()));
     controller.leftTrigger().whileTrue(pullInCoral);
     controller.leftTrigger().whileTrue(Commands.run(() -> leds.flash(120, 255, 255, 0.5)));
-    controller.y().onTrue(setIntakeDown);
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
