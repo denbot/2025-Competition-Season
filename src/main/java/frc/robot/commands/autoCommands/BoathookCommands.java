@@ -97,8 +97,7 @@ public class BoathookCommands {
         setLengthCommand(0.06),
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
-        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()),
-        Commands.runOnce(() -> Robot.robotContainer.leds.solid(0, 21, 60, 255, 255)));
+        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()));
   }
 
   public Command setAngleCommand(double angle) {
