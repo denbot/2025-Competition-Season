@@ -9,7 +9,8 @@ public class AutoRoutineBuilder {
 
   public AutoRoutineBuilder(BoathookCommands boathookCommands, IntakeCommands intakeCommands) {
     autoRoutine = new SequentialCommandGroup();
-    autoRoutine.addCommands(boathookCommands.setBoathookIdle(), intakeCommands.intakeL1Command());
+    // autoRoutine.addCommands(boathookCommands.setBoathookIdle(),
+    // intakeCommands.intakeL1Command());
   }
 
   public AutoRoutineBuilder addPickupPieceBlock(Command pickupPieceCommand) {
@@ -18,7 +19,8 @@ public class AutoRoutineBuilder {
   }
 
   public AutoRoutineBuilder addBuildingBlock(Command autoAlign, Command scoreCommand) {
-    autoRoutine.addCommands(autoAlign, scoreCommand);
+    System.out.println("Added New Command");
+    autoRoutine.addCommands(autoAlign /*, scoreCommand*/);
     return this;
   }
 
