@@ -275,12 +275,12 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller
-        .x().onTrue(
+        .x()
+        .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand.schedule())
                 .alongWith(
-                    Commands.run(() -> leds.rainbow())
-                        .until(() -> !currentOnTheFlyCommand.isScheduled())
-                        .andThen(Commands.runOnce(() -> leds.fullSolid(60, 255, 255)))));
+                    Commands.runEnd(() -> leds.rainbow(), () -> leds.fullSolid(60, 255, 255))
+                        .until(() -> !currentOnTheFlyCommand.isScheduled())));
 
     controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
     controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
@@ -298,13 +298,23 @@ public class RobotContainer {
         .povRight()
         .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
 
-    controller.leftBumper().whileTrue(rejectCoral);
+    controller
+        .leftBumper()
+        .whileTrue(
+            rejectCoral.alongWith(
+                Commands.runEnd(
+                    () -> leds.flashSection(0, 21, 0, 255, 255, 0.25), 
+                    () -> leds.fullSolid(0, 0, 0))
+                    .withTimeout(0.5)));
     controller
         .leftTrigger()
-        .onTrue(
+        .whileTrue(
             Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule())
                 .alongWith(pullInCoral)
-                .alongWith(Commands.run(() -> leds.flash(120, 255, 255, 0.5))));
+                .alongWith(
+                    Commands.runEnd(
+                        () -> leds.flash(120, 255, 255, 0.5), 
+                        () -> leds.fullSolid(0, 0, 0))));
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
