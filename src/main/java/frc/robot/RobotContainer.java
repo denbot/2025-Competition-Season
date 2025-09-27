@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -33,6 +34,7 @@ import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
@@ -57,6 +59,7 @@ public class RobotContainer {
   public final Intake intake;
   public final Boathook boathook;
   public final RumbleSubsystem rumbleSubsystem;
+  public Leds leds;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -75,7 +78,6 @@ public class RobotContainer {
 
   private final Command pullInCoral;
   private final Command rejectCoral;
-  private final Command setIntakeDown;
 
   private final Command microRotationAdjustForwards;
   private final Command microRotationAdjustBackwards;
@@ -101,21 +103,21 @@ public class RobotContainer {
           () -> {
             extendBoathook = boathookCommands.extendL2();
             retractBoathook = boathookCommands.retractL2();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
           });
   private final Command SetL3 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL3();
             retractBoathook = boathookCommands.retractL3();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
           });
   private final Command SetL4 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL4();
             retractBoathook = boathookCommands.retractL4();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
           });
 
   public final AutoRoutineBuilder autoRoutineBuilder;
@@ -164,17 +166,17 @@ public class RobotContainer {
     intake = new Intake();
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
+    leds = new Leds();
 
     intakeCommands = new IntakeCommands(intake);
     boathookCommands = new BoathookCommands(boathook);
 
     extendBoathook = boathookCommands.extendL2();
     retractBoathook = boathookCommands.retractL2();
-    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, leds);
 
     pullInCoral = intakeCommands.runIntakeCommand();
     rejectCoral = intakeCommands.runRejectCommand();
-    setIntakeDown = intakeCommands.intakeDownCommand();
 
     microRotationAdjustForwards = boathookCommands.MicroAdjustAngleForward();
     microRotationAdjustBackwards = boathookCommands.MicroAdjustAngleBackward();
@@ -272,7 +274,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
+    controller
+        .x()
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand.schedule())
+                .alongWith(
+                    Commands.runEnd(() -> leds.rainbow(), () -> leds.fullSolid(60, 255, 255))
+                        .until(() -> !currentOnTheFlyCommand.isScheduled())));
 
     controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
     controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
@@ -290,12 +298,21 @@ public class RobotContainer {
         .povRight()
         .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
 
-    controller.leftBumper().whileTrue(rejectCoral);
+    controller
+        .leftBumper()
+        .whileTrue(
+            rejectCoral.alongWith(
+                leds.getFlashCommand(0, 21, 0, 255, 255, 0.25, 0.5)
+                    .andThen(() -> leds.fullSolid(0, 0, 0))
+                    .withTimeout(0.5)));
     controller
         .leftTrigger()
-        .onTrue(Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule()));
-    controller.leftTrigger().whileTrue(pullInCoral);
-    controller.y().onTrue(setIntakeDown);
+        .whileTrue(
+            Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule())
+                .alongWith(pullInCoral)
+                .alongWith(
+                    Commands.runEnd(
+                        () -> leds.flash(120, 255, 255, 0.5), () -> leds.fullSolid(0, 0, 0))));
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
@@ -312,53 +329,115 @@ public class RobotContainer {
 
     buttonBoxController
         .twoLeftTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoLeft())
+                .alongWith(
+                    Commands.run(() -> leds.flash(15, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
     buttonBoxController
         .twoRightTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoRight()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwoRight())
+                .alongWith(
+                    Commands.run(() -> leds.flash(0, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
 
     buttonBoxController
         .fourLeftTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourLeft()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourLeft())
+                .alongWith(
+                    Commands.run(() -> leds.flash(45, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
     buttonBoxController
         .fourRightTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourRight()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignFourRight())
+                .alongWith(
+                    Commands.run(() -> leds.flash(30, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
 
     buttonBoxController
         .sixLeftTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixLeft()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixLeft())
+                .alongWith(
+                    Commands.run(() -> leds.flash(75, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
     buttonBoxController
         .sixRightTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight())
+                .alongWith(
+                    Commands.run(() -> leds.flash(60, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
 
     buttonBoxController
         .eightLeftTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightLeft()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightLeft())
+                .alongWith(
+                    Commands.run(() -> leds.flash(105, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
     buttonBoxController
         .eightRightTrigger()
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightRight()));
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignEightRight())
+                .alongWith(
+                    Commands.run(() -> leds.flash(90, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
 
     buttonBoxController
         .tenLeftTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenLeft()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenLeft())
+                .alongWith(
+                    Commands.run(() -> leds.flash(135, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
     buttonBoxController
         .tenRightTrigger()
-        .onTrue(Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenRight()));
+        .onTrue(
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTenRight())
+                .alongWith(
+                    Commands.run(() -> leds.flash(120, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
 
     buttonBoxController
         .twelveLeftTrigger()
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveLeft()));
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveLeft())
+                .alongWith(
+                    Commands.run(() -> leds.flash(165, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
     buttonBoxController
         .twelveRightTrigger()
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveRight()));
+            Commands.runOnce(() -> currentOnTheFlyCommand = OnTheFlyCommands.alignTwelveRight())
+                .alongWith(
+                    Commands.run(() -> leds.flash(150, 255, 255, 0.25))
+                        .withTimeout(0.5)
+                        .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
 
-    buttonBoxController.L1Trigger().onTrue(SetL1);
-    buttonBoxController.L2Trigger().onTrue(SetL2);
-    buttonBoxController.L3Trigger().onTrue(SetL3);
-    buttonBoxController.L4Trigger().onTrue(SetL4);
+    buttonBoxController
+        .L1Trigger()
+        .onTrue(
+            SetL1.andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 255)))
+                .andThen(new WaitCommand(1))
+                .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0))));
+    buttonBoxController.L2Trigger().onTrue(SetL2.alongWith(leds.indicateL2()));
+    buttonBoxController.L3Trigger().onTrue(SetL3.alongWith(leds.indicateL3()));
+    buttonBoxController.L4Trigger().onTrue(SetL4.alongWith(leds.indicateL4()));
 
     buttonBoxController
         .lollipopLeftTrigger()

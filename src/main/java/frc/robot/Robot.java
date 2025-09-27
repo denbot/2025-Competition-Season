@@ -21,6 +21,8 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
@@ -205,7 +207,20 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (!DriverStation.getAlliance().isPresent())
+      robotContainer.leds.solidInSectionCenter(0, 0, 255);
+    else if (DriverStation.getAlliance().get() == Alliance.Red)
+      robotContainer.leds.solidInSectionCenter(0, 255, 255);
+    else robotContainer.leds.solidInSectionCenter(120, 255, 255);
+
+    if (LimelightHelpers.getTV("limelight-right"))
+      robotContainer.leds.solidInSection(0, 7, 60, 255, 255);
+    else robotContainer.leds.solidInSection(0, 7, 0, 0, 0);
+    if (LimelightHelpers.getTV("limelight-left"))
+      robotContainer.leds.solidInSection(14, 21, 60, 255, 255);
+    else robotContainer.leds.solidInSection(14, 21, 0, 0, 0);
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Robot;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.boathook.Boathook;
 import java.util.function.BooleanSupplier;
 
@@ -71,7 +73,7 @@ public class BoathookCommands {
 
   public Command setBoathookStab() {
     System.out.println("Setting Boathook Stab");
-    return new SequentialCommandGroup(setLengthCommand(0.2), setAngleCommand(35));
+    return new SequentialCommandGroup(setLengthCommand(0.2), setAngleCommand(45));
   }
 
   public Command MicroAdjustExtensionForward() {
@@ -90,23 +92,36 @@ public class BoathookCommands {
     return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() - 0.01));
   }
 
-  public Command handoffCommand(IntakeCommands intakeCommands) {
+  public Command handoffCommand(IntakeCommands intakeCommands, Leds led) {
     return new SequentialCommandGroup(
         setAngleCommand(93),
         setLengthCommand(0.06),
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
-        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()));
+        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()),
+        Commands.runOnce(() -> led.solidInSection(0, 21, 60, 255, 255)));
   }
 
   public Command setAngleCommand(double angle) {
     System.out.println("Setting Angle To: " + angle);
-    return (Commands.run(() -> boathook.setAngle(angle))).until(isAngleFinished());
+    return (Commands.run(
+            () -> {
+              boathook.setAngle(angle);
+              Robot.robotContainer.leds.solidInSectionRight(30, 255, 255);
+            }))
+        .until(isAngleFinished())
+        .andThen(() -> Robot.robotContainer.leds.solidInSectionRight(60, 255, 255));
   }
 
   public Command setLengthCommand(double length) {
     System.out.println("Setting Length To: " + length);
-    return (Commands.run(() -> boathook.setLength(length))).until(isExtendFinished());
+    return (Commands.run(
+            () -> {
+              boathook.setLength(length);
+              Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
+            }))
+        .until(isExtendFinished())
+        .andThen(() -> Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255));
   }
 
   public BooleanSupplier isExtendFinished() {
