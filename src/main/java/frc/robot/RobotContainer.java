@@ -274,8 +274,8 @@ public class RobotContainer {
 
     controller.x().onTrue(Commands.runOnce(() -> currentOnTheFlyCommand.schedule()));
 
-    controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
-    controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
+    controller.rightBumper().onTrue(Commands.runOnce(() -> {if(currentOnTheFlyCommand.isFinished() && !extendBoathook.isScheduled())extendBoathook.schedule();}));
+    controller.rightTrigger().onTrue(Commands.runOnce(() -> {if(currentOnTheFlyCommand.isFinished() && !retractBoathook.isScheduled())retractBoathook.schedule();}));
 
     controller
         .povUp()
