@@ -4,12 +4,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Robot;
+import frc.robot.commands.DriveCommands;
 
 public class OnTheFlyCommands {
 
@@ -57,6 +61,16 @@ public class OnTheFlyCommands {
       this.angle = angle;
     }
   }
+
+  private static double currentRobotX;
+  private static double currentRobotY;
+  private static double currentRobotAngle;
+  private static double offsetX;
+  private static double offsetY;
+  private static double offsetAngle;
+
+  private static double translationalKP = 5;
+  private static double angularKP = 0.5;
 
   public static Command alignTwoLeft() {
     return getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT);
@@ -134,6 +148,37 @@ public class OnTheFlyCommands {
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)));
   }
 
+  private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {
+    return Commands.runEnd(
+            () -> {
+              currentRobotX = Robot.robotContainer.drive.getPose().getX();
+              currentRobotY = Robot.robotContainer.drive.getPose().getY();
+              currentRobotAngle = Robot.robotContainer.drive.getPose().getRotation().getDegrees();
+              offsetX = targetPose.x - currentRobotX;
+              offsetY = targetPose.y - currentRobotY;
+              offsetAngle = targetPose.angle - currentRobotAngle;
+              offsetAngle = offsetAngle > 180 ? offsetAngle -= 360 : offsetAngle < -180 ? offsetAngle += 360 : offsetAngle;
+              System.out.println("X: " + offsetX + "\nY: " + offsetY + "\nAngle: " + offsetAngle);
+              ChassisSpeeds newSpeeds =
+                  new ChassisSpeeds(
+                      offsetX * translationalKP,
+                      offsetY * translationalKP,
+                      offsetAngle * angularKP);
+              Robot.robotContainer.drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      newSpeeds,
+                      DriverStation.getAlliance().get() == Alliance.Red
+                          ? Robot.robotContainer.drive.getRotation().plus(new Rotation2d(Math.PI))
+                          : Robot.robotContainer.drive.getRotation()));
+            },
+            () ->
+                DriveCommands.joystickDrive(
+                    Robot.robotContainer.drive, () -> 0.0, () -> 0.0, () -> 0.0))
+        .until(
+            () ->
+                Math.abs(offsetX) < 0.02 && Math.abs(offsetY) < 0.02 && Math.abs(offsetAngle) < 1);
+  }
+
   private static Command getAutoAlignCommand(OnTheFlyTargetPose targetPose) {
     double x = targetPose.x;
     double y = targetPose.y;
@@ -154,7 +199,8 @@ public class OnTheFlyCommands {
     // initializes new pathFindToPose command which both create a path and has the robot follow said
     // path
     return AutoBuilder.pathfindToPose(
-        new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+            new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
+            new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)))
+        .andThen(getFinalAlignmentCommand(targetPose));
   }
 }
