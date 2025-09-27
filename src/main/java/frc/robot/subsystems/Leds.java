@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Leds extends SubsystemBase {
@@ -23,6 +25,27 @@ public class Leds extends SubsystemBase {
 
   public void update() {
     ledString.setData(ledBuffer);
+  }
+
+  public Command indicateL2() {
+    return Commands.run(() -> flashSection(0, 3, 150, 255, 255, 0.25))
+        .alongWith(Commands.run(() -> flashSection(18, 21, 150, 255, 255, 0.25)))
+        .withTimeout(0.5)
+        .andThen(Commands.runOnce(() -> fullSolid(0, 0, 0)));
+  }
+
+  public Command indicateL3() {
+    return Commands.run(() -> flashSection(3, 6, 150, 255, 255, 0.25))
+        .alongWith(Commands.run(() -> flashSection(15, 18, 150, 255, 255, 0.25)))
+        .withTimeout(0.5)
+        .andThen(Commands.runOnce(() -> fullSolid(0, 0, 0)));
+  }
+
+  public Command indicateL4() {
+    return Commands.run(() -> flashSection(6, 9, 150, 255, 255, 0.25))
+        .alongWith(Commands.run(() -> flashSection(12, 15, 150, 255, 255, 0.25)))
+        .withTimeout(0.5)
+        .andThen(Commands.runOnce(() -> fullSolid(0, 0, 0)));
   }
 
   public void solidInSection(int start, int finish, int hue, int sat, int val) {

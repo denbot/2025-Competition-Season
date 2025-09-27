@@ -303,8 +303,8 @@ public class RobotContainer {
         .whileTrue(
             rejectCoral.alongWith(
                 Commands.runEnd(
-                    () -> leds.flashSection(0, 21, 0, 255, 255, 0.25), 
-                    () -> leds.fullSolid(0, 0, 0))
+                        () -> leds.flashSection(0, 21, 0, 255, 255, 0.25),
+                        () -> leds.fullSolid(0, 0, 0))
                     .withTimeout(0.5)));
     controller
         .leftTrigger()
@@ -313,8 +313,7 @@ public class RobotContainer {
                 .alongWith(pullInCoral)
                 .alongWith(
                     Commands.runEnd(
-                        () -> leds.flash(120, 255, 255, 0.5), 
-                        () -> leds.fullSolid(0, 0, 0))));
+                        () -> leds.flash(120, 255, 255, 0.5), () -> leds.fullSolid(0, 0, 0))));
 
     // boathook.setDefaultCommand(idleBoathook);
     controller.povLeft().onTrue(microRotationAdjustBackwards);
@@ -437,27 +436,9 @@ public class RobotContainer {
             SetL1.andThen(Commands.runOnce(() -> leds.fullSolid(150, 255, 255)))
                 .andThen(new WaitCommand(1))
                 .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0))));
-    buttonBoxController
-        .L2Trigger()
-        .onTrue(
-            SetL2.alongWith(
-                Commands.run(() -> leds.flashSection(0, 7, 150, 255, 255, 0.25))
-                    .withTimeout(0.5)
-                    .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
-    buttonBoxController
-        .L3Trigger()
-        .onTrue(
-            SetL3.alongWith(
-                Commands.run(() -> leds.flashSection(7, 14, 150, 255, 255, 0.25))
-                    .withTimeout(0.5)
-                    .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
-    buttonBoxController
-        .L4Trigger()
-        .onTrue(
-            SetL4.alongWith(
-                Commands.run(() -> leds.flashSection(14, 21, 150, 255, 255, 0.25))
-                    .withTimeout(0.5)
-                    .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)))));
+    buttonBoxController.L2Trigger().onTrue(SetL2.alongWith(leds.indicateL2()));
+    buttonBoxController.L3Trigger().onTrue(SetL3.alongWith(leds.indicateL3()));
+    buttonBoxController.L4Trigger().onTrue(SetL4.alongWith(leds.indicateL4()));
 
     buttonBoxController
         .lollipopLeftTrigger()
