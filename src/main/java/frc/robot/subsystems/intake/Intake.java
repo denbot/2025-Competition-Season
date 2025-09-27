@@ -70,15 +70,7 @@ public class Intake extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-<<<<<<< HEAD
-<<<<<<< HEAD
-                  .withMagnetOffset(0.08443671875)
-=======
-                  .withMagnetOffset(0.09063671875)
->>>>>>> 5b181cf (Updated intake cancoder setpoint)
-=======
-                  .withMagnetOffset(0.09063671875)
->>>>>>> c1f4532d0feaab96722481b6aa52285a05f9cb52
+                  .withMagnetOffset(-0.4483828125)
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   public boolean up = false;
