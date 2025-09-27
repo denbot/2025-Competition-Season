@@ -155,6 +155,6 @@ public class OnTheFlyCommands {
     // path
     return AutoBuilder.pathfindToPose(
         new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-        new PathConstraints(2.0, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
+        new PathConstraints(3.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720)));
   }
 }
