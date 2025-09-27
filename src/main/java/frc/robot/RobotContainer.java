@@ -302,9 +302,8 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(
             rejectCoral.alongWith(
-                Commands.runEnd(
-                        () -> leds.flashSection(0, 21, 0, 255, 255, 0.25),
-                        () -> leds.fullSolid(0, 0, 0))
+                leds.getFlashCommand(0, 21, 0, 255, 255, 0.25, 0.5)
+                    .andThen(() -> leds.fullSolid(0, 0, 0))
                     .withTimeout(0.5)));
     controller
         .leftTrigger()
@@ -433,7 +432,7 @@ public class RobotContainer {
     buttonBoxController
         .L1Trigger()
         .onTrue(
-            SetL1.andThen(Commands.runOnce(() -> leds.fullSolid(150, 255, 255)))
+            SetL1.andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 255)))
                 .andThen(new WaitCommand(1))
                 .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0))));
     buttonBoxController.L2Trigger().onTrue(SetL2.alongWith(leds.indicateL2()));

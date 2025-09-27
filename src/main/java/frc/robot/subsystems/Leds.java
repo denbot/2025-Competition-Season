@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Leds extends SubsystemBase {
   private AddressableLED ledString;
@@ -28,24 +29,18 @@ public class Leds extends SubsystemBase {
   }
 
   public Command indicateL2() {
-    return Commands.run(() -> flashSection(0, 3, 150, 255, 255, 0.25))
-        .alongWith(Commands.run(() -> flashSection(18, 21, 150, 255, 255, 0.25)))
-        .withTimeout(0.5)
-        .andThen(Commands.runOnce(() -> fullSolid(0, 0, 0)));
+    return getFlashCommand(0, 3, 60, 255, 255, 0.25, 0.5)
+        .alongWith(getFlashCommand(18, 21, 60, 255, 255, 0.25, 0.5));
   }
 
   public Command indicateL3() {
-    return Commands.run(() -> flashSection(3, 6, 150, 255, 255, 0.25))
-        .alongWith(Commands.run(() -> flashSection(15, 18, 150, 255, 255, 0.25)))
-        .withTimeout(0.5)
-        .andThen(Commands.runOnce(() -> fullSolid(0, 0, 0)));
+    return getFlashCommand(3, 6, 30, 255, 255, 0.25, 0.5)
+        .alongWith(getFlashCommand(15, 18, 30, 255, 255, 0.25, 0.5));
   }
 
   public Command indicateL4() {
-    return Commands.run(() -> flashSection(6, 9, 150, 255, 255, 0.25))
-        .alongWith(Commands.run(() -> flashSection(12, 15, 150, 255, 255, 0.25)))
-        .withTimeout(0.5)
-        .andThen(Commands.runOnce(() -> fullSolid(0, 0, 0)));
+    return getFlashCommand(6, 9, 0, 255, 255, 0.25, 0.5)
+        .alongWith(getFlashCommand(12, 15, 0, 255, 255, 0.25, 0.5));
   }
 
   public void solidInSection(int start, int finish, int hue, int sat, int val) {
@@ -53,6 +48,42 @@ public class Leds extends SubsystemBase {
       ledBuffer.setHSV(i, hue, sat, val);
     }
     update();
+  }
+
+  public void gradientInSection(int start, int finish, int hue, int sat, int val) {
+    if (start < finish) {
+      for (var i = start; i < finish; i++) {
+        ledBuffer.setHSV(i, hue, sat, val - ((i / finish) * val));
+      }
+    } else {
+      for (var i = start; i > finish; i--) {
+        ledBuffer.setHSV(i, hue, sat, val * (i / start));
+      }
+    }
+    update();
+  }
+
+  public Command getFlashCommand(
+      int start, int finish, int hue, int sat, int val, double flashRate, double duration) {
+    return Commands.repeatingSequence(
+            Commands.runOnce(() -> solidInSection(start, finish, hue, sat, val)),
+            new WaitCommand(flashRate),
+            Commands.runOnce(() -> solidInSection(start, finish, 0, 0, 0)),
+            new WaitCommand(flashRate))
+        .withTimeout(duration)
+        .andThen(() -> solidInSection(start, finish, 0, 0, 0));
+  }
+
+  public void solidInSectionLeft(int hue, int sat, int val) {
+    this.solidInSection(0, 7, hue, sat, val);
+  }
+
+  public void solidInSectionCenter(int hue, int sat, int val) {
+    this.solidInSection(7, 14, hue, sat, val / 2);
+  }
+
+  public void solidInSectionRight(int hue, int sat, int val) {
+    this.solidInSection(14, 21, hue, sat, val);
   }
 
   public void fullSolid(int hue, int sat, int val) {
@@ -67,20 +98,6 @@ public class Leds extends SubsystemBase {
     } else {
       for (var i = 0; i < 21; i++) {
         ledBuffer.setHSV(i, hue, 0, 255);
-      }
-    }
-
-    update();
-  }
-
-  public void flashSection(int start, int end, int hue, int sat, int val, double flashRate) {
-    if (Timer.getFPGATimestamp() % flashRate < flashRate / 2) {
-      for (var i = start; i < end; i++) {
-        ledBuffer.setHSV(i, hue, sat, val);
-      }
-    } else {
-      for (var i = 0; i < 21; i++) {
-        ledBuffer.setHSV(i, hue, 0, 0);
       }
     }
 
