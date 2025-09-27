@@ -98,7 +98,7 @@ public class BoathookCommands {
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
         new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()),
-        Commands.runOnce(() -> led.solid(0, 21, 60, 255, 255)));
+        Commands.runOnce(() -> led.solidInSection(0, 21, 60, 255, 255)));
   }
 
   public Command setAngleCommand(double angle) {

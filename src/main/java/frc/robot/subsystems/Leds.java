@@ -25,11 +25,15 @@ public class Leds extends SubsystemBase {
     ledString.setData(ledBuffer);
   }
 
-  public void solid(int start, int finish, int hue, int sat, int val) {
+  public void solidInSection(int start, int finish, int hue, int sat, int val) {
     for (var i = start; i < finish; i++) {
       ledBuffer.setHSV(i, hue, sat, val);
     }
     update();
+  }
+
+  public void fullSolid(int hue, int sat, int val) {
+    this.solidInSection(0, amountOfLights, hue, sat, val);
   }
 
   public void flash(int hue, int sat, int val, double flashRate) {
@@ -40,6 +44,20 @@ public class Leds extends SubsystemBase {
     } else {
       for (var i = 0; i < 21; i++) {
         ledBuffer.setHSV(i, hue, 0, 255);
+      }
+    }
+
+    update();
+  }
+
+  public void flashSection(int start, int end, int hue, int sat, int val, double flashRate) {
+    if (Timer.getFPGATimestamp() % flashRate < flashRate / 2) {
+      for (var i = start; i < end; i++) {
+        ledBuffer.setHSV(i, hue, sat, val);
+      }
+    } else {
+      for (var i = 0; i < 21; i++) {
+        ledBuffer.setHSV(i, hue, 0, 0);
       }
     }
 
