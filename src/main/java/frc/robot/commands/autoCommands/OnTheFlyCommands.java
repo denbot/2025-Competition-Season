@@ -24,13 +24,13 @@ public class OnTheFlyCommands {
     FOUR_LEFT(3.64, 2.89, 60),
     SIX_LEFT(3.08, 4.20, 0),
     EIGHT_LEFT(3.93, 5.33, -60),
-    TEN_LEFT(5.34, 5.16, -120),
+    TEN_LEFT(5.06, 5.32, -120),
     TWELVE_LEFT(5.9, 3.86, 180),
     TWO_RIGHT(5.33, 2.88, 120),
     FOUR_RIGHT(3.92, 2.73, 60),
     SIX_RIGHT(3.08, 3.87, 0),
     EIGHT_RIGHT(3.65, 5.17, -60),
-    TEN_RIGHT(5.06, 5.32, -120),
+    TEN_RIGHT(5.34, 5.16, -120),
     TWELVE_RIGHT(5.9, 4.18, 180),
     // Human Player Locations
     HUMAN_LEFT(1.3, 1.0, -130),
@@ -157,7 +157,10 @@ public class OnTheFlyCommands {
               offsetX = targetPose.x - currentRobotX;
               offsetY = targetPose.y - currentRobotY;
               offsetAngle = targetPose.angle - currentRobotAngle;
-              offsetAngle = offsetAngle > 180 ? offsetAngle -= 360 : offsetAngle < -180 ? offsetAngle += 360 : offsetAngle;
+              offsetAngle =
+                  offsetAngle > 180
+                      ? offsetAngle -= 360
+                      : offsetAngle < -180 ? offsetAngle += 360 : offsetAngle;
               System.out.println("X: " + offsetX + "\nY: " + offsetY + "\nAngle: " + offsetAngle);
               ChassisSpeeds newSpeeds =
                   new ChassisSpeeds(
