@@ -60,11 +60,11 @@ public class ButtonBoxController {
   }
 
   public Trigger tenLeftTrigger() {
-    return controller2.button(2);
+    return controller2.button(3);
   }
 
   public Trigger tenRightTrigger() {
-    return controller2.button(3);
+    return controller2.button(2);
   }
 
   public Trigger twelveLeftTrigger() {

@@ -110,7 +110,8 @@ public class BoathookCommands {
               Robot.robotContainer.leds.solidInSectionRight(30, 255, 255);
             }))
         .until(isAngleFinished())
-        .andThen(() -> Robot.robotContainer.leds.solidInSectionRight(60, 255, 255));
+        .andThen(
+            Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionRight(60, 255, 255)));
   }
 
   public Command setLengthCommand(double length) {
@@ -121,7 +122,8 @@ public class BoathookCommands {
               Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
             }))
         .until(isExtendFinished())
-        .andThen(() -> Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255));
+        .andThen(
+            Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255)));
   }
 
   public BooleanSupplier isExtendFinished() {

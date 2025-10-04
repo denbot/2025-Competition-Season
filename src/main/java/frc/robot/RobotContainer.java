@@ -241,9 +241,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -controller.getLeftY() * Constants.driverSpeedReduction,
+            () -> -controller.getLeftX() * Constants.driverSpeedReduction,
+            () -> -controller.getRightX() * Constants.driverSpeedReduction));
 
     // Lock to 0° when A button is held
     // TODO Lock this into rotating around the reef
@@ -279,11 +279,28 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand.schedule())
                 .alongWith(
-                    Commands.runEnd(() -> leds.rainbow(), () -> leds.fullSolid(60, 255, 255))
-                        .until(() -> !currentOnTheFlyCommand.isScheduled())));
+                    Commands.run(() -> leds.rainbow())
+                        .until(() -> !currentOnTheFlyCommand.isScheduled()))
+                .andThen(Commands.run(() -> leds.fullSolid(60, 255, 255)).withTimeout(0.5)));
 
-    controller.rightBumper().onTrue(Commands.runOnce(() -> extendBoathook.schedule()));
-    controller.rightTrigger().onTrue(Commands.runOnce(() -> retractBoathook.schedule()));
+    controller
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  if (!currentOnTheFlyCommand.isScheduled() || currentOnTheFlyCommand.isFinished())
+                    extendBoathook.schedule();
+                }));
+    controller
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () -> {
+                      if (!currentOnTheFlyCommand.isScheduled()
+                          || currentOnTheFlyCommand.isFinished()) retractBoathook.schedule();
+                    })
+                .until(() -> !retractBoathook.isScheduled())
+                .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)).withTimeout(0.25)));
 
     controller
         .povUp()
