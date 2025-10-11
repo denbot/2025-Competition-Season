@@ -28,11 +28,11 @@ public class ButtonBoxController {
   }
 
   public Trigger twoLeftTrigger() {
-    return controller1.button(3);
+    return controller1.button(2);
   }
 
   public Trigger twoRightTrigger() {
-    return controller1.button(2);
+    return controller1.button(3);
   }
 
   public Trigger fourLeftTrigger() {

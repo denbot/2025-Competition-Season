@@ -12,7 +12,11 @@ import java.util.function.BooleanSupplier;
 
 public class BoathookCommands {
 
+  private double startLength;
+  private double stepLength;
+  private double itterations = 0;
   private Boathook boathook;
+  private int clockCycles = 20;
 
   public BoathookCommands(Boathook boathook) {
     this.boathook = boathook;
@@ -50,7 +54,14 @@ public class BoathookCommands {
 
   public Command extendL4() {
     return new SequentialCommandGroup(
-        setLengthCommand(0.2), setAngleCommand(90), setLengthCommand(4.6), setAngleCommand(97));
+        setLengthCommand(0.2),
+        setAngleCommand(90),
+        setLengthCommand(1.1),
+        new WaitCommand(1),
+        setLengthCommand(2.4),
+        new WaitCommand(1),
+        setLengthCommand(4.6),
+        setAngleCommand(97));
   }
 
   public Command retractL4() {
@@ -115,18 +126,31 @@ public class BoathookCommands {
   }
 
   public Command setLengthCommand(double length) {
-    return (Commands.run(
+    return Commands.runOnce(
             () -> {
-              boathook.setLength(length);
-              Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
-            }))
+              startLength = boathook.getLength();
+              stepLength = ((length - startLength) / clockCycles);
+              itterations = 0;
+            })
+        .andThen(
+            Commands.run(
+                () -> {
+                  itterations++;
+                  System.out.println(startLength + (stepLength * itterations));
+                  System.out.println(itterations);
+                  // boathook.setLength(startLength + (stepLength * itterations));
+                  Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
+                }))
         .until(isExtendFinished())
         .andThen(
             Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255)));
   }
 
   public BooleanSupplier isExtendFinished() {
-    return () -> (Math.abs(boathook.getLengthSetpoint() - boathook.getLength()) < 0.1);
+    return () ->
+        (
+        Math.abs(boathook.getLengthSetpoint() - boathook.getLength()) < 0.1 && itterations
+            == clockCycles);
   }
 
   public BooleanSupplier isAngleFinished() {

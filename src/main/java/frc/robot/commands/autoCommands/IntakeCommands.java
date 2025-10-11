@@ -18,7 +18,7 @@ public class IntakeCommands {
   }
 
   public Command runSoftIntakeCommand() {
-    return Commands.runOnce(() -> intake.setIntakeSpeed(5), this.intake);
+    return Commands.runOnce(() -> intake.setIntakeSpeed(5));
   }
 
   public Command runRejectCommand() {
@@ -27,17 +27,17 @@ public class IntakeCommands {
   }
 
   public Command intakeDownCommand() {
-    return Commands.run(() -> intake.setAngle(0), this.intake)
+    return Commands.run(() -> intake.setAngle(0))
         .until(() -> Math.abs(0 - intake.getRotationAngle()) < 0.01);
   }
 
   public Command intakeL1Command() {
-    return Commands.run(() -> intake.setAngle(0.2), this.intake)
+    return Commands.run(() -> intake.setAngle(0.2))
         .until(() -> Math.abs(0.2 - intake.getRotationAngle()) < 0.01);
   }
 
   public Command intakeSpearCommand() {
-    return Commands.run(() -> intake.setAngle(0.45), this.intake)
+    return Commands.run(() -> intake.setAngle(0.45))
         .until(
             () ->
                 Math.abs(0.45 - intake.getRotationAngle()) < 0.025
