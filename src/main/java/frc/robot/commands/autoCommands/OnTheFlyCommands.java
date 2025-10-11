@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -152,16 +151,27 @@ public class OnTheFlyCommands {
   private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {
     return Commands.runEnd(
             () -> {
+              double x = targetPose.x;
+              double y = targetPose.y;
+              double angle = targetPose.angle;
+              if (DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+                // approximate location of top right corner of the reef = 17.6, 7.6
+                x = 17.548 - x;
+                y = 8.052 - y;
+                angle += 180;
+                if (angle > 180) angle -= 360;
+              }
               currentRobotX = Robot.robotContainer.drive.getPose().getX();
               currentRobotY = Robot.robotContainer.drive.getPose().getY();
               currentRobotAngle = Robot.robotContainer.drive.getPose().getRotation().getDegrees();
-              offsetX = targetPose.x - currentRobotX;
-              offsetY = targetPose.y - currentRobotY;
-              offsetAngle = targetPose.angle - currentRobotAngle;
+              offsetX = x - currentRobotX;
+              offsetY = y - currentRobotY;
+              offsetAngle = angle - currentRobotAngle;
               offsetAngle =
-                  offsetAngle > 185
+                  offsetAngle > 180
                       ? offsetAngle -= 360
-                      : offsetAngle < -185 ? offsetAngle += 360 : offsetAngle;
+                      : offsetAngle < -180 ? offsetAngle += 360 : offsetAngle;
               System.out.println("X: " + offsetX + "\nY: " + offsetY + "\nAngle: " + offsetAngle);
               ChassisSpeeds newSpeeds =
                   new ChassisSpeeds(
@@ -170,10 +180,7 @@ public class OnTheFlyCommands {
                       offsetAngle * angularKP);
               Robot.robotContainer.drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
-                      newSpeeds,
-                      DriverStation.getAlliance().get() == Alliance.Red
-                          ? Robot.robotContainer.drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : Robot.robotContainer.drive.getRotation()));
+                      newSpeeds, Robot.robotContainer.drive.getRotation()));
             },
             () ->
                 DriveCommands.joystickDrive(
