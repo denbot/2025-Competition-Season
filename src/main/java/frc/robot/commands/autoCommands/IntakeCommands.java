@@ -14,8 +14,7 @@ public class IntakeCommands {
   }
 
   public Command runIntakeCommand() {
-    return Commands.runEnd(
-        () -> intake.setIntakeSpeed(60), () -> intake.setIntakeSpeed(0));
+    return Commands.runEnd(() -> intake.setIntakeSpeed(60), () -> intake.setIntakeSpeed(0));
   }
 
   public Command runSoftIntakeCommand() {
@@ -23,8 +22,7 @@ public class IntakeCommands {
   }
 
   public Command runRejectCommand() {
-    return Commands.runEnd(
-            () -> intake.setIntakeSpeed(-60), () -> intake.setIntakeSpeed(0))
+    return Commands.runEnd(() -> intake.setIntakeSpeed(-60), () -> intake.setIntakeSpeed(0))
         .raceWith(new WaitCommand(0.5));
   }
 

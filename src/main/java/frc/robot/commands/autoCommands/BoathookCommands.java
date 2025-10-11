@@ -72,25 +72,22 @@ public class BoathookCommands {
   }
 
   public Command MicroAdjustExtensionForward() {
-    return Commands.runOnce(
-        () -> boathook.setLength(boathook.getLengthSetpoint() + 0.05));
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() + 0.05));
   }
 
   public Command MicroAdjustExtensionBackward() {
-    return Commands.runOnce(
-        () -> boathook.setLength(boathook.getLengthSetpoint() - 0.05));
+    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() - 0.05));
   }
 
   public Command MicroAdjustAngleForward() {
-    return Commands.runOnce(
-        () -> boathook.setAngle(boathook.getAngleSetpoint() + 0.05));
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() + 0.05));
   }
 
   public Command MicroAdjustAngleBackward() {
-    return Commands.runOnce(
-        () -> boathook.setAngle(boathook.getAngleSetpoint() - 0.05));
+    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() - 0.05));
   }
 
+  // exists because setName returns void,
   private Command setCommandName(Command command, String name) {
     command.setName(name);
     return command;
