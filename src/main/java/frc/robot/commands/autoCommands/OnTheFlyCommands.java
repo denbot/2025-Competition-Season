@@ -73,51 +73,52 @@ public class OnTheFlyCommands {
   private static double angularKP = 0.5;
 
   public static Command alignTwoLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT), "Align_Two_Left");
   }
 
   public static Command alignTwoRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT), "Align_Two_Right");
   }
 
   public static Command alignFourLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT), "Align_Four_Left");
   }
 
   public static Command alignFourRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT), "Align_Four_Right");
   }
 
   public static Command alignSixLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT), "Align_Six_Left");
   }
 
   public static Command alignSixRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT), "Align_Six_Right");
   }
 
   public static Command alignEightLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT), "Align_Eight_Left");
   }
 
   public static Command alignEightRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT), "Align_Eight_Right");
   }
 
   public static Command alignTenLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT), "Align_Ten_Left");
   }
 
   public static Command alignTenRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT), "Align_Ten_Right");
   }
 
   public static Command alignTwelveLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT), "Align_Twelve_Left");
   }
 
   public static Command alignTwelveRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT);
+    return setCommandName(
+        getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT), "Align_Twelve_Right");
   }
 
   public static Command pickupLollipopLeft(IntakeCommands intake) {
@@ -158,9 +159,9 @@ public class OnTheFlyCommands {
               offsetY = targetPose.y - currentRobotY;
               offsetAngle = targetPose.angle - currentRobotAngle;
               offsetAngle =
-                  offsetAngle > 180
+                  offsetAngle > 185
                       ? offsetAngle -= 360
-                      : offsetAngle < -180 ? offsetAngle += 360 : offsetAngle;
+                      : offsetAngle < -185 ? offsetAngle += 360 : offsetAngle;
               System.out.println("X: " + offsetX + "\nY: " + offsetY + "\nAngle: " + offsetAngle);
               ChassisSpeeds newSpeeds =
                   new ChassisSpeeds(
@@ -205,5 +206,10 @@ public class OnTheFlyCommands {
             new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
             new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)))
         .andThen(getFinalAlignmentCommand(targetPose));
+  }
+
+  private static Command setCommandName(Command command, String name) {
+    command.setName(name);
+    return command;
   }
 }
