@@ -40,7 +40,8 @@ public final class Constants {
     public static final String canivoreSerial = "D75CCE723353385320202034111303FF";
   }
 
-  public static final double driverSpeedReduction = 0.8;
+  public static final double lateralSpeedReduction = 0.8;
+  public static final double rotationalSpeedReduction = 0.8;
 
   public static class IntakeConstants {
     public static final double rotatorGearRatio = 1;

@@ -241,9 +241,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY() * Constants.driverSpeedReduction,
-            () -> -controller.getLeftX() * Constants.driverSpeedReduction,
-            () -> -controller.getRightX() * Constants.driverSpeedReduction));
+            () -> -controller.getLeftY() * Constants.lateralSpeedReduction,
+            () -> -controller.getLeftX() * Constants.lateralSpeedReduction,
+            () -> -controller.getRightX() * Constants.rotationalSpeedReduction));
 
     // Lock to 0° when A button is held
     // TODO Lock this into rotating around the reef
@@ -301,20 +301,6 @@ public class RobotContainer {
                     })
                 .until(() -> !retractBoathook.isScheduled())
                 .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)).withTimeout(0.25)));
-
-    controller
-        .povUp()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionForward().schedule()));
-    controller
-        .povDown()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionBackward().schedule()));
-    controller
-        .povLeft()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleForward().schedule()));
-    controller
-        .povRight()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
-
     controller
         .leftBumper()
         .whileTrue(
