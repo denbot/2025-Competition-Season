@@ -243,9 +243,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY() * Constants.lateralSpeedReduction,
-            () -> -controller.getLeftX() * Constants.lateralSpeedReduction,
-            () -> -controller.getRightX() * Constants.rotationalSpeedReduction));
+            () -> -controller.getLeftY() * (controller.rightStick().getAsBoolean() ? 1 : 0.8),
+            () -> -controller.getLeftX() * (controller.rightStick().getAsBoolean() ? 1 : 0.8),
+            () -> -controller.getRightX() * 0.8));
 
     // Lock to 0° when A button is held
     // TODO Lock this into rotating around the reef

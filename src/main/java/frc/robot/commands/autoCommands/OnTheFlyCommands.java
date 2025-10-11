@@ -123,29 +123,31 @@ public class OnTheFlyCommands {
   public static Command pickupLollipopLeft(IntakeCommands intake) {
     return new SequentialCommandGroup(
         getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
+        intake.intakeDownCommand(),
         new ParallelCommandGroup(
-            intake.intakeDownCommand(),
-            intake.runIntakeCommand(),
-            Commands.runOnce(() -> System.out.println("Running Align To Lollipop")),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)));
+            intake.runIntakeCommand().withTimeout(1),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)),
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   public static Command pickupLollipopRight(IntakeCommands intake) {
     return new SequentialCommandGroup(
         getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
+        intake.intakeDownCommand(),
         new ParallelCommandGroup(
-            intake.intakeDownCommand(),
-            intake.runIntakeCommand(),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)));
+            intake.runIntakeCommand().withTimeout(1),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   public static Command pickupLollipopCenter(IntakeCommands intake) {
     return new SequentialCommandGroup(
         getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
+        intake.intakeDownCommand(),
         new ParallelCommandGroup(
-            intake.intakeDownCommand(),
-            intake.runIntakeCommand(),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)));
+            intake.runIntakeCommand().withTimeout(1),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {

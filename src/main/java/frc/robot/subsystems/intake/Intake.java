@@ -61,7 +61,7 @@ public class Intake extends SubsystemBase {
                   .withMotionMagicCruiseVelocity(2))
           .withSlot0(
               new Slot0Configs()
-                  .withKP(40)
+                  .withKP(45)
                   .withKD(0)
                   .withKG(0.2)
                   .withGravityType(GravityTypeValue.Arm_Cosine));

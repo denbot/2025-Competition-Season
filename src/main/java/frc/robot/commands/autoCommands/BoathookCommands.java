@@ -72,19 +72,23 @@ public class BoathookCommands {
   }
 
   public Command MicroAdjustExtensionForward() {
-    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() + 0.05), this.boathook);
+    return Commands.runOnce(
+        () -> boathook.setLength(boathook.getLengthSetpoint() + 0.05), this.boathook);
   }
 
   public Command MicroAdjustExtensionBackward() {
-    return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() - 0.05), this.boathook);
+    return Commands.runOnce(
+        () -> boathook.setLength(boathook.getLengthSetpoint() - 0.05), this.boathook);
   }
 
   public Command MicroAdjustAngleForward() {
-    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() + 0.05), this.boathook);
+    return Commands.runOnce(
+        () -> boathook.setAngle(boathook.getAngleSetpoint() + 0.05), this.boathook);
   }
 
   public Command MicroAdjustAngleBackward() {
-    return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() - 0.05), this.boathook);
+    return Commands.runOnce(
+        () -> boathook.setAngle(boathook.getAngleSetpoint() - 0.05), this.boathook);
   }
 
   private Command setCommandName(Command command, String name) {
@@ -95,7 +99,7 @@ public class BoathookCommands {
   public Command handoffCommand(IntakeCommands intakeCommands, Leds led) {
     return new SequentialCommandGroup(
         setAngleCommand(93),
-        setLengthCommand(0.08),
+        setLengthCommand(0.06),
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
         new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()),
@@ -107,7 +111,8 @@ public class BoathookCommands {
             () -> {
               boathook.setAngle(angle);
               Robot.robotContainer.leds.solidInSectionRight(30, 255, 255);
-            }, this.boathook))
+            },
+            this.boathook))
         .until(isAngleFinished())
         .andThen(
             Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionRight(60, 255, 255)));
@@ -118,7 +123,8 @@ public class BoathookCommands {
             () -> {
               boathook.setLength(length);
               Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
-            }, this.boathook))
+            },
+            this.boathook))
         .until(isExtendFinished())
         .andThen(
             Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255)));
