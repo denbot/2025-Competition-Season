@@ -42,12 +42,12 @@ public class OnTheFlyCommands {
     RED_CLIMB_TWO(8.8, 1.9, 180),
     RED_CLIMB_THREE(8.8, 2.95, 180),
     // "Lolipop" or coral with algea on top of it positions
-    LOLLIPOP_RIGHT_SETUP(2.5, 5.8, 180),
-    LOLLIPOP_CENTER_SETUP(2.5, 4.0, 180),
-    LOLLIPOP_LEFT_SETUP(2.5, 2.2, 180),
-    LOLLIPOP_RIGHT(1.227, 5.8, 180),
-    LOLLIPOP_CENTER(1.227, 4.0, 180),
-    LOLLIPOP_LEFT(1.227, 2.2, 180);
+    LOLLIPOP_RIGHT_SETUP(2.5, 5.8, 0),
+    LOLLIPOP_CENTER_SETUP(2.5, 4.0, 0),
+    LOLLIPOP_LEFT_SETUP(2.5, 2.2, 0),
+    LOLLIPOP_RIGHT(1.227, 5.8, 0),
+    LOLLIPOP_CENTER(1.227, 4.0, 0),
+    LOLLIPOP_LEFT(1.227, 2.2, 0);
 
     // OTF variables
     public final double x;
@@ -122,32 +122,38 @@ public class OnTheFlyCommands {
 
   public static Command pickupLollipopLeft(IntakeCommands intake) {
     return new SequentialCommandGroup(
-        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
-        intake.intakeDownCommand(),
+        new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
+            intake.intakeDownCommand(),
+            Robot.robotContainer.boathookCommands.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(1),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
+    Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   public static Command pickupLollipopRight(IntakeCommands intake) {
     return new SequentialCommandGroup(
-        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
-        intake.intakeDownCommand(),
+        new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
+            intake.intakeDownCommand(),
+            Robot.robotContainer.boathookCommands.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(1),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
+    Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   public static Command pickupLollipopCenter(IntakeCommands intake) {
     return new SequentialCommandGroup(
-        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
-        intake.intakeDownCommand(),
+        new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
+            intake.intakeDownCommand(),
+            Robot.robotContainer.boathookCommands.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(1),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
+    Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {
