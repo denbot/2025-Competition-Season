@@ -127,7 +127,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.492458984375)
+                  .withMagnetOffset(-0.493431640625)
                   .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
   public static final TalonFXConfiguration extenderConfig =
@@ -169,7 +169,7 @@ public class Boathook extends SubsystemBase {
       new CANcoderConfiguration()
           .withMagnetSensor(
               new MagnetSensorConfigs()
-                  .withMagnetOffset(0.19402421875) // 0.372
+                  .withMagnetOffset(0.15312765625) // 0.372
                   .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
   CANdiConfiguration limitSensorsConfig =
