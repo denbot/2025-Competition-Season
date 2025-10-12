@@ -44,6 +44,7 @@ public class AutoRoutineBuilder {
     this.autoRoutine = new SequentialCommandGroup();
     this.autoRoutine.addCommands(
         this.boathookCommands.setBoathookIdle(), this.intakeCommands.intakeL1Command());
+    SmartDashboard.putString("Added Command", "Cleared Commands");
   }
 
   public SequentialCommandGroup build() {
