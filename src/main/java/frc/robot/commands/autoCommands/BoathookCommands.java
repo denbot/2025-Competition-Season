@@ -121,7 +121,8 @@ public class BoathookCommands {
         setLengthLinearCommand(0.06),
         setAngleCommand(25),
         intakeCommands.intakeSpearCommand(),
-        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.intakeL1Command()),
+        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.runRejectCommand()),
+        intakeCommands.intakeL1Command(),
         Commands.runOnce(() -> led.solidInSection(0, 21, 60, 255, 255)));
   }
 

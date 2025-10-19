@@ -2,6 +2,7 @@ package frc.robot.commands.autoCommands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import java.util.ArrayList;
 
@@ -16,7 +17,6 @@ public class AutoRoutineBuilder {
     autoRoutine = new SequentialCommandGroup();
     this.boathookCommands = boathookCommands;
     this.intakeCommands = intakeCommands;
-    autoRoutine.addCommands(boathookCommands.setBoathookIdle(), intakeCommands.intakeL1Command());
   }
 
   public AutoRoutineBuilder addPickupPieceBlock(Command pickupPieceCommand) {
@@ -33,9 +33,11 @@ public class AutoRoutineBuilder {
   }
 
   public AutoRoutineBuilder addBuildingBlock(Command autoAlign, Command scoreCommand) {
-    autoRoutine.addCommands(autoAlign, scoreCommand);
+    autoRoutine.addCommands(
+        new ParallelCommandGroup(
+            autoAlign, boathookCommands.setBoathookIdle(), intakeCommands.intakeL1Command()),
+        scoreCommand);
     SmartDashboard.putString("Added Command", autoAlign.getName() + ", " + scoreCommand.getName());
-
     commandStrings.add(autoAlign.getName() + ", " + scoreCommand.getName());
     return this;
   }
