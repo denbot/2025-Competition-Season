@@ -223,10 +223,10 @@ public class RobotContainer {
     preCheckTab.schedule();
 
     // Attempt to load the chrp
-    var status = m_orchestra.loadMusic("OceanMan.chrp");
+    var status = m_orchestra.loadMusic("mii_channel.chrp");
 
     if (!status.isOK()) {
-      // log error
+      System.out.println("Failed to load file");
     }
   }
 
@@ -336,6 +336,15 @@ public class RobotContainer {
     controller.povRight().onTrue(microRotationAdjustForwards);
     controller.povDown().onTrue(microExtensionAdjustInwards);
     controller.povUp().onTrue(microExtensionAdjustOutwards);
+    buttonBoxController
+        .lollipopCenterTrigger()
+        .onTrue(
+            Commands.runOnce(
+                    () -> {
+                      System.out.println("Played Song");
+                      m_orchestra.play();
+                    })
+                .ignoringDisable(true));
     // controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
     // controller.leftStick().onTrue(Commands.runOnce(() ->
     // m_orchestra.stop()).ignoringDisable(true));
