@@ -27,7 +27,7 @@ public class IntakeCommands {
   }
 
   public Command intakeDownCommand() {
-    return Commands.run(() -> intake.setAngle(0))
+    return Commands.run(() -> intake.setAngle(0.015))
         .until(() -> Math.abs(0 - intake.getRotationAngle()) < 0.01);
   }
 
