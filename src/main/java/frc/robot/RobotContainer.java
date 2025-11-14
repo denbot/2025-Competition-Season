@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -191,6 +192,7 @@ public class RobotContainer {
         .addBuildingBlock(OnTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
         .addBuildingBlock(OnTheFlyCommands.alignFourRight(), boathookCommands.scoreL4());
     */
+    SmartDashboard.putStringArray("Auto Routine List", autoRoutineBuilder.getCommandStrings());
 
     rumblePresets = new RumblePresets(rumbleSubsystem);
     currentOnTheFlyCommand = OnTheFlyCommands.alignSixRight();
@@ -241,9 +243,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY() * Constants.driverSpeedReduction,
-            () -> -controller.getLeftX() * Constants.driverSpeedReduction,
-            () -> -controller.getRightX() * Constants.driverSpeedReduction));
+            () -> -controller.getLeftY() * (controller.rightStick().getAsBoolean() ? 1 : 0.8),
+            () -> -controller.getLeftX() * (controller.rightStick().getAsBoolean() ? 1 : 0.8),
+            () -> -controller.getRightX() * 0.8));
 
     // Lock to 0° when A button is held
     // TODO Lock this into rotating around the reef
@@ -301,20 +303,6 @@ public class RobotContainer {
                     })
                 .until(() -> !retractBoathook.isScheduled())
                 .andThen(Commands.runOnce(() -> leds.fullSolid(0, 0, 0)).withTimeout(0.25)));
-
-    controller
-        .povUp()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionForward().schedule()));
-    controller
-        .povDown()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustExtensionBackward().schedule()));
-    controller
-        .povLeft()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleForward().schedule()));
-    controller
-        .povRight()
-        .onTrue(Commands.runOnce(() -> boathookCommands.MicroAdjustAngleBackward().schedule()));
-
     controller
         .leftBumper()
         .whileTrue(

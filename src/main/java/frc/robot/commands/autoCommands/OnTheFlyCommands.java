@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -43,12 +42,12 @@ public class OnTheFlyCommands {
     RED_CLIMB_TWO(8.8, 1.9, 180),
     RED_CLIMB_THREE(8.8, 2.95, 180),
     // "Lolipop" or coral with algea on top of it positions
-    LOLLIPOP_RIGHT_SETUP(2.5, 5.8, 180),
-    LOLLIPOP_CENTER_SETUP(2.5, 4.0, 180),
-    LOLLIPOP_LEFT_SETUP(2.5, 2.2, 180),
-    LOLLIPOP_RIGHT(1.227, 5.8, 180),
-    LOLLIPOP_CENTER(1.227, 4.0, 180),
-    LOLLIPOP_LEFT(1.227, 2.2, 180);
+    LOLLIPOP_RIGHT_SETUP(2.5, 5.8, 0),
+    LOLLIPOP_CENTER_SETUP(2.5, 4.0, 0),
+    LOLLIPOP_LEFT_SETUP(2.5, 2.2, 0),
+    LOLLIPOP_RIGHT(1.227, 5.8, 0),
+    LOLLIPOP_CENTER(1.227, 4.0, 0),
+    LOLLIPOP_LEFT(1.227, 2.2, 0);
 
     // OTF variables
     public final double x;
@@ -73,90 +72,110 @@ public class OnTheFlyCommands {
   private static double angularKP = 0.5;
 
   public static Command alignTwoLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT), "Align_Two_Left");
   }
 
   public static Command alignTwoRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT), "Align_Two_Right");
   }
 
   public static Command alignFourLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT), "Align_Four_Left");
   }
 
   public static Command alignFourRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT), "Align_Four_Right");
   }
 
   public static Command alignSixLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT), "Align_Six_Left");
   }
 
   public static Command alignSixRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT), "Align_Six_Right");
   }
 
   public static Command alignEightLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT), "Align_Eight_Left");
   }
 
   public static Command alignEightRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT), "Align_Eight_Right");
   }
 
   public static Command alignTenLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT), "Align_Ten_Left");
   }
 
   public static Command alignTenRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT), "Align_Ten_Right");
   }
 
   public static Command alignTwelveLeft() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT);
+    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT), "Align_Twelve_Left");
   }
 
   public static Command alignTwelveRight() {
-    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT);
+    return setCommandName(
+        getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT), "Align_Twelve_Right");
   }
 
   public static Command pickupLollipopLeft(IntakeCommands intake) {
     return new SequentialCommandGroup(
-        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
         new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
             intake.intakeDownCommand(),
-            intake.runIntakeCommand(),
-            Commands.runOnce(() -> System.out.println("Running Align To Lollipop")),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)));
+            Robot.robotContainer.boathookCommands.setBoathookStab()),
+        new ParallelCommandGroup(
+            intake.runIntakeCommand().withTimeout(2),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)),
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   public static Command pickupLollipopRight(IntakeCommands intake) {
     return new SequentialCommandGroup(
-        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
         new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
             intake.intakeDownCommand(),
-            intake.runIntakeCommand(),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)));
+            Robot.robotContainer.boathookCommands.setBoathookStab()),
+        new ParallelCommandGroup(
+            intake.runIntakeCommand().withTimeout(2),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   public static Command pickupLollipopCenter(IntakeCommands intake) {
     return new SequentialCommandGroup(
-        getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
         new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
             intake.intakeDownCommand(),
-            intake.runIntakeCommand(),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)));
+            Robot.robotContainer.boathookCommands.setBoathookStab()),
+        new ParallelCommandGroup(
+            intake.runIntakeCommand().withTimeout(2),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
   }
 
   private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {
     return Commands.runEnd(
             () -> {
+              double x = targetPose.x;
+              double y = targetPose.y;
+              double angle = targetPose.angle;
+              if (DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+                // approximate location of top right corner of the reef = 17.6, 7.6
+                x = 17.548 - x;
+                y = 8.052 - y;
+                angle += 180;
+                if (angle > 180) angle -= 360;
+              }
               currentRobotX = Robot.robotContainer.drive.getPose().getX();
               currentRobotY = Robot.robotContainer.drive.getPose().getY();
               currentRobotAngle = Robot.robotContainer.drive.getPose().getRotation().getDegrees();
-              offsetX = targetPose.x - currentRobotX;
-              offsetY = targetPose.y - currentRobotY;
-              offsetAngle = targetPose.angle - currentRobotAngle;
+              offsetX = x - currentRobotX;
+              offsetY = y - currentRobotY;
+              offsetAngle = angle - currentRobotAngle;
               offsetAngle =
                   offsetAngle > 180
                       ? offsetAngle -= 360
@@ -169,10 +188,7 @@ public class OnTheFlyCommands {
                       offsetAngle * angularKP);
               Robot.robotContainer.drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
-                      newSpeeds,
-                      DriverStation.getAlliance().get() == Alliance.Red
-                          ? Robot.robotContainer.drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : Robot.robotContainer.drive.getRotation()));
+                      newSpeeds, Robot.robotContainer.drive.getRotation()));
             },
             () ->
                 DriveCommands.joystickDrive(
@@ -205,5 +221,10 @@ public class OnTheFlyCommands {
             new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
             new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)))
         .andThen(getFinalAlignmentCommand(targetPose));
+  }
+
+  private static Command setCommandName(Command command, String name) {
+    command.setName(name);
+    return command;
   }
 }
