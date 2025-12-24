@@ -67,7 +67,6 @@ public class RobotContainer {
   private final ButtonBoxController buttonBoxController = new ButtonBoxController();
 
   // Dashboard inputs
-  public DSControlWord controlWord = new DSControlWord();
   private final LoggedDashboardChooser<Command> autoChooser;
   public Orchestra m_orchestra = new Orchestra();
 

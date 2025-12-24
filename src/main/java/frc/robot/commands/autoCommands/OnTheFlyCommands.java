@@ -178,8 +178,8 @@ public class OnTheFlyCommands {
               offsetAngle = angle - currentRobotAngle;
               offsetAngle =
                   offsetAngle > 180
-                      ? offsetAngle -= 360
-                      : offsetAngle < -180 ? offsetAngle += 360 : offsetAngle;
+                      ? offsetAngle - 360
+                      : offsetAngle < -180 ? offsetAngle + 360 : offsetAngle;
               System.out.println("X: " + offsetX + "\nY: " + offsetY + "\nAngle: " + offsetAngle);
               ChassisSpeeds newSpeeds =
                   new ChassisSpeeds(
