@@ -2,7 +2,6 @@ package frc.robot.commands.elasticCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.Limelights;
 
