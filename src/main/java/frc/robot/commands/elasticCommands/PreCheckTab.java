@@ -1,23 +1,27 @@
 package frc.robot.commands.elasticCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.Limelights;
 
+import java.util.function.Supplier;
+
 public class PreCheckTab extends Command {
-  private final CommandGenericHID mainController;
-  private final CommandGenericHID operatorController1;
-  private final CommandGenericHID operatorController2;
+  private final Supplier<Boolean> mainControllerConnected;
+  private final Supplier<Boolean> buttonBoxControllerOneConnected;
+  private final Supplier<Boolean> buttonBoxControllerTwoConnected;
   private final Elastic.Tabs tab;
 
   public PreCheckTab(
-      CommandGenericHID mainController,
-      CommandGenericHID operatorController1,
-      CommandGenericHID operatorController2) {
-    this.mainController = mainController;
-    this.operatorController1 = operatorController1;
-    this.operatorController2 = operatorController2;
+      Supplier<Boolean> mainControllerConnected,
+      Supplier<Boolean> buttonBoxControllerOneConnected,
+      Supplier<Boolean> buttonBoxControllerTwoConnected
+  ) {
+    this.mainControllerConnected = mainControllerConnected;
+    this.buttonBoxControllerOneConnected = buttonBoxControllerOneConnected;
+    this.buttonBoxControllerTwoConnected = buttonBoxControllerTwoConnected;
 
     this.tab = Elastic.Tabs.PRE_CHECK;
   }
@@ -29,9 +33,9 @@ public class PreCheckTab extends Command {
 
   @Override
   public void execute() {
-    boolean mainControllerConnected = mainController.isConnected();
-    boolean operatorController1Connected = operatorController1.isConnected();
-    boolean operatorController2Connected = operatorController2.isConnected();
+    boolean mainControllerConnected = this.mainControllerConnected.get();
+    boolean operatorController1Connected = buttonBoxControllerOneConnected.get();
+    boolean operatorController2Connected = buttonBoxControllerTwoConnected.get();
 
     boolean allControllersConnected =
         mainControllerConnected && operatorController1Connected && operatorController2Connected;
@@ -55,5 +59,10 @@ public class PreCheckTab extends Command {
     tab.getEntry(limelight.name).setBoolean(limelightFound);
 
     return limelightFound;
+  }
+
+  @Override
+  public boolean isFinished() {
+    return DriverStation.isEnabled();
   }
 }

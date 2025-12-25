@@ -4,8 +4,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ButtonBoxController {
-  public static final CommandGenericHID controller1 = new CommandGenericHID(1);
-  public static final CommandGenericHID controller2 = new CommandGenericHID(2);
+  private static final CommandGenericHID controller1 = new CommandGenericHID(1);
+  private static final CommandGenericHID controller2 = new CommandGenericHID(2);
+
+  public boolean isControllerOneConnected() {
+    return controller1.isConnected();
+  }
+
+  public boolean isControllerTwoConnected() {
+    return controller2.isConnected();
+  }
 
   public Trigger L4Trigger() {
     return controller1.button(4);

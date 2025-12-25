@@ -134,6 +134,8 @@ public class Robot extends LoggedRobot {
     Limelights.LEFT.setPipeline(LimelightPipeline.APRIL_TAG);
     Limelights.RIGHT.setPipeline(LimelightPipeline.APRIL_TAG);
     Limelights.REAR.setPipeline(LimelightPipeline.APRIL_TAG);
+
+    robotContainer.preCheckTab.schedule();
   }
 
   /** This function is called periodically during all modes. */
@@ -200,6 +202,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     Elastic.Tabs.PRE_CHECK.show();
+    robotContainer.preCheckTab.schedule();
 
     // Enable limelight 4 throttling when disabled to prevent overheating.
     LimelightHelpers.setThrottle("limelight-rear", 120);

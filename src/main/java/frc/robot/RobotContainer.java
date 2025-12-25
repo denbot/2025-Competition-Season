@@ -17,7 +17,6 @@ import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DSControlWord;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -220,8 +219,10 @@ public class RobotContainer {
 
     preCheckTab =
         new PreCheckTab(
-            controller, ButtonBoxController.controller1, ButtonBoxController.controller2);
-    preCheckTab.schedule();
+            controller::isConnected,
+            buttonBoxController::isControllerOneConnected,
+            buttonBoxController::isControllerTwoConnected
+        );
 
     // Attempt to load the chrp
     var status = m_orchestra.loadMusic("OceanMan.chrp");
