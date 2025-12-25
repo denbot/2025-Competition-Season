@@ -1,13 +1,15 @@
 package frc.robot.commands.autoCommands;
 
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
-import frc.robot.subsystems.Leds;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import java.util.function.BooleanSupplier;
 
@@ -115,7 +117,8 @@ public class BoathookCommands {
     return command;
   }
 
-  public Command handoffCommand(IntakeCommands intakeCommands, Leds led) {
+  public Command handoffCommand(IntakeCommands intakeCommands, LEDSubsystem led) {
+
     return new SequentialCommandGroup(
         setAngleCommand(93),
         setLengthLinearCommand(0.06),
@@ -123,32 +126,34 @@ public class BoathookCommands {
         intakeCommands.intakeSpearCommand(),
         new ParallelCommandGroup(setAngleCommand(93), intakeCommands.runRejectCommand()),
         intakeCommands.intakeL1Command(),
-        Commands.runOnce(() -> led.solidInSection(0, 21, 60, 255, 255)));
+        led.fill(Color.kYellow)
+    );
   }
 
   public Command setAngleCommand(double angle) {
-    return (Commands.run(
-            () -> {
-              boathook.setAngle(angle);
-              Robot.robotContainer.leds.solidInSectionRight(30, 255, 255);
-            }))
+    // TODO We shouldn't access the ledSubsystem this way
+    final LEDSubsystem ledSubsystem = Robot.robotContainer.ledSubsystem;
+
+    return Commands.run(() -> boathook.setAngle(angle))
+        .alongWith(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kOrange))
         .until(isAngleFinished())
-        .andThen(
-            Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionRight(60, 255, 255)));
+        .andThen(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kYellow));
   }
 
   public Command setLengthLinearCommand(double length) {
-    return Commands.run(
-            () -> {
-              boathook.setLength(length);
-              Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
-            })
+    // TODO We shouldn't access the ledSubsystem this way
+    final LEDSubsystem ledSubsystem = Robot.robotContainer.ledSubsystem;
+
+    return Commands.run(() -> boathook.setLength(length))
+        .alongWith(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kOrange))
         .until(isLinearExtendFinished())
-        .andThen(
-            Commands.runOnce(() -> Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255)));
+        .andThen(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kYellow));
   }
 
   public Command setLengthCurveCommand(double length) {
+    // TODO We shouldn't access the ledSubsystem this way
+    final LEDSubsystem ledSubsystem = Robot.robotContainer.ledSubsystem;
+
     return Commands.runOnce(
             () -> {
               startLength = boathook.getLength();
@@ -171,15 +176,13 @@ public class BoathookCommands {
                       SmartDashboard.putNumber("Boathook Setpoint", setPoint);
                       itterations++;
                       boathook.setLength(setPoint);
-                      Robot.robotContainer.leds.solidInSectionLeft(30, 255, 255);
                     })
+                .alongWith(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kYellow))
                 .until(isCurveExtendFinished()))
         .andThen(
-            Commands.runOnce(
-                () -> {
-                  Robot.robotContainer.leds.solidInSectionLeft(60, 255, 255);
-                  boathook.setLength(length);
-                }));
+            Commands.runOnce(() -> boathook.setLength(length))
+                .andThen(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kOrange))
+        );
   }
 
   public BooleanSupplier isLinearExtendFinished() {

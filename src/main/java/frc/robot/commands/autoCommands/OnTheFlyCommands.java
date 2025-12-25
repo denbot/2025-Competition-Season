@@ -129,7 +129,7 @@ public class OnTheFlyCommands {
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.ledSubsystem));
   }
 
   public static Command pickupLollipopRight(IntakeCommands intake) {
@@ -141,7 +141,7 @@ public class OnTheFlyCommands {
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.ledSubsystem));
   }
 
   public static Command pickupLollipopCenter(IntakeCommands intake) {
@@ -153,7 +153,7 @@ public class OnTheFlyCommands {
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.leds));
+        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.ledSubsystem));
   }
 
   private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {

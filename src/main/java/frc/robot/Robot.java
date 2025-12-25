@@ -18,15 +18,17 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.WebServer;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.util.MappedTrigger;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.LimelightPipeline;
@@ -37,6 +39,10 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import java.util.Optional;
+
+import static edu.wpi.first.units.Units.Percent;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -50,6 +56,9 @@ public class Robot extends LoggedRobot {
   private final Matrix<N3, N1> visionMatrix = new Matrix<>(Nat.N3(), Nat.N1());
   private Field2d field = new Field2d();
   private final Timer timer = new Timer();
+
+  // An event loop that will be run in disabledPeriodic. Can be used to set up any triggers that should only run then
+  private final EventLoop disabledEventLoop = new EventLoop();
 
   public Robot() {
     // Record metadata
@@ -104,6 +113,35 @@ public class Robot extends LoggedRobot {
     // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
     visionMatrix.fill(0.5); // X/Y location to 0.5
     visionMatrix.set(2, 0, 1); // Vision rotation is not to be trusted, apparently
+
+    // Just to make the below code a little cleaner
+    final LEDSubsystem ledSubsystem = robotContainer.ledSubsystem;
+
+    // When disabled, we want to see the driver station we believe we're part of.
+    new MappedTrigger<>(disabledEventLoop, DriverStation::getAlliance)
+        // Unknown alliance
+        .onValue(Optional.empty(), ledSubsystem.run(ledSubsystem.centerBuffer,
+            LEDPattern.solid(Color.kWhite).atBrightness(Percent.of(50))
+        ))
+        // Red alliance
+        .onValue(Optional.of(Alliance.Red), ledSubsystem.run(ledSubsystem.centerBuffer,
+            LEDPattern.solid(Color.kRed).atBrightness(Percent.of(50))
+        ))
+        // Blue alliance
+        .onValue(Optional.of(Alliance.Blue), ledSubsystem.run(ledSubsystem.centerBuffer,
+            LEDPattern.solid(Color.kBlue).atBrightness(Percent.of(50))
+        ));
+
+    // When disabled, we want to see the state of our limelights and if they see a target
+    // TODO Verify if the left and right buffer matches the left and right camera. If not, swap the buffers so we maintain
+    //  consistent robot left/right.
+    new Trigger(disabledEventLoop, ()-> LimelightHelpers.getTV(Limelights.RIGHT.name))
+        .onTrue(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kGreen))
+        .onFalse(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kBlack));
+
+    new Trigger(disabledEventLoop, ()-> LimelightHelpers.getTV(Limelights.LEFT.name))
+        .onTrue(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kGreen))
+        .onFalse(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kBlack));
   }
 
   @Override
@@ -190,18 +228,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    if (!DriverStation.getAlliance().isPresent())
-      robotContainer.leds.solidInSectionCenter(0, 0, 255);
-    else if (DriverStation.getAlliance().get() == Alliance.Red)
-      robotContainer.leds.solidInSectionCenter(0, 255, 255);
-    else robotContainer.leds.solidInSectionCenter(120, 255, 255);
-
-    if (LimelightHelpers.getTV("limelight-right"))
-      robotContainer.leds.solidInSection(0, 7, 60, 255, 255);
-    else robotContainer.leds.solidInSection(0, 7, 0, 0, 0);
-    if (LimelightHelpers.getTV("limelight-left"))
-      robotContainer.leds.solidInSection(14, 21, 60, 255, 255);
-    else robotContainer.leds.solidInSection(14, 21, 0, 0, 0);
+    disabledEventLoop.poll();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
