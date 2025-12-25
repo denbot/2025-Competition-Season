@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.boathook;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -18,8 +19,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BoathookConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Robot;
+import frc.robot.subsystems.CanBeAnInstrument;
 
-public class Boathook extends SubsystemBase {
+public class Boathook extends SubsystemBase implements CanBeAnInstrument {
   /** Creates a new Boathook. */
 
   // ONLY HERE UNTIL INTAKE IS FINISHED, currently only refferenced in runIntakeCommand.java
@@ -230,9 +232,9 @@ public class Boathook extends SubsystemBase {
     return level;
   }
 
-  public void addInstruments() {
-    Robot.robotContainer.m_orchestra.addInstrument(rotationMotor);
-    Robot.robotContainer.m_orchestra.addInstrument(extenderMotor);
+  public void addInstruments(Orchestra orchestra) {
+    orchestra.addInstrument(rotationMotor);
+    orchestra.addInstrument(extenderMotor);
   }
 
   @Override

@@ -67,7 +67,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  public Orchestra m_orchestra = new Orchestra();
 
   // Commands
   public Command extendBoathook;
@@ -124,6 +123,8 @@ public class RobotContainer {
   public final RumblePresets rumblePresets;
 
   public final PreCheckTab preCheckTab;
+  // Currently this field is not used, but keeping it here as it will be used in the future.
+  private final Orchestra m_orchestra = new Orchestra();
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
@@ -223,6 +224,10 @@ public class RobotContainer {
             buttonBoxController::isControllerOneConnected,
             buttonBoxController::isControllerTwoConnected
         );
+
+    // Setup our instruments
+    intake.addInstruments(m_orchestra);
+    boathook.addInstruments(m_orchestra);
 
     // Attempt to load the chrp
     var status = m_orchestra.loadMusic("OceanMan.chrp");

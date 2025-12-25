@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -18,9 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Robot;
+import frc.robot.subsystems.CanBeAnInstrument;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase implements CanBeAnInstrument {
   /** Creates a new Intake. */
   private final TalonFX intakeLeft =
       new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
@@ -156,11 +157,11 @@ public class Intake extends SubsystemBase {
     up = !up;
   }
 
-  public void addInstruments() {
+  public void addInstruments(Orchestra orchestra) {
     // Add a single device to the orchestra
-    Robot.robotContainer.m_orchestra.addInstrument(rotation);
-    Robot.robotContainer.m_orchestra.addInstrument(intakeLeft);
-    Robot.robotContainer.m_orchestra.addInstrument(intakeRight);
+    orchestra.addInstrument(rotation);
+    orchestra.addInstrument(intakeLeft);
+    orchestra.addInstrument(intakeRight);
   }
 
   public void stopIntake() {
