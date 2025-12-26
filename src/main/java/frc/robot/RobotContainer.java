@@ -48,6 +48,8 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.util.ButtonBoxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import java.util.Optional;
+
 import static edu.wpi.first.units.Units.*;
 
 /**
@@ -57,41 +59,33 @@ import static edu.wpi.first.units.Units.*;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private static Command currentOnTheFlyCommand;
   // Subsystems
   public final Drive drive;
   private final Intake intake;
   private final Boathook boathook;
   private final RumbleSubsystem rumbleSubsystem;
   private final AutoRoutineBuilder autoRoutineBuilder;
-  public final PreCheckTab preCheckTab;
+
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
   private final ButtonBoxController buttonBoxController = new ButtonBoxController();
+
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  // permmanent
-  private final Command pullInCoral;
-  private final Command rejectCoral;
+  public final PreCheckTab preCheckTab;
 
-  private final Command microRotationAdjustForwards;
-  private final Command microRotationAdjustBackwards;
-  private final Command microExtensionAdjustInwards;
-  private final Command microExtensionAdjustOutwards;
   // Currently this field is not used, but keeping it here as it will be used in the future.
   private final Orchestra m_orchestra = new Orchestra();
   public LEDController ledController;
   // Commands
   private Command extendBoathook;
 
-  // each of these corresponds to a different button on the button board
-  // these should set the pipeline to the side of the reef where the button is located
-  // numbers correspond to clock faces with twelve being the back face of the reef
   private Command retractBoathook;
   private Command scorePrepCommand;
   private BoathookCommands boathookCommands;
   private IntakeCommands intakeCommands;
   private final OnTheFlyCommands onTheFlyCommands;
+  private Command currentOnTheFlyCommand;
 
   private final Command SetL1 =
       Commands.runOnce(
@@ -172,22 +166,7 @@ public class RobotContainer {
     retractBoathook = boathookCommands.retractL2();
     scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
 
-    pullInCoral = intakeCommands.runIntakeCommand();
-    rejectCoral = intakeCommands.runRejectCommand();
-
-    microRotationAdjustForwards = boathookCommands.MicroAdjustAngleForward();
-    microRotationAdjustBackwards = boathookCommands.MicroAdjustAngleBackward();
-    microExtensionAdjustInwards = boathookCommands.MicroAdjustExtensionBackward();
-    microExtensionAdjustOutwards = boathookCommands.MicroAdjustExtensionForward();
-
-    // onTheFlyAlignCommand = new OnTheFlyAlignCommand(drive);
-
     autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intakeCommands);
-    /* Test Auto Routine Builder Pattern
-        .addBuildingBlock(onTheFlyCommands.alignEightLeft(), boathookCommands.scoreL2())
-        .addBuildingBlock(onTheFlyCommands.alignSixLeft(), boathookCommands.scoreL3())
-        .addBuildingBlock(onTheFlyCommands.alignFourRight(), boathookCommands.scoreL4());
-    */
     SmartDashboard.putStringArray("Auto Routine List", autoRoutineBuilder.getCommandStrings());
 
     currentOnTheFlyCommand = onTheFlyCommands.alignSixRight();
@@ -259,23 +238,13 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 Rotation2d::new));
 
-    // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when Start button is pressed
+    // Reset gyro to 0° when the Start button is pressed
     controller
         .start()
         .onTrue(
-            Commands.runOnce(
-                    () -> {
-                      boolean isFlipped =
-                          DriverStation.getAlliance().isPresent()
-                              && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-                      Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
-                      drive.setPose(new Pose2d(drive.getPose().getTranslation(), rotation));
-                    },
-                    drive)
-                .ignoringDisable(true));
+            Commands.runOnce(this::resetGyro, drive)
+                .ignoringDisable(true)
+        );
 
     controller
         .x()
@@ -293,17 +262,23 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  if (!currentOnTheFlyCommand.isScheduled() || currentOnTheFlyCommand.isFinished())
+                  if (!currentOnTheFlyCommand.isScheduled() || currentOnTheFlyCommand.isFinished()) {
                     extendBoathook.schedule();
-                }));
+                  }
+                }
+            )
+        );
+
     controller
         .rightTrigger()
         .onTrue(
             Commands.runOnce(
                     () -> {
-                      if (!currentOnTheFlyCommand.isScheduled()
-                          || currentOnTheFlyCommand.isFinished()) retractBoathook.schedule();
-                    })
+                      if (!currentOnTheFlyCommand.isScheduled() || currentOnTheFlyCommand.isFinished()) {
+                        retractBoathook.schedule();
+                      }
+                    }
+                )
                 .until(() -> !retractBoathook.isScheduled())
                 .andThen(ledController.fill(Color.kBlack))
         );
@@ -311,29 +286,25 @@ public class RobotContainer {
     controller
         .leftBumper()
         .whileTrue(
-            rejectCoral
+            intakeCommands.runRejectCommand()
                 .alongWith(ledController.temporary(Color.kRed, Milliseconds.of(500)))
         );
 
     controller
         .leftTrigger()
         .whileTrue(
-            Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule())
-                .alongWith(pullInCoral)
+            intakeCommands.intakeDownCommand()
+                .alongWith(intakeCommands.runIntakeCommand())
                 .alongWith(
                     ledController.run(LEDPattern.solid(Color.kGreen).blink(Milliseconds.of(500)))
                 )
                 .andThen(ledController.fill(Color.kBlack))
         );
 
-    // boathook.setDefaultCommand(idleBoathook);
-    controller.povLeft().onTrue(microRotationAdjustBackwards);
-    controller.povRight().onTrue(microRotationAdjustForwards);
-    controller.povDown().onTrue(microExtensionAdjustInwards);
-    controller.povUp().onTrue(microExtensionAdjustOutwards);
-    // controller.back().onTrue(Commands.runOnce(() -> m_orchestra.play()).ignoringDisable(true));
-    // controller.leftStick().onTrue(Commands.runOnce(() ->
-    // m_orchestra.stop()).ignoringDisable(true));
+    controller.povLeft().onTrue(boathookCommands.microAdjustAngleBackward());
+    controller.povRight().onTrue(boathookCommands.microAdjustAngleForward());
+    controller.povDown().onTrue(boathookCommands.microAdjustExtensionBackward());
+    controller.povUp().onTrue(boathookCommands.microAdjustExtensionForward());
 
     configureAutoBuilderBindings();
 
@@ -381,6 +352,7 @@ public class RobotContainer {
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
+
     buttonBoxController
         .sixRightTrigger()
         .onTrue(
@@ -398,6 +370,7 @@ public class RobotContainer {
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
+
     buttonBoxController
         .eightRightTrigger()
         .onTrue(
@@ -415,6 +388,7 @@ public class RobotContainer {
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
+
     buttonBoxController
         .tenRightTrigger()
         .onTrue(
@@ -455,32 +429,41 @@ public class RobotContainer {
         .lollipopLeftTrigger()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        autoRoutineBuilder.addPickupPieceBlock(
-                            onTheFlyCommands.pickupLollipopLeft(intakeCommands)))
-                .ignoringDisable(true));
+                    () -> autoRoutineBuilder.addPickupPieceBlock(onTheFlyCommands.pickupLollipopLeft(intakeCommands))
+                )
+                .ignoringDisable(true)
+        );
+
     buttonBoxController
         .lollipopCenterTrigger()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        autoRoutineBuilder.addPickupPieceBlock(
-                            onTheFlyCommands.pickupLollipopCenter(intakeCommands)))
-                .ignoringDisable(true));
+                    () -> autoRoutineBuilder.addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter(intakeCommands))
+                )
+                .ignoringDisable(true)
+        );
+
     buttonBoxController
         .lollipopRightTrigger()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        autoRoutineBuilder.addPickupPieceBlock(
-                            onTheFlyCommands.pickupLollipopRight(intakeCommands)))
-                .ignoringDisable(true));
+                    () -> autoRoutineBuilder.addPickupPieceBlock(onTheFlyCommands.pickupLollipopRight(intakeCommands))
+                )
+                .ignoringDisable(true)
+        );
 
     // Clear Commands
     buttonBoxController
         .spearTrigger()
-        .onTrue(Commands.runOnce(() -> autoRoutineBuilder.clearCommands()).ignoringDisable(true))
+        .onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands).ignoringDisable(true))
         .onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
+  }
+
+  private void resetGyro() {
+    var alliance = DriverStation.getAlliance();
+    boolean isFlipped = alliance.equals(Optional.of(DriverStation.Alliance.Red));
+    Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
+    drive.setPose(new Pose2d(drive.getPose().getTranslation(), rotation));
   }
 
   private void configureAutoBuilderBindings() {

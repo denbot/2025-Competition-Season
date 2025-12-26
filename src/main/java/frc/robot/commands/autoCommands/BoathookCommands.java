@@ -98,19 +98,19 @@ public class BoathookCommands {
     return new SequentialCommandGroup(setLengthLinearCommand(0.2), setAngleCommand(45));
   }
 
-  public Command MicroAdjustExtensionForward() {
+  public Command microAdjustExtensionForward() {
     return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() + 0.05));
   }
 
-  public Command MicroAdjustExtensionBackward() {
+  public Command microAdjustExtensionBackward() {
     return Commands.runOnce(() -> boathook.setLength(boathook.getLengthSetpoint() - 0.05));
   }
 
-  public Command MicroAdjustAngleForward() {
+  public Command microAdjustAngleForward() {
     return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() + 0.05));
   }
 
-  public Command MicroAdjustAngleBackward() {
+  public Command microAdjustAngleBackward() {
     return Commands.runOnce(() -> boathook.setAngle(boathook.getAngleSetpoint() - 0.05));
   }
 
