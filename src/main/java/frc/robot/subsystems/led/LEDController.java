@@ -1,20 +1,27 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.led;
 
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+
+import java.util.Arrays;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 
 /**
  * Subsystem for controlling Addressable LEDs on the robot.
  *
- * <p>This subsystem manages an {@link AddressableLED} strip and provides various methods to apply
- * patterns and colors to the entire strip or specific sections (views) of it.
+ * <p>This controller manages an {@link AddressableLED} strip by mapping physical pixels to
+ * {@link LEDSubsystem} virtual resources. This allows multiple commands to run on different
+ * sections of the strip simultaneously without manual conflict checking.
  */
-public class LEDSubsystem extends SubsystemBase {
+public class LEDController {
 
   /*
    * These are specific buffers that can be addressed as a unit instead of always specifying start/end. They also have
@@ -23,7 +30,10 @@ public class LEDSubsystem extends SubsystemBase {
    * class to use them.
    *
    * Technically, we could expose the AddressableLEDBuffer and let others use it directly or create their own buffer
-   * view to use. I chose to go with more encapsulation rather than less in this case.
+   * view to use. I chose to go with more encapsulation rather than less in this case. If you did want to allow the user
+   * to make their own views, I would expose the createView method so we can guarantee the stripToSubsystems map has
+   * been updated with the correct values. We would do it on the fly, but there's no way to determine what the physical
+   * LED indexes are based on the logical indexes used in the view.
    */
   /**
    * Buffer view for the left section of the LED strip.
@@ -49,41 +59,62 @@ public class LEDSubsystem extends SubsystemBase {
   private final AddressableLED LEDString;
   private final AddressableLEDBuffer baseLEDBuffer;
 
+  private final Map<Integer, LEDSubsystem> ledSubsystemMap;
+  private final IdentityHashMap<Object, LEDSubsystem[]> stripToSubsystems;
+
   /**
    * Creates a new LEDSubsystem.
    *
    * @param numberOfLEDs The total number of LEDs in the strip.
    */
-  public LEDSubsystem(int numberOfLEDs) {
+  public LEDController(int numberOfLEDs) {
+    ledSubsystemMap = LEDSubsystem.getLEDMap(numberOfLEDs);
+    stripToSubsystems = new IdentityHashMap<>();
+
     LEDString = new AddressableLED(0);
     baseLEDBuffer = new AddressableLEDBuffer(numberOfLEDs);
 
+    // Let's go ahead and put the cache for our full LED strip in
+    stripToSubsystems.put(
+        baseLEDBuffer,
+        ledSubsystemMap.values().toArray(new LEDSubsystem[0])
+    );
+
     LEDString.setLength(numberOfLEDs);
-    LEDString.setData(baseLEDBuffer);
     LEDString.start();
 
     // Let's set up views for the individual sections we care about
-    l2LeftBuffer = baseLEDBuffer.createView(0, 3);
-    l2RightBuffer = baseLEDBuffer.createView(17, 20);
+    l2LeftBuffer = createView(0, 3);
+    l2RightBuffer = createView(17, 20);
 
-    l3LeftBuffer = baseLEDBuffer.createView(3, 6);
-    l3RightBuffer = baseLEDBuffer.createView(14, 17);
+    l3LeftBuffer = createView(3, 6);
+    l3RightBuffer = createView(14, 17);
 
-    l4LeftBuffer = baseLEDBuffer.createView(6, 9);
-    l4RightBuffer = baseLEDBuffer.createView(11, 14);
+    l4LeftBuffer = createView(6, 9);
+    l4RightBuffer = createView(11, 14);
 
-    leftBuffer = baseLEDBuffer.createView(0, 6);
-    centerBuffer = baseLEDBuffer.createView(7, 13);
-    rightBuffer = baseLEDBuffer.createView(14, 20);
+    leftBuffer = createView(0, 6);
+    centerBuffer = createView(7, 13);
+    rightBuffer = createView(14, 20);
+
+    // Kick off our LED updates every event loop. This allows the LED controller to update the LED string while our
+    // actual LEDSubsystem enum helps ensure no single LED is running more than one command.
+    Commands.run(() -> LEDString.setData(baseLEDBuffer))
+        .withName("LED Data Updater")
+        .schedule();
   }
 
-  @Override
-  public void periodic() {
-    /*
-     Updating every the LEDs every robot loop is preferred over a manual update command that might accidentally not
-     be called.
-    */
-    LEDString.setData(baseLEDBuffer);
+  private AddressableLEDBufferView createView(int startIndex, int endIndex) {
+    AddressableLEDBufferView view = baseLEDBuffer.createView(startIndex, endIndex);
+
+    LEDSubsystem[] subsystems = IntStream
+        .rangeClosed(startIndex, endIndex)
+        .mapToObj(ledSubsystemMap::get)
+        .toArray(LEDSubsystem[]::new);
+
+    stripToSubsystems.put(view, subsystems);
+
+    return view;
   }
 
   /**
@@ -95,7 +126,7 @@ public class LEDSubsystem extends SubsystemBase {
    * @return A command that applies the pattern to the LED strip continuously.
    */
   public <LED extends LEDReader & LEDWriter> Command run(LED ledStrip, LEDPattern pattern) {
-    return run(() -> pattern.applyTo(ledStrip))
+    return Commands.run(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
         .ignoringDisable(true);
   }
 
@@ -243,10 +274,18 @@ public class LEDSubsystem extends SubsystemBase {
         .solid(color)
         .blink(Milliseconds.of(250));
 
-    return run(() -> {
-      pattern.applyTo(left);
-      pattern.applyTo(right);
-    })
+    LEDSubsystem[] subsystems = Stream.concat(
+            Arrays.stream(stripToSubsystems.get(left)),
+            Arrays.stream(stripToSubsystems.get(right))
+        )
+        .toArray(LEDSubsystem[]::new);
+
+    return Commands.run(() -> {
+              pattern.applyTo(left);
+              pattern.applyTo(right);
+            },
+            subsystems
+        )
         .ignoringDisable(true)
         .withTimeout(Milliseconds.of(500))
         .andThen(fill(Color.kBlack));

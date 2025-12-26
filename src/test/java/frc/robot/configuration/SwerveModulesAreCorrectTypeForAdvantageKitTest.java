@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.configuration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,15 +7,10 @@ import frc.robot.generated.TunerConstants;
 import org.junit.jupiter.api.Test;
 
 /**
- * This test verifies any static configurations set up in the project. Each test verifies a specific aspect of the
- * configuration. This is useful as it saves runtime cost of checking configurations that can be checked on the host
- * build computer.
+ * Because we're using an AdvantageKit template, they only supported the TalonFX_Integrated drivers. This test ensures
+ * that the codebase is using those drivers.
  */
-public class InvalidConfigurationTest {
-  /**
-   * Because we're using an AdvantageKit template, they only supported the TalonFX_Integrated drivers. This test ensures
-   * that the codebase is using those drivers.
-   */
+public class SwerveModulesAreCorrectTypeForAdvantageKitTest {
   @Test
   void testSwerveMotorTypesAreTalonFXIntegrated() {
     var modules =

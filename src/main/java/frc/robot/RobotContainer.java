@@ -35,7 +35,7 @@ import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.commands.elasticCommands.PreCheckTab;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.led.LEDController;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
@@ -80,7 +80,7 @@ public class RobotContainer {
   private final Command microExtensionAdjustOutwards;
   // Currently this field is not used, but keeping it here as it will be used in the future.
   private final Orchestra m_orchestra = new Orchestra();
-  public LEDSubsystem ledSubsystem;
+  public LEDController ledController;
   // Commands
   private Command extendBoathook;
 
@@ -162,10 +162,10 @@ public class RobotContainer {
     intake = new Intake();
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(controller);
-    ledSubsystem = new LEDSubsystem(21);
+    ledController = new LEDController(21);
 
     intakeCommands = new IntakeCommands(intake);
-    boathookCommands = new BoathookCommands(boathook, ledSubsystem);
+    boathookCommands = new BoathookCommands(boathook, ledController);
     onTheFlyCommands = new OnTheFlyCommands(boathookCommands, drive);
 
     extendBoathook = boathookCommands.extendL2();
@@ -281,10 +281,10 @@ public class RobotContainer {
         .x()
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand.schedule())
-                .alongWith(ledSubsystem.rainbow())
+                .alongWith(ledController.rainbow())
                 .until(() -> !currentOnTheFlyCommand.isScheduled())
                 .andThen(
-                    ledSubsystem.temporary(Color.kYellow, Milliseconds.of(500))
+                    ledController.temporary(Color.kYellow, Milliseconds.of(500))
                 )
         );
 
@@ -305,14 +305,14 @@ public class RobotContainer {
                           || currentOnTheFlyCommand.isFinished()) retractBoathook.schedule();
                     })
                 .until(() -> !retractBoathook.isScheduled())
-                .andThen(ledSubsystem.fill(Color.kBlack))
+                .andThen(ledController.fill(Color.kBlack))
         );
 
     controller
         .leftBumper()
         .whileTrue(
             rejectCoral
-                .alongWith(ledSubsystem.temporary(Color.kRed, Milliseconds.of(500)))
+                .alongWith(ledController.temporary(Color.kRed, Milliseconds.of(500)))
         );
 
     controller
@@ -321,9 +321,9 @@ public class RobotContainer {
             Commands.runOnce(() -> intakeCommands.intakeDownCommand().schedule())
                 .alongWith(pullInCoral)
                 .alongWith(
-                    ledSubsystem.run(LEDPattern.solid(Color.kGreen).blink(Milliseconds.of(500)))
+                    ledController.run(LEDPattern.solid(Color.kGreen).blink(Milliseconds.of(500)))
                 )
-                .andThen(ledSubsystem.fill(Color.kBlack))
+                .andThen(ledController.fill(Color.kBlack))
         );
 
     // boathook.setDefaultCommand(idleBoathook);
@@ -342,7 +342,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwoLeft())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -351,7 +351,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwoRight())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -360,7 +360,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignFourLeft())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -369,7 +369,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignFourRight())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -378,7 +378,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignSixLeft())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
     buttonBoxController
@@ -386,7 +386,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignSixRight())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -395,7 +395,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignEightLeft())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
     buttonBoxController
@@ -403,7 +403,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignEightRight())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -412,7 +412,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTenLeft())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
     buttonBoxController
@@ -420,7 +420,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTenRight())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -429,7 +429,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwelveLeft())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
@@ -438,18 +438,18 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwelveRight())
                 .alongWith(
-                    ledSubsystem.temporary(Color.kRed, Milliseconds.of(250))
+                    ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
         );
 
     buttonBoxController
         .L1Trigger()
         .onTrue(
-            SetL1.alongWith(ledSubsystem.temporary(Color.kRed, Seconds.of(1)))
+            SetL1.alongWith(ledController.temporary(Color.kRed, Seconds.of(1)))
         );
-    buttonBoxController.L2Trigger().onTrue(SetL2.alongWith(ledSubsystem.indicateL2()));
-    buttonBoxController.L3Trigger().onTrue(SetL3.alongWith(ledSubsystem.indicateL3()));
-    buttonBoxController.L4Trigger().onTrue(SetL4.alongWith(ledSubsystem.indicateL4()));
+    buttonBoxController.L2Trigger().onTrue(SetL2.alongWith(ledController.indicateL2()));
+    buttonBoxController.L3Trigger().onTrue(SetL3.alongWith(ledController.indicateL3()));
+    buttonBoxController.L4Trigger().onTrue(SetL4.alongWith(ledController.indicateL4()));
 
     buttonBoxController
         .lollipopLeftTrigger()

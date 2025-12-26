@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.led.LEDController;
 import frc.robot.util.MappedTrigger;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -115,20 +115,20 @@ public class Robot extends LoggedRobot {
     visionMatrix.set(2, 0, 1); // Vision rotation is not to be trusted, apparently
 
     // Just to make the below code a little cleaner
-    final LEDSubsystem ledSubsystem = robotContainer.ledSubsystem;
+    final LEDController ledController = robotContainer.ledController;
 
     // When disabled, we want to see the driver station we believe we're part of.
     new MappedTrigger<>(disabledEventLoop, DriverStation::getAlliance)
         // Unknown alliance
-        .onValue(Optional.empty(), ledSubsystem.run(ledSubsystem.centerBuffer,
+        .onValue(Optional.empty(), ledController.run(ledController.centerBuffer,
             LEDPattern.solid(Color.kWhite).atBrightness(Percent.of(50))
         ))
         // Red alliance
-        .onValue(Optional.of(Alliance.Red), ledSubsystem.run(ledSubsystem.centerBuffer,
+        .onValue(Optional.of(Alliance.Red), ledController.run(ledController.centerBuffer,
             LEDPattern.solid(Color.kRed).atBrightness(Percent.of(50))
         ))
         // Blue alliance
-        .onValue(Optional.of(Alliance.Blue), ledSubsystem.run(ledSubsystem.centerBuffer,
+        .onValue(Optional.of(Alliance.Blue), ledController.run(ledController.centerBuffer,
             LEDPattern.solid(Color.kBlue).atBrightness(Percent.of(50))
         ));
 
@@ -136,12 +136,12 @@ public class Robot extends LoggedRobot {
     // TODO Verify if the left and right buffer matches the left and right camera. If not, swap the buffers so we maintain
     //  consistent robot left/right.
     new Trigger(disabledEventLoop, ()-> LimelightHelpers.getTV(Limelights.RIGHT.name))
-        .onTrue(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kGreen))
-        .onFalse(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kBlack));
+        .onTrue(ledController.fill(ledController.rightBuffer, Color.kGreen))
+        .onFalse(ledController.fill(ledController.rightBuffer, Color.kBlack));
 
     new Trigger(disabledEventLoop, ()-> LimelightHelpers.getTV(Limelights.LEFT.name))
-        .onTrue(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kGreen))
-        .onFalse(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kBlack));
+        .onTrue(ledController.fill(ledController.leftBuffer, Color.kGreen))
+        .onFalse(ledController.fill(ledController.leftBuffer, Color.kBlack));
   }
 
   @Override
