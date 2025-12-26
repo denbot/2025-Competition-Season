@@ -13,14 +13,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.OrchestraPlayer;
 import frc.robot.commands.autoCommands.AutoRoutineBuilder;
 import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.IntakeCommands;
@@ -74,8 +71,6 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   public final PreCheckTab preCheckTab;
 
-  // Currently this field is not used, but keeping it here as it will be used in the future.
-  private final Orchestra m_orchestra = new Orchestra();
   public LEDController ledController;
   // Commands
   private Command extendBoathook;
@@ -190,6 +185,13 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    OrchestraPlayer orchestraPlayer = new OrchestraPlayer(
+        controller,
+        intake,
+        boathook
+    );
+    autoChooser.addOption("Music Player", orchestraPlayer);
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -199,17 +201,6 @@ public class RobotContainer {
             buttonBoxController::isControllerOneConnected,
             buttonBoxController::isControllerTwoConnected
         );
-
-    // Setup our instruments
-    intake.addInstruments(m_orchestra);
-    boathook.addInstruments(m_orchestra);
-
-    // Attempt to load the chrp
-    var status = m_orchestra.loadMusic("OceanMan.chrp");
-
-    if (!status.isOK()) {
-      // log error
-    }
   }
 
   /**
@@ -731,6 +722,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoRoutineBuilder.build();
+    return autoChooser.get();
+    // TODO We will get back to this one running the motion path is an auto option
+//    return autoRoutineBuilder.build();
   }
 }
