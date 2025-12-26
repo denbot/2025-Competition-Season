@@ -31,6 +31,7 @@ import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.commands.elasticCommands.PreCheckTab;
+import frc.robot.commands.status.AllianceStatus;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.led.LEDController;
 import frc.robot.subsystems.RumbleSubsystem;
@@ -71,7 +72,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   public final PreCheckTab preCheckTab;
 
-  public LEDController ledController;
+  private final LEDController ledController;
   // Commands
   private Command extendBoathook;
 
@@ -201,6 +202,9 @@ public class RobotContainer {
             buttonBoxController::isControllerOneConnected,
             buttonBoxController::isControllerTwoConnected
         );
+
+    // TODO Add a SendableChooser wrapper that automatically runs our status commands
+    new AllianceStatus(ledController).schedule();
   }
 
   /**

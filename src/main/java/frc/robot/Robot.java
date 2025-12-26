@@ -19,16 +19,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.led.LEDController;
-import frc.robot.util.MappedTrigger;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.LimelightPipeline;
@@ -40,10 +35,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import java.util.Optional;
-
-import static edu.wpi.first.units.Units.Percent;
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -51,14 +42,11 @@ import static edu.wpi.first.units.Units.Percent;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private Command autonomousCommand;
   public static RobotContainer robotContainer;
   private final Matrix<N3, N1> visionMatrix = new Matrix<>(Nat.N3(), Nat.N1());
-  private Field2d field = new Field2d();
   private final Timer timer = new Timer();
-
-  // An event loop that will be run in disabledPeriodic. Can be used to set up any triggers that should only run then
-  private final EventLoop disabledEventLoop = new EventLoop();
+  private Command autonomousCommand;
+  private Field2d field = new Field2d();
 
   public Robot() {
     // Record metadata
@@ -114,34 +102,17 @@ public class Robot extends LoggedRobot {
     visionMatrix.fill(0.5); // X/Y location to 0.5
     visionMatrix.set(2, 0, 1); // Vision rotation is not to be trusted, apparently
 
-    // Just to make the below code a little cleaner
-    final LEDController ledController = robotContainer.ledController;
-
-    // When disabled, we want to see the driver station we believe we're part of.
-    new MappedTrigger<>(disabledEventLoop, DriverStation::getAlliance)
-        // Unknown alliance
-        .onValue(Optional.empty(), ledController.run(ledController.centerBuffer,
-            LEDPattern.solid(Color.kWhite).atBrightness(Percent.of(50))
-        ))
-        // Red alliance
-        .onValue(Optional.of(Alliance.Red), ledController.run(ledController.centerBuffer,
-            LEDPattern.solid(Color.kRed).atBrightness(Percent.of(50))
-        ))
-        // Blue alliance
-        .onValue(Optional.of(Alliance.Blue), ledController.run(ledController.centerBuffer,
-            LEDPattern.solid(Color.kBlue).atBrightness(Percent.of(50))
-        ));
-
     // When disabled, we want to see the state of our limelights and if they see a target
     // TODO Verify if the left and right buffer matches the left and right camera. If not, swap the buffers so we maintain
     //  consistent robot left/right.
-    new Trigger(disabledEventLoop, ()-> LimelightHelpers.getTV(Limelights.RIGHT.name))
-        .onTrue(ledController.fill(ledController.rightBuffer, Color.kGreen))
-        .onFalse(ledController.fill(ledController.rightBuffer, Color.kBlack));
-
-    new Trigger(disabledEventLoop, ()-> LimelightHelpers.getTV(Limelights.LEFT.name))
-        .onTrue(ledController.fill(ledController.leftBuffer, Color.kGreen))
-        .onFalse(ledController.fill(ledController.leftBuffer, Color.kBlack));
+    // TODO Move these to their own status command when we have the ability to select status commands
+//    new Trigger(disabledEventLoop, () -> LimelightHelpers.getTV(Limelights.RIGHT.name))
+//        .onTrue(ledController.fill(ledController.rightBuffer, Color.kGreen))
+//        .onFalse(ledController.fill(ledController.rightBuffer, Color.kBlack));
+//
+//    new Trigger(disabledEventLoop, () -> LimelightHelpers.getTV(Limelights.LEFT.name))
+//        .onTrue(ledController.fill(ledController.leftBuffer, Color.kGreen))
+//        .onFalse(ledController.fill(ledController.leftBuffer, Color.kBlack));
   }
 
   @Override
@@ -155,7 +126,9 @@ public class Robot extends LoggedRobot {
     robotContainer.preCheckTab.schedule();
   }
 
-  /** This function is called periodically during all modes. */
+  /**
+   * This function is called periodically during all modes.
+   */
   @Override
   public void robotPeriodic() {
     // Switch thread to high priority to improve loop timing
@@ -215,7 +188,9 @@ public class Robot extends LoggedRobot {
         limelightName, botPoseEstimate.pose, botPoseEstimate.timestampSeconds, visionMatrix);
   }
 
-  /** This function is called once when the robot is disabled. */
+  /**
+   * This function is called once when the robot is disabled.
+   */
   @Override
   public void disabledInit() {
     Elastic.Tabs.PRE_CHECK.show();
@@ -225,13 +200,16 @@ public class Robot extends LoggedRobot {
     LimelightHelpers.setThrottle("limelight-rear", 120);
   }
 
-  /** This function is called periodically when disabled. */
+  /**
+   * This function is called periodically when disabled.
+   */
   @Override
   public void disabledPeriodic() {
-    disabledEventLoop.poll();
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /**
+   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+   */
   @Override
   public void autonomousInit() {
     Elastic.Tabs.AUTONOMOUS.show();
@@ -246,11 +224,16 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /** This function is called periodically during autonomous. */
+  /**
+   * This function is called periodically during autonomous.
+   */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
-  /** This function is called once when teleop is enabled. */
+  /**
+   * This function is called once when teleop is enabled.
+   */
   @Override
   public void teleopInit() {
     Elastic.Tabs.TELEOPERATED.show();
@@ -267,7 +250,9 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /** This function is called periodically during operator control. */
+  /**
+   * This function is called periodically during operator control.
+   */
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
@@ -276,7 +261,9 @@ public class Robot extends LoggedRobot {
     // SmartDashboard.putNumber("Angle", RobotContainer.currentTargetPose.angle);
   }
 
-  /** This function is called once when test mode is enabled. */
+  /**
+   * This function is called once when test mode is enabled.
+   */
   @Override
   public void testInit() {
     // Disable limelight 4 throttling
@@ -286,18 +273,26 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /** This function is called periodically during test mode. */
+  /**
+   * This function is called periodically during test mode.
+   */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
-  /** This function is called once when the robot is first started up. */
+  /**
+   * This function is called once when the robot is first started up.
+   */
   @Override
   public void simulationInit() {
     // Enable limelight 4 throttling to prevent overheating.
     LimelightHelpers.setThrottle("limelight-rear", 120);
   }
 
-  /** This function is called periodically whilst in simulation. */
+  /**
+   * This function is called periodically whilst in simulation.
+   */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }
