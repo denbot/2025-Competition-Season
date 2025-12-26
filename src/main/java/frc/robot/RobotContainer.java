@@ -103,21 +103,21 @@ public class RobotContainer {
           () -> {
             extendBoathook = boathookCommands.extendL2();
             retractBoathook = boathookCommands.retractL2();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, ledSubsystem);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
   private final Command SetL3 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL3();
             retractBoathook = boathookCommands.retractL3();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, ledSubsystem);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
   private final Command SetL4 =
       Commands.runOnce(
           () -> {
             extendBoathook = boathookCommands.extendL4();
             retractBoathook = boathookCommands.retractL4();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, ledSubsystem);
+            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
           });
 
   /**
@@ -165,11 +165,11 @@ public class RobotContainer {
     ledSubsystem = new LEDSubsystem(21);
 
     intakeCommands = new IntakeCommands(intake);
-    boathookCommands = new BoathookCommands(boathook);
+    boathookCommands = new BoathookCommands(boathook, ledSubsystem);
 
     extendBoathook = boathookCommands.extendL2();
     retractBoathook = boathookCommands.retractL2();
-    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands, ledSubsystem);
+    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
 
     pullInCoral = intakeCommands.runIntakeCommand();
     rejectCoral = intakeCommands.runRejectCommand();
@@ -336,8 +336,6 @@ public class RobotContainer {
     // m_orchestra.stop()).ignoringDisable(true));
 
     configureAutoBuilderBindings();
-
-    // TODO Consolidate operatorController 1 & 2 into One class
 
     buttonBoxController
         .twoLeftTrigger()

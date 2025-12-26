@@ -22,9 +22,14 @@ public class BoathookCommands {
   private double offset = -0.1;
   private double scaling = 0.1;
   private Boathook boathook;
+  private final LEDSubsystem ledSubsystem;
 
-  public BoathookCommands(Boathook boathook) {
+  public BoathookCommands(
+      Boathook boathook,
+      LEDSubsystem ledSubsystem
+  ) {
     this.boathook = boathook;
+    this.ledSubsystem = ledSubsystem;
   }
 
   public Command extendL2() {
@@ -117,7 +122,7 @@ public class BoathookCommands {
     return command;
   }
 
-  public Command handoffCommand(IntakeCommands intakeCommands, LEDSubsystem led) {
+  public Command handoffCommand(IntakeCommands intakeCommands) {
 
     return new SequentialCommandGroup(
         setAngleCommand(93),
@@ -126,14 +131,11 @@ public class BoathookCommands {
         intakeCommands.intakeSpearCommand(),
         new ParallelCommandGroup(setAngleCommand(93), intakeCommands.runRejectCommand()),
         intakeCommands.intakeL1Command(),
-        led.fill(Color.kYellow)
+        ledSubsystem.fill(Color.kYellow)
     );
   }
 
   public Command setAngleCommand(double angle) {
-    // TODO We shouldn't access the ledSubsystem this way
-    final LEDSubsystem ledSubsystem = Robot.robotContainer.ledSubsystem;
-
     return Commands.run(() -> boathook.setAngle(angle))
         .alongWith(ledSubsystem.fill(ledSubsystem.rightBuffer, Color.kOrange))
         .until(isAngleFinished())
@@ -141,9 +143,6 @@ public class BoathookCommands {
   }
 
   public Command setLengthLinearCommand(double length) {
-    // TODO We shouldn't access the ledSubsystem this way
-    final LEDSubsystem ledSubsystem = Robot.robotContainer.ledSubsystem;
-
     return Commands.run(() -> boathook.setLength(length))
         .alongWith(ledSubsystem.fill(ledSubsystem.leftBuffer, Color.kOrange))
         .until(isLinearExtendFinished())
@@ -151,9 +150,6 @@ public class BoathookCommands {
   }
 
   public Command setLengthCurveCommand(double length) {
-    // TODO We shouldn't access the ledSubsystem this way
-    final LEDSubsystem ledSubsystem = Robot.robotContainer.ledSubsystem;
-
     return Commands.runOnce(
             () -> {
               startLength = boathook.getLength();
