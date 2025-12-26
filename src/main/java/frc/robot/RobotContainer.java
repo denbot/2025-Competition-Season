@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -58,14 +57,13 @@ import static edu.wpi.first.units.Units.*;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  public static Command currentOnTheFlyCommand;
+  private static Command currentOnTheFlyCommand;
   // Subsystems
   public final Drive drive;
-  public final Intake intake;
-  public final Boathook boathook;
-  public final RumbleSubsystem rumbleSubsystem;
-  public final AutoRoutineBuilder autoRoutineBuilder;
-  public final RumblePresets rumblePresets;
+  private final Intake intake;
+  private final Boathook boathook;
+  private final RumbleSubsystem rumbleSubsystem;
+  private final AutoRoutineBuilder autoRoutineBuilder;
   public final PreCheckTab preCheckTab;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -84,16 +82,16 @@ public class RobotContainer {
   private final Orchestra m_orchestra = new Orchestra();
   public LEDSubsystem ledSubsystem;
   // Commands
-  public Command extendBoathook;
+  private Command extendBoathook;
 
   // each of these corresponds to a different button on the button board
   // these should set the pipeline to the side of the reef where the button is located
   // numbers correspond to clock faces with twelve being the back face of the reef
-  public Command retractBoathook;
-  public Command scorePrepCommand;
-  public BoathookCommands boathookCommands;
-  public IntakeCommands intakeCommands;
-  private OnTheFlyCommands onTheFlyCommands;
+  private Command retractBoathook;
+  private Command scorePrepCommand;
+  private BoathookCommands boathookCommands;
+  private IntakeCommands intakeCommands;
+  private final OnTheFlyCommands onTheFlyCommands;
 
   private final Command SetL1 =
       Commands.runOnce(
@@ -192,7 +190,6 @@ public class RobotContainer {
     */
     SmartDashboard.putStringArray("Auto Routine List", autoRoutineBuilder.getCommandStrings());
 
-    rumblePresets = new RumblePresets(rumbleSubsystem);
     currentOnTheFlyCommand = onTheFlyCommands.alignSixRight();
 
     // Set up auto routines
@@ -486,7 +483,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
   }
 
-  public void configureAutoBuilderBindings() {
+  private void configureAutoBuilderBindings() {
     // L4 Bindings
     assignButtonBinding(
         buttonBoxController.twelveLeftTrigger(),
@@ -740,7 +737,7 @@ public class RobotContainer {
                 onTheFlyCommands.alignTwoRight(), boathookCommands.scoreL2()));
   }
 
-  public void assignButtonBinding(
+  private void assignButtonBinding(
       Trigger alignButton, Trigger scoreButton, Runnable buildingRunnable) {
     alignButton.and(scoreButton).onTrue(Commands.runOnce(buildingRunnable).ignoringDisable(true));
   }
