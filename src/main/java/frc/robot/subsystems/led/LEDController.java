@@ -100,6 +100,7 @@ public class LEDController {
     // Kick off our LED updates every event loop. This allows the LED controller to update the LED string while our
     // actual LEDSubsystem enum helps ensure no single LED is running more than one command.
     Commands.run(() -> LEDString.setData(baseLEDBuffer))
+        .ignoringDisable(true)
         .withName("LED Data Updater")
         .schedule();
   }
@@ -127,6 +128,7 @@ public class LEDController {
    */
   public <LED extends LEDReader & LEDWriter> Command run(LED ledStrip, LEDPattern pattern) {
     return Commands.run(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
+        .withName("LED Control")
         .ignoringDisable(true);
   }
 
@@ -287,6 +289,7 @@ public class LEDController {
             subsystems
         )
         .ignoringDisable(true)
+        .withName("LED Scoring Level")
         .withTimeout(Milliseconds.of(500))
         .andThen(fill(Color.kBlack));
   }
