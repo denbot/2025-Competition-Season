@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Robot;
-import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.drive.Drive;
 
 public class OnTheFlyCommands {
+
+  private final BoathookCommands boathookCommands;
+  private final Drive drive;
 
   private enum OnTheFlyTargetPose {
     // all defined as x/y locations on the field
@@ -61,103 +63,113 @@ public class OnTheFlyCommands {
     }
   }
 
-  private static double currentRobotX;
-  private static double currentRobotY;
-  private static double currentRobotAngle;
-  private static double offsetX;
-  private static double offsetY;
-  private static double offsetAngle;
+  private double currentRobotX;
+  private double currentRobotY;
+  private double currentRobotAngle;
+  private double offsetX;
+  private double offsetY;
+  private double offsetAngle;
 
-  private static double translationalKP = 5;
-  private static double angularKP = 0.5;
+  private final double translationalKP = 5;
+  private final double angularKP = 0.5;
 
-  public static Command alignTwoLeft() {
+  public OnTheFlyCommands(
+      BoathookCommands boathookCommands,
+      Drive drive
+  ) {
+    this.boathookCommands = boathookCommands;
+    this.drive = drive;
+  }
+
+  public Command alignTwoLeft() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT), "Align_Two_Left");
   }
 
-  public static Command alignTwoRight() {
+  public Command alignTwoRight() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT), "Align_Two_Right");
   }
 
-  public static Command alignFourLeft() {
+  public Command alignFourLeft() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT), "Align_Four_Left");
   }
 
-  public static Command alignFourRight() {
+  public Command alignFourRight() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT), "Align_Four_Right");
   }
 
-  public static Command alignSixLeft() {
+  public Command alignSixLeft() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT), "Align_Six_Left");
   }
 
-  public static Command alignSixRight() {
+  public Command alignSixRight() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT), "Align_Six_Right");
   }
 
-  public static Command alignEightLeft() {
+  public Command alignEightLeft() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT), "Align_Eight_Left");
   }
 
-  public static Command alignEightRight() {
+  public Command alignEightRight() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT), "Align_Eight_Right");
   }
 
-  public static Command alignTenLeft() {
+  public Command alignTenLeft() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT), "Align_Ten_Left");
   }
 
-  public static Command alignTenRight() {
+  public Command alignTenRight() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT), "Align_Ten_Right");
   }
 
-  public static Command alignTwelveLeft() {
+  public Command alignTwelveLeft() {
     return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT), "Align_Twelve_Left");
   }
 
-  public static Command alignTwelveRight() {
+  public Command alignTwelveRight() {
     return setCommandName(
         getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT), "Align_Twelve_Right");
   }
 
-  public static Command pickupLollipopLeft(IntakeCommands intake) {
+  public Command pickupLollipopLeft(IntakeCommands intake) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
             intake.intakeDownCommand(),
-            Robot.robotContainer.boathookCommands.setBoathookStab()),
+            boathookCommands.setBoathookStab()
+        ),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
-            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.ledSubsystem));
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)
+        ),
+        boathookCommands.handoffCommand(intake));
   }
 
-  public static Command pickupLollipopRight(IntakeCommands intake) {
+  public Command pickupLollipopRight(IntakeCommands intake) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
             intake.intakeDownCommand(),
-            Robot.robotContainer.boathookCommands.setBoathookStab()),
+            boathookCommands.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.ledSubsystem));
+        boathookCommands.handoffCommand(intake));
   }
 
-  public static Command pickupLollipopCenter(IntakeCommands intake) {
+  public Command pickupLollipopCenter(IntakeCommands intake) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
             intake.intakeDownCommand(),
-            Robot.robotContainer.boathookCommands.setBoathookStab()),
+            boathookCommands.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
-        Robot.robotContainer.boathookCommands.handoffCommand(intake, Robot.robotContainer.ledSubsystem));
+        boathookCommands.handoffCommand(intake));
   }
 
-  private static Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {
-    return Commands.runEnd(
+  private Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {
+    return Commands.run(
             () -> {
               double x = targetPose.x;
               double y = targetPose.y;
@@ -170,9 +182,9 @@ public class OnTheFlyCommands {
                 angle += 180;
                 if (angle > 180) angle -= 360;
               }
-              currentRobotX = Robot.robotContainer.drive.getPose().getX();
-              currentRobotY = Robot.robotContainer.drive.getPose().getY();
-              currentRobotAngle = Robot.robotContainer.drive.getPose().getRotation().getDegrees();
+              currentRobotX = drive.getPose().getX();
+              currentRobotY = drive.getPose().getY();
+              currentRobotAngle = drive.getPose().getRotation().getDegrees();
               offsetX = x - currentRobotX;
               offsetY = y - currentRobotY;
               offsetAngle = angle - currentRobotAngle;
@@ -186,19 +198,16 @@ public class OnTheFlyCommands {
                       offsetX * translationalKP,
                       offsetY * translationalKP,
                       offsetAngle * angularKP);
-              Robot.robotContainer.drive.runVelocity(
+              drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
-                      newSpeeds, Robot.robotContainer.drive.getRotation()));
-            },
-            () ->
-                DriveCommands.joystickDrive(
-                    Robot.robotContainer.drive, () -> 0.0, () -> 0.0, () -> 0.0))
+                      newSpeeds, drive.getRotation()));
+            })
         .until(
             () ->
                 Math.abs(offsetX) < 0.02 && Math.abs(offsetY) < 0.02 && Math.abs(offsetAngle) < 1);
   }
 
-  private static Command getAutoAlignCommand(OnTheFlyTargetPose targetPose) {
+  private Command getAutoAlignCommand(OnTheFlyTargetPose targetPose) {
     double x = targetPose.x;
     double y = targetPose.y;
     double angle = targetPose.angle;
