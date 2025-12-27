@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.led.LEDController;
 import frc.robot.util.elastic.Elastic;
 import frc.robot.util.limelight.LimelightHelpers;
 import frc.robot.util.limelight.LimelightPipeline;
@@ -113,6 +112,12 @@ public class Robot extends LoggedRobot {
 //    new Trigger(disabledEventLoop, () -> LimelightHelpers.getTV(Limelights.LEFT.name))
 //        .onTrue(ledController.fill(ledController.leftBuffer, Color.kGreen))
 //        .onFalse(ledController.fill(ledController.leftBuffer, Color.kBlack));
+
+    // The simulated joysticks can be adjusted on the fly pretty easily, so we don't want a wall of warnings when running
+    // in the simulator.
+    if(isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
   }
 
   @Override
