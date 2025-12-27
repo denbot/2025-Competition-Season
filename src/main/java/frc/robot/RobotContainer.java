@@ -72,37 +72,15 @@ public class RobotContainer {
 
   private Command retractBoathook;
   private Command scorePrepCommand;
-  private BoathookCommands boathookCommands;
-  private IntakeCommands intakeCommands;
+  private final BoathookCommands boathookCommands;
+  private final IntakeCommands intakeCommands;
   private final OnTheFlyCommands onTheFlyCommands;
   private Command currentOnTheFlyCommand;
 
-  private final Command SetL1 =
-      Commands.runOnce(
-          () -> {
-            scorePrepCommand = intakeCommands.intakeL1Command();
-          });
-  private final Command SetL2 =
-      Commands.runOnce(
-          () -> {
-            extendBoathook = boathookCommands.extendL2();
-            retractBoathook = boathookCommands.retractL2();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
-          });
-  private final Command SetL3 =
-      Commands.runOnce(
-          () -> {
-            extendBoathook = boathookCommands.extendL3();
-            retractBoathook = boathookCommands.retractL3();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
-          });
-  private final Command SetL4 =
-      Commands.runOnce(
-          () -> {
-            extendBoathook = boathookCommands.extendL4();
-            retractBoathook = boathookCommands.retractL4();
-            scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
-          });
+  private final Command SetL1;
+  private final Command SetL2;
+  private final Command SetL3;
+  private final Command SetL4;
 
   /**
    * The container for the robot. Contains subsystems, IO devices, and commands.
@@ -151,6 +129,26 @@ public class RobotContainer {
     intakeCommands = new IntakeCommands(intake);
     boathookCommands = new BoathookCommands(boathook, ledController);
     onTheFlyCommands = new OnTheFlyCommands(intakeCommands, boathookCommands, drive);
+
+    SetL1 = Commands.runOnce(() -> scorePrepCommand = intakeCommands.intakeL1Command());
+    SetL2 = Commands.runOnce(() -> {
+          extendBoathook = boathookCommands.extendL2();
+          retractBoathook = boathookCommands.retractL2();
+          scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+        }
+    );
+    SetL3 = Commands.runOnce(() -> {
+          extendBoathook = boathookCommands.extendL3();
+          retractBoathook = boathookCommands.retractL3();
+          scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+        }
+    );
+    SetL4 = Commands.runOnce(() -> {
+          extendBoathook = boathookCommands.extendL4();
+          retractBoathook = boathookCommands.retractL4();
+          scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+        }
+    );
 
     extendBoathook = boathookCommands.extendL2();
     retractBoathook = boathookCommands.retractL2();
