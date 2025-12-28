@@ -1,4 +1,4 @@
-package frc.robot.controllers;
+package frc.robot.control.controllers;
 
 import edu.wpi.first.wpilibj.simulation.GenericHIDSim;
 
