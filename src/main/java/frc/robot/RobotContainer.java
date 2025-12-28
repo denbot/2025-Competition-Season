@@ -56,7 +56,7 @@ public class RobotContainer {
   private final RumbleSubsystem rumbleSubsystem;
 
   // Controller
-  private final DenbotXboxController driverController = new DenbotXboxController(0);
+  private final DenbotXboxController driverController = new DenbotXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final ButtonBoxController buttonBoxController = new ButtonBoxController();
 
   // Event loops depending on the robot state

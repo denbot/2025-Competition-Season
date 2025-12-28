@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.DriveCommands;
@@ -73,20 +74,7 @@ public class TeleopControl {
     );
 
     SelectCommand<ReefBranch> onTheFlyCommand = new SelectCommand<>(
-        Map.ofEntries(
-            Map.entry(ReefBranch.TWO_LEFT, onTheFlyCommands.alignTwelveLeft()),
-            Map.entry(ReefBranch.TWO_RIGHT, onTheFlyCommands.alignTwoRight()),
-            Map.entry(ReefBranch.FOUR_LEFT, onTheFlyCommands.alignFourLeft()),
-            Map.entry(ReefBranch.FOUR_RIGHT, onTheFlyCommands.alignFourRight()),
-            Map.entry(ReefBranch.SIX_LEFT, onTheFlyCommands.alignSixLeft()),
-            Map.entry(ReefBranch.SIX_RIGHT, onTheFlyCommands.alignSixRight()),
-            Map.entry(ReefBranch.EIGHT_LEFT, onTheFlyCommands.alignEightLeft()),
-            Map.entry(ReefBranch.EIGHT_RIGHT, onTheFlyCommands.alignEightRight()),
-            Map.entry(ReefBranch.TEN_LEFT, onTheFlyCommands.alignTenLeft()),
-            Map.entry(ReefBranch.TEN_RIGHT, onTheFlyCommands.alignTenRight()),
-            Map.entry(ReefBranch.TWELVE_LEFT, onTheFlyCommands.alignTwelveLeft()),
-            Map.entry(ReefBranch.TWELVE_RIGHT, onTheFlyCommands.alignTwelveRight())
-        ),
+        onTheFlyCommands.branchToAlignmentCommands(),
         () -> targetReefBranch
     );
 
@@ -167,139 +155,30 @@ public class TeleopControl {
         .onTrue(boathookCommands.microAdjustExtensionForward());
 
     buttonBoxController
-        .twoLeftTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWO_LEFT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
+        .buttonToReefBranchMap(teleopEventLoop)
+        .forEach(
+            (trigger, branch) -> trigger.onTrue(
+                Commands.runOnce(() -> targetReefBranch = branch)
+                    .alongWith(
+                        ledController.temporary(Color.kRed, Milliseconds.of(250))
+                    )
+            )
         );
 
-    buttonBoxController
-        .twoRightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWO_RIGHT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
+    Map<ReefLevel, Command> ledIndicationMap = Map.ofEntries(
+        Map.entry(ReefLevel.L1, ledController.temporary(Color.kRed, Seconds.of(1))),
+        Map.entry(ReefLevel.L2, ledController.indicateL2()),
+        Map.entry(ReefLevel.L3, ledController.indicateL3()),
+        Map.entry(ReefLevel.L4, ledController.indicateL4())
+    );
 
     buttonBoxController
-        .fourLeftTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.FOUR_LEFT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .fourRightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.FOUR_RIGHT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .sixLeftTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.SIX_LEFT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .sixRightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.SIX_RIGHT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .eightLeftTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.EIGHT_LEFT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .eightRightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.EIGHT_RIGHT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .tenLeftTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.TEN_LEFT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .tenRightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.TEN_RIGHT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .twelveLeftTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWELVE_LEFT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .twelveRightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWELVE_RIGHT)
-                .alongWith(
-                    ledController.temporary(Color.kRed, Milliseconds.of(250))
-                )
-        );
-
-    buttonBoxController
-        .L1Trigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefLevel = ReefLevel.L1)
-                .alongWith(ledController.temporary(Color.kRed, Seconds.of(1)))
-        );
-
-    buttonBoxController
-        .L2Trigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefLevel = ReefLevel.L2)
-                .alongWith(ledController.indicateL2())
-        );
-
-    buttonBoxController
-        .L3Trigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefLevel = ReefLevel.L3)
-                .alongWith(ledController.indicateL3())
-        );
-
-    buttonBoxController
-        .L4Trigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(() -> targetReefLevel = ReefLevel.L4)
-                .alongWith(ledController.indicateL4())
+        .buttonToReefLevelMap(teleopEventLoop)
+        .forEach(
+            (trigger, level) -> trigger.onTrue(
+                Commands.runOnce(() -> targetReefLevel = level)
+                    .alongWith(ledIndicationMap.get(level))
+            )
         );
 
     // TODO This should probably be under drive control and automatic on intake

@@ -1,10 +1,11 @@
 package frc.robot.control.controllers;
 
 import edu.wpi.first.wpilibj.simulation.GenericHIDSim;
+import frc.robot.Constants;
 
 public class ButtonBoxControllerSim {
-  private final GenericHIDSim controller1Sim = new GenericHIDSim(1);
-  private final GenericHIDSim controller2Sim = new GenericHIDSim(2);
+  private final GenericHIDSim controller1Sim = new GenericHIDSim(Constants.OperatorConstants.kButtonBoxControllerAPort);
+  private final GenericHIDSim controller2Sim = new GenericHIDSim(Constants.OperatorConstants.kButtonBoxControllerBPort);
 
   public ButtonBoxControllerSim() {
     // Setting the button count is required for the sim to work, otherwise getting button values will always return false

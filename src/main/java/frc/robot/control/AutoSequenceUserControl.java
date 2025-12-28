@@ -9,6 +9,7 @@ import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
+import frc.robot.game.ReefBranch;
 
 import java.util.Map;
 
@@ -45,37 +46,29 @@ public class AutoSequenceUserControl {
 
     buttonBoxController.spearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
-    // Define the possible face alignments and scoring levels available on the reef
-    var reefFaceTriggers = Map.ofEntries(
-        Map.entry(buttonBoxController.twelveLeftTrigger(disabledEventLoop), onTheFlyCommands.alignTwelveLeft()),
-        Map.entry(buttonBoxController.twelveRightTrigger(disabledEventLoop), onTheFlyCommands.alignTwelveRight()),
-        Map.entry(buttonBoxController.tenLeftTrigger(disabledEventLoop), onTheFlyCommands.alignTenLeft()),
-        Map.entry(buttonBoxController.tenRightTrigger(disabledEventLoop), onTheFlyCommands.alignTenRight()),
-        Map.entry(buttonBoxController.eightLeftTrigger(disabledEventLoop), onTheFlyCommands.alignEightLeft()),
-        Map.entry(buttonBoxController.eightRightTrigger(disabledEventLoop), onTheFlyCommands.alignEightRight()),
-        Map.entry(buttonBoxController.sixLeftTrigger(disabledEventLoop), onTheFlyCommands.alignSixLeft()),
-        Map.entry(buttonBoxController.sixRightTrigger(disabledEventLoop), onTheFlyCommands.alignSixRight()),
-        Map.entry(buttonBoxController.fourLeftTrigger(disabledEventLoop), onTheFlyCommands.alignFourLeft()),
-        Map.entry(buttonBoxController.fourRightTrigger(disabledEventLoop), onTheFlyCommands.alignFourRight()),
-        Map.entry(buttonBoxController.twoLeftTrigger(disabledEventLoop), onTheFlyCommands.alignTwoLeft()),
-        Map.entry(buttonBoxController.twoRightTrigger(disabledEventLoop), onTheFlyCommands.alignTwoRight())
-    );
-
     var reefLevelTriggers = Map.ofEntries(
+        // TODO L1
         Map.entry(buttonBoxController.L4Trigger(disabledEventLoop), boathookCommands.scoreL4()),
         Map.entry(buttonBoxController.L3Trigger(disabledEventLoop), boathookCommands.scoreL3()),
         Map.entry(buttonBoxController.L2Trigger(disabledEventLoop), boathookCommands.scoreL2())
     );
 
+    var buttonToReefBranchMap = buttonBoxController.buttonToReefBranchMap(disabledEventLoop);
+    var reefBranchToAlignCommandMap = onTheFlyCommands.branchToAlignmentCommands();
+
     // Cross-join the face and level triggers. This binds every combination of 
     // [Face Button] + [Level Button] so that pressing both simultaneously 
     // adds a specific "Building Block" (align + score) to our autonomous sequence.
-    for (Map.Entry<Trigger, Command> face : reefFaceTriggers.entrySet()) {
+    for (Map.Entry<Trigger, ReefBranch> face : buttonToReefBranchMap.entrySet()) {
+      Trigger faceButton = face.getKey();
+      Command faceCommand = reefBranchToAlignCommandMap.get(face.getValue());
+
       for (Map.Entry<Trigger, Command> level : reefLevelTriggers.entrySet()) {
-        Command faceCommand = face.getValue();
+        Trigger levelButton = face.getKey();
         Command levelCommand = level.getValue();
 
-        face.getKey().and(level.getKey())
+        faceButton
+            .and(levelButton)
             .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addBuildingBlock(faceCommand, levelCommand)));
       }
     }

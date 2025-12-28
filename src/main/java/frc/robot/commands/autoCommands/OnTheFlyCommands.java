@@ -7,11 +7,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.event.EventLoop;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.game.ReefBranch;
 import frc.robot.subsystems.drive.Drive;
+
+import java.util.Map;
 
 public class OnTheFlyCommands {
 
@@ -82,6 +83,28 @@ public class OnTheFlyCommands {
     this.intakeCommands = intakeCommands;
     this.boathookCommands = boathookCommands;
     this.drive = drive;
+  }
+
+  /**
+   * Returns a map of reef branches to their corresponding auto-alignment commands.
+   *
+   * @return A map where each {@link ReefBranch} is associated with its specific alignment command.
+   */
+  public Map<ReefBranch, Command> branchToAlignmentCommands() {
+    return Map.ofEntries(
+        Map.entry(ReefBranch.TWO_LEFT, alignTwelveLeft()),
+        Map.entry(ReefBranch.TWO_RIGHT, alignTwoRight()),
+        Map.entry(ReefBranch.FOUR_LEFT, alignFourLeft()),
+        Map.entry(ReefBranch.FOUR_RIGHT, alignFourRight()),
+        Map.entry(ReefBranch.SIX_LEFT, alignSixLeft()),
+        Map.entry(ReefBranch.SIX_RIGHT, alignSixRight()),
+        Map.entry(ReefBranch.EIGHT_LEFT, alignEightLeft()),
+        Map.entry(ReefBranch.EIGHT_RIGHT, alignEightRight()),
+        Map.entry(ReefBranch.TEN_LEFT, alignTenLeft()),
+        Map.entry(ReefBranch.TEN_RIGHT, alignTenRight()),
+        Map.entry(ReefBranch.TWELVE_LEFT, alignTwelveLeft()),
+        Map.entry(ReefBranch.TWELVE_RIGHT, alignTwelveRight())
+    );
   }
 
   public Command alignTwoLeft() {

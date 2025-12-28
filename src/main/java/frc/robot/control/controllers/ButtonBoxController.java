@@ -4,10 +4,71 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
+import frc.robot.game.ReefBranch;
+import frc.robot.game.ReefLevel;
+
+import java.util.Map;
 
 public class ButtonBoxController {
-  private static final CommandGenericHID controller1 = new CommandGenericHID(1);
-  private static final CommandGenericHID controller2 = new CommandGenericHID(2);
+  private static final CommandGenericHID controller1 = new CommandGenericHID(Constants.OperatorConstants.kButtonBoxControllerAPort);
+  private static final CommandGenericHID controller2 = new CommandGenericHID(Constants.OperatorConstants.kButtonBoxControllerBPort);
+
+  /**
+   * Returns a map of triggers to their corresponding reef branches.
+   *
+   * @param eventLoop The event loop to use for the triggers.
+   * @return A map of triggers to reef branches.
+   */
+  public Map<Trigger, ReefBranch> buttonToReefBranchMap(EventLoop eventLoop) {
+    return Map.ofEntries(
+        Map.entry(this.twoLeftTrigger(eventLoop), ReefBranch.TWO_LEFT),
+        Map.entry(this.twoRightTrigger(eventLoop), ReefBranch.TWO_RIGHT),
+        Map.entry(this.fourLeftTrigger(eventLoop), ReefBranch.FOUR_LEFT),
+        Map.entry(this.fourRightTrigger(eventLoop), ReefBranch.FOUR_RIGHT),
+        Map.entry(this.sixLeftTrigger(eventLoop), ReefBranch.SIX_LEFT),
+        Map.entry(this.sixRightTrigger(eventLoop), ReefBranch.SIX_RIGHT),
+        Map.entry(this.eightLeftTrigger(eventLoop), ReefBranch.EIGHT_LEFT),
+        Map.entry(this.eightRightTrigger(eventLoop), ReefBranch.EIGHT_RIGHT),
+        Map.entry(this.tenLeftTrigger(eventLoop), ReefBranch.TEN_LEFT),
+        Map.entry(this.tenRightTrigger(eventLoop), ReefBranch.TEN_RIGHT),
+        Map.entry(this.twelveLeftTrigger(eventLoop), ReefBranch.TWELVE_LEFT),
+        Map.entry(this.twelveRightTrigger(eventLoop), ReefBranch.TWELVE_RIGHT)
+    );
+  }
+
+  /**
+   * Returns a map of triggers to their corresponding reef branches using the default button loop.
+   *
+   * @return A map of triggers to reef branches.
+   */
+  public Map<Trigger, ReefBranch> buttonToReefBranchMap() {
+    return buttonToReefBranchMap(CommandScheduler.getInstance().getDefaultButtonLoop());
+  }
+
+  /**
+   * Returns a map of triggers to their corresponding reef levels.
+   *
+   * @param eventLoop The event loop to use for the triggers.
+   * @return A map of triggers to reef levels.
+   */
+  public Map<Trigger, ReefLevel> buttonToReefLevelMap(EventLoop eventLoop) {
+    return Map.ofEntries(
+        Map.entry(this.L1Trigger(eventLoop), ReefLevel.L1),
+        Map.entry(this.L2Trigger(eventLoop), ReefLevel.L2),
+        Map.entry(this.L3Trigger(eventLoop), ReefLevel.L3),
+        Map.entry(this.L4Trigger(eventLoop), ReefLevel.L4)
+    );
+  }
+
+  /**
+   * Returns a map of triggers to their corresponding reef levels using the default button loop.
+   *
+   * @return A map of triggers to reef levels.
+   */
+  public Map<Trigger, ReefLevel> buttonToReefLevelMap() {
+    return buttonToReefLevelMap(CommandScheduler.getInstance().getDefaultButtonLoop());
+  }
 
   public boolean isControllerOneConnected() {
     return controller1.isConnected();
