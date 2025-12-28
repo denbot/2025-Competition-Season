@@ -85,52 +85,51 @@ public class OnTheFlyCommands {
   }
 
   public Command alignTwoLeft() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT), "Align_Two_Left");
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_LEFT).withName("Align Two Left");
   }
 
   public Command alignTwoRight() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT), "Align_Two_Right");
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT).withName("Align Two Right");
   }
 
   public Command alignFourLeft() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT), "Align_Four_Left");
+    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT).withName("Align Four Left");
   }
 
   public Command alignFourRight() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT), "Align_Four_Right");
+    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT).withName("Align Four Right");
   }
 
   public Command alignSixLeft() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT), "Align_Six_Left");
+    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT).withName("Align Six Left");
   }
 
   public Command alignSixRight() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT), "Align_Six_Right");
+    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT).withName("Align Six Right");
   }
 
   public Command alignEightLeft() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT), "Align_Eight_Left");
+    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT).withName("Align Eight Left");
   }
 
   public Command alignEightRight() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT), "Align_Eight_Right");
+    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT).withName("Align Eight Right");
   }
 
   public Command alignTenLeft() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT), "Align_Ten_Left");
+    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT).withName("Align Ten Left");
   }
 
   public Command alignTenRight() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT), "Align_Ten_Right");
+    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT).withName("Align Ten Right");
   }
 
   public Command alignTwelveLeft() {
-    return setCommandName(getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT), "Align_Twelve_Left");
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT).withName("Align Twelve Left");
   }
 
   public Command alignTwelveRight() {
-    return setCommandName(
-        getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT), "Align_Twelve_Right");
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT).withName("Align Twelve Right");
   }
 
   public Command pickupLollipopLeft() {
@@ -231,12 +230,8 @@ public class OnTheFlyCommands {
     // path
     return AutoBuilder.pathfindToPose(
             new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(angle))),
-            new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)))
+            new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720))
+        )
         .andThen(getFinalAlignmentCommand(targetPose));
-  }
-
-  private static Command setCommandName(Command command, String name) {
-    command.setName(name);
-    return command;
   }
 }
