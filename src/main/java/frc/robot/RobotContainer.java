@@ -208,6 +208,7 @@ public class RobotContainer {
         driverController,
         buttonBoxController,
         drive,
+        boathook,
         boathookCommands,
         intakeCommands,
         onTheFlyCommands,

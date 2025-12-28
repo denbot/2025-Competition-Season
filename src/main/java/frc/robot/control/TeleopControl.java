@@ -3,70 +3,92 @@ package frc.robot.control;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.control.controllers.DenbotXboxController;
+import frc.robot.game.ReefBranch;
+import frc.robot.game.ReefLevel;
+import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.led.LEDController;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
 public class TeleopControl {
-  private final Drive drive;
-  private Command extendBoathook;
-  private Command retractBoathook;
-  private Command scorePrepCommand;
-  private Command currentOnTheFlyCommand;
+  // Chosen by fair dice roll. https://xkcd.com/221/
+  private ReefLevel targetReefLevel = ReefLevel.L2;
+  private ReefBranch targetReefBranch = ReefBranch.SIX_RIGHT;
 
   public TeleopControl(
       EventLoop teleopEventLoop,
       DenbotXboxController driverController,
       ButtonBoxController buttonBoxController,
       Drive drive,
+      Boathook boathook,
       BoathookCommands boathookCommands,
       IntakeCommands intakeCommands,
       OnTheFlyCommands onTheFlyCommands,
       LEDController ledController
   ) {
-    this.drive = drive;
-
-    Command setL1 = Commands.runOnce(() -> scorePrepCommand = intakeCommands.intakeL1Command());
-    Command setL2 = Commands.runOnce(() -> {
-          extendBoathook = boathookCommands.extendL2();
-          retractBoathook = boathookCommands.retractL2();
-          scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
-        }
-    );
-    Command setL3 = Commands.runOnce(() -> {
-          extendBoathook = boathookCommands.extendL3();
-          retractBoathook = boathookCommands.retractL3();
-          scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
-        }
-    );
-    Command setL4 = Commands.runOnce(() -> {
-          extendBoathook = boathookCommands.extendL4();
-          retractBoathook = boathookCommands.retractL4();
-          scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
-        }
+    SelectCommand<ReefLevel> scorePrepCommand = new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ReefLevel.L1, intakeCommands.intakeL1Command()),
+            Map.entry(ReefLevel.L2, boathookCommands.handoffCommand(intakeCommands)),
+            Map.entry(ReefLevel.L3, boathookCommands.handoffCommand(intakeCommands)),
+            Map.entry(ReefLevel.L4, boathookCommands.handoffCommand(intakeCommands))
+        ),
+        () -> targetReefLevel
     );
 
-    extendBoathook = boathookCommands.extendL2();
-    retractBoathook = boathookCommands.retractL2();
-    scorePrepCommand = boathookCommands.handoffCommand(intakeCommands);
+    SelectCommand<ReefLevel> extendBoathook = new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ReefLevel.L1, Commands.idle(boathook)),
+            Map.entry(ReefLevel.L2, boathookCommands.extendL2()),
+            Map.entry(ReefLevel.L3, boathookCommands.extendL3()),
+            Map.entry(ReefLevel.L4, boathookCommands.extendL4())
+        ),
+        () -> targetReefLevel
+    );
 
-    currentOnTheFlyCommand = onTheFlyCommands.alignSixRight();
+    SelectCommand<ReefLevel> retractBoathook = new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ReefLevel.L1, Commands.idle(boathook)),
+            Map.entry(ReefLevel.L2, boathookCommands.retractL2()),
+            Map.entry(ReefLevel.L3, boathookCommands.retractL3()),
+            Map.entry(ReefLevel.L4, boathookCommands.retractL4())
+        ),
+        () -> targetReefLevel
+    );
 
+    SelectCommand<ReefBranch> onTheFlyCommand = new SelectCommand<>(
+        Map.ofEntries(
+            Map.entry(ReefBranch.TWO_LEFT, onTheFlyCommands.alignTwelveLeft()),
+            Map.entry(ReefBranch.TWO_RIGHT, onTheFlyCommands.alignTwoRight()),
+            Map.entry(ReefBranch.FOUR_LEFT, onTheFlyCommands.alignFourLeft()),
+            Map.entry(ReefBranch.FOUR_RIGHT, onTheFlyCommands.alignFourRight()),
+            Map.entry(ReefBranch.SIX_LEFT, onTheFlyCommands.alignSixLeft()),
+            Map.entry(ReefBranch.SIX_RIGHT, onTheFlyCommands.alignSixRight()),
+            Map.entry(ReefBranch.EIGHT_LEFT, onTheFlyCommands.alignEightLeft()),
+            Map.entry(ReefBranch.EIGHT_RIGHT, onTheFlyCommands.alignEightRight()),
+            Map.entry(ReefBranch.TEN_LEFT, onTheFlyCommands.alignTenLeft()),
+            Map.entry(ReefBranch.TEN_RIGHT, onTheFlyCommands.alignTenRight()),
+            Map.entry(ReefBranch.TWELVE_LEFT, onTheFlyCommands.alignTwelveLeft()),
+            Map.entry(ReefBranch.TWELVE_RIGHT, onTheFlyCommands.alignTwelveRight())
+        ),
+        () -> targetReefBranch
+    );
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -90,47 +112,28 @@ public class TeleopControl {
     // Reset gyro to 0° when the Start button is pressed
     driverController
         .start(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(this::resetGyro, drive)
-                .ignoringDisable(true)
-        );
+        .onTrue(Commands.runOnce(() -> resetGyro(drive), drive).ignoringDisable(true));
 
     driverController
         .x(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand.schedule())
+            onTheFlyCommand
                 .alongWith(ledController.rainbow())
-                .until(() -> !currentOnTheFlyCommand.isScheduled())
-                .andThen(
-                    ledController.temporary(Color.kYellow, Milliseconds.of(500))
-                )
+                .andThen(ledController.temporary(Color.kYellow, Milliseconds.of(500)))
         );
+
+    // We don't want to accidentally trigger until we're at the correct location around the reef
+    BooleanSupplier onTheFlyIsNotRunning = onTheFlyCommand::isScheduled;
 
     driverController
         .rightBumper(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  if (!currentOnTheFlyCommand.isScheduled() || currentOnTheFlyCommand.isFinished()) {
-                    extendBoathook.schedule();
-                  }
-                }
-            )
-        );
+        .and(onTheFlyIsNotRunning)
+        .onTrue(extendBoathook);
 
     driverController
         .rightTrigger(teleopEventLoop)
-        .onTrue(
-            Commands.runOnce(
-                    () -> {
-                      if (!currentOnTheFlyCommand.isScheduled() || currentOnTheFlyCommand.isFinished()) {
-                        retractBoathook.schedule();
-                      }
-                    }
-                )
-                .until(() -> !retractBoathook.isScheduled())
-                .andThen(ledController.fill(Color.kBlack))
-        );
+        .and(onTheFlyIsNotRunning)
+        .onTrue(retractBoathook);
 
     driverController
         .leftBumper(teleopEventLoop)
@@ -144,21 +147,29 @@ public class TeleopControl {
         .whileTrue(
             intakeCommands.intakeDownCommand()
                 .alongWith(intakeCommands.runIntakeCommand())
-                .alongWith(
-                    ledController.run(LEDPattern.solid(Color.kGreen).blink(Milliseconds.of(500)))
-                )
-                .andThen(ledController.fill(Color.kBlack))
+                .alongWith(ledController.temporary(Color.kGreen, Milliseconds.of(500)))
         );
 
-    driverController.povLeft(teleopEventLoop).onTrue(boathookCommands.microAdjustAngleBackward());
-    driverController.povRight(teleopEventLoop).onTrue(boathookCommands.microAdjustAngleForward());
-    driverController.povDown(teleopEventLoop).onTrue(boathookCommands.microAdjustExtensionBackward());
-    driverController.povUp(teleopEventLoop).onTrue(boathookCommands.microAdjustExtensionForward());
+    driverController
+        .povLeft(teleopEventLoop)
+        .onTrue(boathookCommands.microAdjustAngleBackward());
+
+    driverController
+        .povRight(teleopEventLoop)
+        .onTrue(boathookCommands.microAdjustAngleForward());
+
+    driverController
+        .povDown(teleopEventLoop)
+        .onTrue(boathookCommands.microAdjustExtensionBackward());
+
+    driverController
+        .povUp(teleopEventLoop)
+        .onTrue(boathookCommands.microAdjustExtensionForward());
 
     buttonBoxController
         .twoLeftTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwoLeft())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWO_LEFT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -167,7 +178,7 @@ public class TeleopControl {
     buttonBoxController
         .twoRightTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwoRight())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWO_RIGHT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -176,7 +187,7 @@ public class TeleopControl {
     buttonBoxController
         .fourLeftTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignFourLeft())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.FOUR_LEFT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -185,7 +196,7 @@ public class TeleopControl {
     buttonBoxController
         .fourRightTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignFourRight())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.FOUR_RIGHT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -194,7 +205,7 @@ public class TeleopControl {
     buttonBoxController
         .sixLeftTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignSixLeft())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.SIX_LEFT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -203,7 +214,7 @@ public class TeleopControl {
     buttonBoxController
         .sixRightTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignSixRight())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.SIX_RIGHT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -212,7 +223,7 @@ public class TeleopControl {
     buttonBoxController
         .eightLeftTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignEightLeft())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.EIGHT_LEFT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -221,7 +232,7 @@ public class TeleopControl {
     buttonBoxController
         .eightRightTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignEightRight())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.EIGHT_RIGHT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -230,7 +241,7 @@ public class TeleopControl {
     buttonBoxController
         .tenLeftTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTenLeft())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.TEN_LEFT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -239,7 +250,7 @@ public class TeleopControl {
     buttonBoxController
         .tenRightTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTenRight())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.TEN_RIGHT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -248,7 +259,7 @@ public class TeleopControl {
     buttonBoxController
         .twelveLeftTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwelveLeft())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWELVE_LEFT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -257,7 +268,7 @@ public class TeleopControl {
     buttonBoxController
         .twelveRightTrigger(teleopEventLoop)
         .onTrue(
-            Commands.runOnce(() -> currentOnTheFlyCommand = onTheFlyCommands.alignTwelveRight())
+            Commands.runOnce(() -> targetReefBranch = ReefBranch.TWELVE_RIGHT)
                 .alongWith(
                     ledController.temporary(Color.kRed, Milliseconds.of(250))
                 )
@@ -266,19 +277,38 @@ public class TeleopControl {
     buttonBoxController
         .L1Trigger(teleopEventLoop)
         .onTrue(
-            setL1.alongWith(ledController.temporary(Color.kRed, Seconds.of(1)))
+            Commands.runOnce(() -> targetReefLevel = ReefLevel.L1)
+                .alongWith(ledController.temporary(Color.kRed, Seconds.of(1)))
         );
-    buttonBoxController.L2Trigger(teleopEventLoop).onTrue(setL2.alongWith(ledController.indicateL2()));
-    buttonBoxController.L3Trigger(teleopEventLoop).onTrue(setL3.alongWith(ledController.indicateL3()));
-    buttonBoxController.L4Trigger(teleopEventLoop).onTrue(setL4.alongWith(ledController.indicateL4()));
 
-    // Clear Commands
+    buttonBoxController
+        .L2Trigger(teleopEventLoop)
+        .onTrue(
+            Commands.runOnce(() -> targetReefLevel = ReefLevel.L2)
+                .alongWith(ledController.indicateL2())
+        );
+
+    buttonBoxController
+        .L3Trigger(teleopEventLoop)
+        .onTrue(
+            Commands.runOnce(() -> targetReefLevel = ReefLevel.L3)
+                .alongWith(ledController.indicateL3())
+        );
+
+    buttonBoxController
+        .L4Trigger(teleopEventLoop)
+        .onTrue(
+            Commands.runOnce(() -> targetReefLevel = ReefLevel.L4)
+                .alongWith(ledController.indicateL4())
+        );
+
+    // TODO This should probably be under drive control and automatic on intake
     buttonBoxController
         .spearTrigger(teleopEventLoop)
-        .onTrue(Commands.runOnce(() -> scorePrepCommand.schedule()));
+        .onTrue(scorePrepCommand);
   }
 
-  private void resetGyro() {
+  private void resetGyro(Drive drive) {
     var alliance = DriverStation.getAlliance();
     boolean isFlipped = alliance.equals(Optional.of(DriverStation.Alliance.Red));
     Rotation2d rotation = isFlipped ? new Rotation2d(Math.PI) : new Rotation2d();
