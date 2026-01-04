@@ -157,14 +157,14 @@ public class IntakeIOTalonFX implements IntakeIO {
     rightVelocityRotPerSec, rightCurrentAmps,
     rotatorPositionRot, rotatorVelocityRotPerSec);
 
-    inputs.leftVelocityRadPerSec = Units.rotationsToRadians(leftVelocityRotPerSec.getValueAsDouble());
+    inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
     inputs.leftCurrentAmps = leftCurrentAmps.getValueAsDouble();
 
-    inputs.rightVelocityRadPerSec = Units.rotationsToRadians(leftVelocityRotPerSec.getValueAsDouble());
+    inputs.rightVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
     inputs.rightCurrentAmps = leftCurrentAmps.getValueAsDouble();
 
-    inputs.rotatorPositionRad = Units.rotationsToRadians(rotatorPositionRot.getValueAsDouble());
-    inputs.rotatorVelocityRadPerSec = Units.rotationsToRadians(rotatorVelocityRotPerSec.getValueAsDouble());
+    inputs.rotatorPositionRev = rotatorPositionRot.getValueAsDouble();
+    inputs.rotatorVelocityRevPerSec = rotatorVelocityRotPerSec.getValueAsDouble();
   }
 
     public void addInstruments(Orchestra orchestra) {

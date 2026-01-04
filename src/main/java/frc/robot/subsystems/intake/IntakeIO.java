@@ -12,21 +12,18 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
-    public double leftVelocityRadPerSec = 0.0;
+    public double leftVelocityRevPerSec = 0.0;
     public double leftCurrentAmps = 0.0;
 
-    public double rightVelocityRadPerSec = 0.0;
+    public double rightVelocityRevPerSec = 0.0;
     public double rightCurrentAmps = 0.0;
 
-    public double rotatorPositionRad = 0.0;
-    public double rotatorVelocityRadPerSec = 0.0;
+    public double rotatorPositionRev = 0.0;
+    public double rotatorVelocityRevPerSec = 0.0;
   }
 
   /** Update the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
-
-  /** Run open loop at the specified voltage. */
-  public default void setVoltage(double volts) {}
 
   public default void setIntakeHoldingVoltage(double voltage) {}
 

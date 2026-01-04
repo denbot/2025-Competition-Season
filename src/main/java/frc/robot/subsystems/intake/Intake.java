@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    SmartDashboard.putNumber("Intake Rotation Angle", inputs.rotatorPositionRad);
+    SmartDashboard.putNumber("Intake Rotation Angle", inputs.rotatorPositionRev);
   }
 
   public Command runIntakeCommand() {
@@ -43,19 +43,19 @@ public class Intake extends SubsystemBase {
 
   public Command intakeDownCommand() {
     return Commands.run(() -> io.setAngle(0.015))
-        .until(() -> Math.abs(0 - inputs.rotatorPositionRad) < 0.01);
+        .until(() -> Math.abs(0 - inputs.rotatorPositionRev) < 0.01);
   }
 
   public Command intakeL1Command() {
     return Commands.run(() -> io.setAngle(0.2))
-        .until(() -> Math.abs(0.2 - inputs.rotatorPositionRad) < 0.01);
+        .until(() -> Math.abs(0.2 - inputs.rotatorPositionRev) < 0.01);
   }
 
   public Command intakeSpearCommand() {
     return Commands.run(() -> io.setAngle(0.45))
         .until(
             () ->
-                Math.abs(0.45 - inputs.rotatorPositionRad) < 0.025
-                    && Math.abs(inputs.rotatorVelocityRadPerSec) < 0.01);
+                Math.abs(0.45 - inputs.rotatorPositionRev) < 0.025
+                    && Math.abs(inputs.rotatorVelocityRevPerSec) < 0.01);
   }
 }

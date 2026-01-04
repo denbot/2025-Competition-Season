@@ -15,17 +15,17 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 public class IntakeIOSim implements IntakeIO {
   private DCMotorSim intakeLeftSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.004, 1),
+          LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.001, 1),
           DCMotor.getCIM(1));
 
     private DCMotorSim intakeRightSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.004, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.001, 1),
     DCMotor.getCIM(1));
 
     private DCMotorSim intakeRotatorSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.004, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.001, 1),
     DCMotor.getCIM(1));
 
   private double intakeAppliedVolts = 0.0;
@@ -42,18 +42,18 @@ public class IntakeIOSim implements IntakeIO {
     intakeRotatorSim.setInputVoltage(rotationAppliedVolts);
     intakeRotatorSim.update(0.02);
 
-    inputs.leftVelocityRadPerSec = intakeLeftSim.getAngularVelocityRadPerSec();
+    inputs.leftVelocityRevPerSec = intakeLeftSim.getAngularVelocityRPM() / 60.0;
     inputs.leftCurrentAmps = intakeLeftSim.getCurrentDrawAmps();
 
-    inputs.rightVelocityRadPerSec = intakeRightSim.getAngularVelocityRadPerSec();
+    inputs.rightVelocityRevPerSec = intakeRightSim.getAngularVelocityRPM() / 60.0;
     inputs.rightCurrentAmps = intakeRightSim.getCurrentDrawAmps();
 
-    inputs.rotatorPositionRad = intakeRotatorSim.getAngularPositionRad();
-    inputs.rotatorVelocityRadPerSec = intakeRotatorSim.getAngularVelocityRadPerSec();
+    inputs.rotatorPositionRev = intakeRotatorSim.getAngularPositionRotations();
+    inputs.rotatorVelocityRevPerSec = intakeRotatorSim.getAngularVelocityRPM() / 60.0;
   }
 
   @Override
-  public void setVoltage(double volts) {
+  public void setIntakeSpeed(double volts) {
     intakeAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 
@@ -62,7 +62,7 @@ public class IntakeIOSim implements IntakeIO {
 //     intakeRightSim.setControl(new VoltageOut(-voltage));
 //   }
 
-//   public double getrotationSimAngle() {
+//   public double getrotationAngle() {
 //     return rotationSim.getPosition().getValueAsDouble();
 //   }
 

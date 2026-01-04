@@ -182,8 +182,8 @@ public class TeleopControl {
         );
 
     // TODO This should probably be under drive control and automatic on intake
-    buttonBoxController
-        .spearTrigger(teleopEventLoop)
+    driverController
+        .y(teleopEventLoop)
         .onTrue(scorePrepCommand);
   }
 

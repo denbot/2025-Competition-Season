@@ -44,7 +44,7 @@ public class AutoSequenceUserControl {
     buttonBoxController.lollipopCenterTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter()));
     buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopRight()));
 
-    buttonBoxController.spearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
+    buttonBoxController.clearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
     var reefLevelTriggers = Map.ofEntries(
         // TODO L1
