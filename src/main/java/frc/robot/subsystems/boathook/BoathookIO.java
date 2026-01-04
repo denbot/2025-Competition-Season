@@ -28,13 +28,13 @@ public interface BoathookIO {
   default void setAngleVoltage(double voltage) {
   }
 
-  default void setAnglePosition(Angle angle) {
+  default void setAngle(Angle angle) {
   }
 
   default void setLengthVoltage(double voltage) {
   }
 
-  default void setLengthPosition(Distance length) {
+  default void setLength(Distance length) {
   }
 
   @AutoLog

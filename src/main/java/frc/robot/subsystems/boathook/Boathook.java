@@ -7,9 +7,9 @@ package frc.robot.subsystems.boathook;
 import com.ctre.phoenix6.Orchestra;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.CanBeAnInstrument;
+import org.littletonrobotics.junction.Logger;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -26,7 +26,7 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
   }
 
   public void setAngle(Angle angle) {
-    io.setAnglePosition(angle);
+    io.setAngle(angle);
     angleSetpoint = angle;
   }
 
@@ -39,7 +39,7 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
   }
 
   public void setLength(Distance length) {
-    io.setLengthPosition(length);
+    io.setLength(length);
     lengthSetpoint = length;
   }
 
@@ -60,9 +60,9 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Boathook", inputs);
 
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Boathook/Angle", getAngle().in(Degrees));
-    SmartDashboard.putNumber("Boathook/Extension", getLength().in(Meters));
+    Logger.recordOutput("Boathook/Angle", inputs.angle);
+    Logger.recordOutput("Boathook/Extension", inputs.extensionLength);
   }
 }
