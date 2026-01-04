@@ -118,9 +118,8 @@ public class RobotVisualization {
 
   public void update() {
     intakeAngle.setAngle(Revolutions.of(intake.getRotationAngle()).in(Degrees));
-    boathookAngle.setAngle(Revolutions.of(boathook.getAngle()).in(Degrees));
-    // Length is in rotations, times the sensor drum diameter times PI
-    boathookExtension.setLength(boathook.getLength() * 1.89 * Math.PI);
+    boathookAngle.setAngle(boathook.getAngle().in(Degrees));
+    boathookExtension.setLength(s(boathook.getLength()));
 
     if(DriverStation.getAlliance().isEmpty()) {
       if(currentAllianceColor != white) {
