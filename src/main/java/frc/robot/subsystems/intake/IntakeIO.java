@@ -9,6 +9,8 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.ctre.phoenix6.Orchestra;
+
 public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
@@ -25,6 +27,8 @@ public interface IntakeIO {
 
   /** Update the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
+
+  public default void addInstruments(Orchestra orchestra) {}
 
   public default void setAngle(double angle) {}
 

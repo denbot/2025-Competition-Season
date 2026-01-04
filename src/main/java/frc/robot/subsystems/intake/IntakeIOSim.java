@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.Orchestra;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -56,6 +58,10 @@ public class IntakeIOSim implements IntakeIO {
   @Override
   public void setIntakeSpeed(double volts) {
     intakeAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+  }
+
+  public void addInstruments(Orchestra orchestra){
+    System.out.println("Unable to add instruments in simulation.");
   }
 
 //   public void setAngle(double angle) {

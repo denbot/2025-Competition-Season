@@ -173,7 +173,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public void setAngle(double angle) {
-    rotation.setControl(new PositionVoltage(angle));
+    rotation.setControl(new PositionVoltage(Units.degreesToRotations(angle)));
   }
 
   public void setIntakeSpeed(double velocity) {
