@@ -49,6 +49,6 @@ public interface BoathookIO {
     public Distance extensionLength = Meter.zero();
     public LinearVelocity extensionLengthPerSec = MetersPerSecond.zero();
     public Voltage extensionAppliedVolts = Volts.zero();
-    public Current extensionCurrentAmps = Amps.zero();
+    public Current extensionCurrent = Amps.zero();
   }
 }

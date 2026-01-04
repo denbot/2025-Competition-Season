@@ -160,7 +160,7 @@ public class BoathookIOTalonFX implements BoathookIO, CanBeAnInstrument {
     inputs.extensionLength = wheelCircumference.times(extensionAngle.getValue().in(Rotations));
     inputs.extensionLengthPerSec = wheelCircumference.times(extensionAngularVelocity.getValue().in(RotationsPerSecond)).per(Second);
     inputs.extensionAppliedVolts = extensionAppliedVolts.getValue();
-    inputs.extensionCurrentAmps = extensionCurrent.getValue();
+    inputs.extensionCurrent = extensionCurrent.getValue();
   }
 
   @Override
