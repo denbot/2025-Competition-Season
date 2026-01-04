@@ -42,26 +42,6 @@ public final class Constants {
     public static final String canivoreSerial = "D75CCE723353385320202034111303FF";
   }
 
-  public static class IntakeConstants {
-    public static final double rotatorGearRatio = 1;
-    public static final double forwardSoftLimit = 0.25;
-    public static final double reverseSoftLimit = 0;
-
-    public static final int LEFT_INTAKE_MOTOR_ID = 19;
-    public static final int RIGHT_INTAKE_MOTOR_ID = 20;
-
-    public static final int CANDI_ID = 18; // S1 is unused, S2 is base switch
-    public static final int INTAKE_ROTATION_MOTOR_ID = 23;
-    public static final int INTAKE_ROTATION_ENCODER_ID = 24;
-
-    public static final double intakeDownAngle = 0;
-    public static final double intakeSpearAngle = 0.55;
-    public static final double intakeL1Angle = 0.2;
-
-    public static final double intakeSpeed = 60; // Rotations / Second
-    public static final double intakeAcceleration = 13; // Rotations / Second^2
-  }
-
   public static class BoathookConstants {
     public static final int EXTENDER_MOTOR_ID = 13;
     public static final int ROTATION_MOTOR_ID = 14;

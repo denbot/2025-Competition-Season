@@ -4,177 +4,58 @@
 
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.Orchestra;
-import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.CANdi;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.*;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.CanBeAnInstrument;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class Intake extends SubsystemBase implements CanBeAnInstrument {
+public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-  private final TalonFX intakeLeft =
-      new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
+  private final IntakeIO io;
+  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  private final TalonFX intakeRight =
-      new TalonFX(IntakeConstants.RIGHT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
-
-  private final TalonFX rotation =
-      new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
-  private final CANcoder rotationEncoder =
-      new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
-
-  private final CANdi intakeSensors =
-      new CANdi(IntakeConstants.CANDI_ID, OperatorConstants.canivoreSerial);
-
-  public static final TalonFXConfiguration intakeRotationConfig =
-      new TalonFXConfiguration()
-          .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
-          .withCurrentLimits(
-              new CurrentLimitsConfigs()
-                  .withStatorCurrentLimitEnable(true)
-                  .withStatorCurrentLimit(70))
-          .withFeedback(
-              new FeedbackConfigs()
-                  .withFeedbackRemoteSensorID(IntakeConstants.INTAKE_ROTATION_ENCODER_ID)
-                  .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                  .withSensorToMechanismRatio(IntakeConstants.rotatorGearRatio)
-                  .withRotorToSensorRatio(120))
-          .withSoftwareLimitSwitch(
-              new SoftwareLimitSwitchConfigs()
-                  .withForwardSoftLimitEnable(false)
-                  .withForwardSoftLimitThreshold(IntakeConstants.forwardSoftLimit)
-                  .withReverseSoftLimitEnable(false)
-                  .withReverseSoftLimitThreshold(IntakeConstants.reverseSoftLimit))
-          .withMotionMagic(
-              new MotionMagicConfigs()
-                  .withMotionMagicAcceleration(4)
-                  .withMotionMagicCruiseVelocity(2))
-          .withSlot0(
-              new Slot0Configs()
-                  .withKP(45)
-                  .withKD(0)
-                  .withKG(0.2)
-                  .withGravityType(GravityTypeValue.Arm_Cosine));
-
-  public static final CANcoderConfiguration intakeRotationSensorConfig =
-      new CANcoderConfiguration()
-          .withMagnetSensor(
-              new MagnetSensorConfigs()
-                  .withMagnetOffset(-0.907070703125)
-                  .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
-
-  public boolean up = false;
-
-  private static final CANdiConfiguration intakeSensorsConfig =
-      new CANdiConfiguration()
-          .withDigitalInputs(
-              new DigitalInputsConfigs()
-                  .withS1CloseState(S1CloseStateValue.CloseWhenNotFloating)
-                  .withS1FloatState(S1FloatStateValue.FloatDetect)
-                  .withS2CloseState(S2CloseStateValue.CloseWhenNotFloating)
-                  .withS2FloatState(S2FloatStateValue.FloatDetect));
-
-  private static final TalonFXConfiguration intakeConfig =
-      new TalonFXConfiguration()
-          .withCurrentLimits(
-              new CurrentLimitsConfigs()
-                  .withStatorCurrentLimitEnable(true)
-                  .withStatorCurrentLimit(60))
-          .withSlot0(new Slot0Configs().withKS(5.4).withKP(3));
-
-  private static final NeutralOut motorStop = new NeutralOut();
-  private static final VelocityTorqueCurrentFOC intakeSpin =
-      new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
-
-  public Intake() {
-    rotation.setNeutralMode(NeutralModeValue.Brake);
-    intakeLeft.setNeutralMode(NeutralModeValue.Coast);
-    intakeRight.setNeutralMode(NeutralModeValue.Coast);
-
-    intakeLeft.getConfigurator().apply(intakeConfig);
-    intakeRight.getConfigurator().apply(intakeConfig);
-
-    rotation.getConfigurator().apply(intakeRotationConfig);
-    rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig);
-    intakeSensors.getConfigurator().apply(intakeSensorsConfig);
-  }
-
-  public void setIntakeHoldingVoltage(double voltage) {
-    intakeLeft.setControl(new VoltageOut(voltage));
-    intakeRight.setControl(new VoltageOut(-voltage));
-  }
-
-  public double getRotationAngle() {
-    return rotation.getPosition().getValueAsDouble();
-  }
-
-  public boolean getIntakeIsStalled() {
-    boolean returnCondition =
-        intakeRight.getStatorCurrent().getValueAsDouble() > 40
-            && intakeRight.getVelocity().getValueAsDouble() < 1;
-    if (returnCondition) System.out.println("Motor Is Stalled!!!");
-    return returnCondition;
-  }
-
-  public double getClosedLoopError() {
-    return rotation.getClosedLoopError().getValueAsDouble();
-  }
-
-  public double getRotationSetpoint() {
-    double rotationReference = rotation.getClosedLoopReference().getValueAsDouble();
-    return rotationReference;
-  }
-
-  public double getRotationVelocity() {
-    return rotation.getVelocity().getValueAsDouble();
-  }
-
-  public void setAngle(double angle) {
-    rotation.setControl(new PositionVoltage(angle));
-  }
-
-  public void setIntakeSpeed(double velocity) {
-    intakeLeft.setControl(intakeSpin.withVelocity(velocity));
-    intakeRight.setControl(intakeSpin.withVelocity(-velocity));
-  }
-
-  public void setStaticBrake() {
-    rotation.setControl(new StaticBrake());
-  }
-
-  public void flipL1Toggle() {
-    up = !up;
-  }
-
-  public void addInstruments(Orchestra orchestra) {
-    // Add a single device to the orchestra
-    orchestra.addInstrument(rotation);
-    orchestra.addInstrument(intakeLeft);
-    orchestra.addInstrument(intakeRight);
-  }
-
-  public void stopIntake() {
-    intakeLeft.setControl(motorStop);
-    intakeRight.setControl(motorStop);
+  public Intake(IntakeIO io) {
+    this.io = io;
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Intake Rotation Angle", getRotationAngle());
+    io.updateInputs(inputs);
+    Logger.processInputs("Intake", inputs);
+    SmartDashboard.putNumber("Intake Rotation Angle", inputs.rotatorPositionRad);
   }
 
-  public boolean isCoralIntaken() {
-    return intakeSensors.getS2Closed().getValue() || intakeSensors.getS1Closed().getValue();
+  public Command runIntakeCommand() {
+    return Commands.runEnd(() -> io.setIntakeSpeed(60), () -> io.setIntakeSpeed(0));
+  }
+
+  public Command runSoftIntakeCommand() {
+    return Commands.runOnce(() -> io.setIntakeSpeed(5));
+  }
+
+  public Command runRejectCommand() {
+    return Commands.runEnd(() -> io.setIntakeSpeed(-60), () -> io.setIntakeSpeed(0))
+        .raceWith(new WaitCommand(0.5));
+  }
+
+  public Command intakeDownCommand() {
+    return Commands.run(() -> io.setAngle(0.015))
+        .until(() -> Math.abs(0 - inputs.rotatorPositionRad) < 0.01);
+  }
+
+  public Command intakeL1Command() {
+    return Commands.run(() -> io.setAngle(0.2))
+        .until(() -> Math.abs(0.2 - inputs.rotatorPositionRad) < 0.01);
+  }
+
+  public Command intakeSpearCommand() {
+    return Commands.run(() -> io.setAngle(0.45))
+        .until(
+            () ->
+                Math.abs(0.45 - inputs.rotatorPositionRad) < 0.025
+                    && Math.abs(inputs.rotatorVelocityRadPerSec) < 0.01);
   }
 }

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.led.LEDController;
 import frc.robot.subsystems.boathook.Boathook;
+import frc.robot.subsystems.intake.Intake;
+
 import java.util.function.BooleanSupplier;
 
 public class BoathookCommands {
@@ -120,15 +122,15 @@ public class BoathookCommands {
     return command;
   }
 
-  public Command handoffCommand(IntakeCommands intakeCommands) {
+  public Command handoffCommand(Intake intake) {
 
     return new SequentialCommandGroup(
         setAngleCommand(93),
         setLengthLinearCommand(0.06),
         setAngleCommand(25),
-        intakeCommands.intakeSpearCommand(),
-        new ParallelCommandGroup(setAngleCommand(93), intakeCommands.runRejectCommand()),
-        intakeCommands.intakeL1Command(),
+        intake.intakeSpearCommand(),
+        new ParallelCommandGroup(setAngleCommand(93), intake.runRejectCommand()),
+        intake.intakeL1Command(),
         ledController.fill(Color.kYellow)
     );
   }

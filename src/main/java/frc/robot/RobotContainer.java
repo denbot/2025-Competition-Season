@@ -38,6 +38,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.control.controllers.ButtonBoxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -68,7 +71,6 @@ public class RobotContainer {
 
   // Commands
   private final BoathookCommands boathookCommands;
-  private final IntakeCommands intakeCommands;
   private final OnTheFlyCommands onTheFlyCommands;
 
   // Direct control over the LEDs
@@ -88,6 +90,8 @@ public class RobotContainer {
             new ModuleIOTalonFX(TunerConstants.BackLeft),
             new ModuleIOTalonFX(TunerConstants.BackRight)
         );
+        intake = new Intake(new IntakeIOTalonFX());
+
         break;
 
       case SIM:
@@ -99,6 +103,8 @@ public class RobotContainer {
             new ModuleIOSim(TunerConstants.BackLeft),
             new ModuleIOSim(TunerConstants.BackRight)
         );
+        intake = new Intake(new IntakeIOSim());
+
         break;
 
       default:
@@ -110,17 +116,17 @@ public class RobotContainer {
             new ModuleIO() {},
             new ModuleIO() {}
         );
+        intake = new Intake(new IntakeIO() {});
+
         break;
     }
 
-    intake = new Intake();
     boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(driverController);
     ledController = new LEDController(21);
 
-    intakeCommands = new IntakeCommands(intake);
     boathookCommands = new BoathookCommands(boathook, ledController);
-    onTheFlyCommands = new OnTheFlyCommands(intakeCommands, boathookCommands, drive);
+    onTheFlyCommands = new OnTheFlyCommands(intake, boathookCommands, drive);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
