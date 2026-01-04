@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.intake.Intake;
+
 import java.util.ArrayList;
 
 public class AutoRoutineBuilder {
@@ -11,12 +13,12 @@ public class AutoRoutineBuilder {
   private SequentialCommandGroup autoRoutine;
   private ArrayList<String> commandStrings = new ArrayList<>();
   private BoathookCommands boathookCommands;
-  private IntakeCommands intakeCommands;
+  private Intake intake;
 
-  public AutoRoutineBuilder(BoathookCommands boathookCommands, IntakeCommands intakeCommands) {
+  public AutoRoutineBuilder(BoathookCommands boathookCommands, Intake intake) {
     autoRoutine = new SequentialCommandGroup();
     this.boathookCommands = boathookCommands;
-    this.intakeCommands = intakeCommands;
+    this.intake = intake;
   }
 
   public AutoRoutineBuilder addPickupPieceBlock(Command pickupPieceCommand) {
@@ -35,7 +37,7 @@ public class AutoRoutineBuilder {
   public AutoRoutineBuilder addBuildingBlock(Command autoAlign, Command scoreCommand) {
     autoRoutine.addCommands(
         new ParallelCommandGroup(
-            autoAlign, boathookCommands.setBoathookIdle(), intakeCommands.intakeL1Command()),
+            autoAlign, boathookCommands.setBoathookIdle(), intake.intakeL1Command()),
         scoreCommand);
     SmartDashboard.putString("Added Command", autoAlign.getName() + ", " + scoreCommand.getName());
     commandStrings.add(autoAlign.getName() + ", " + scoreCommand.getName());
@@ -45,7 +47,7 @@ public class AutoRoutineBuilder {
   public void clearCommands() {
     this.autoRoutine = new SequentialCommandGroup();
     this.autoRoutine.addCommands(
-        this.boathookCommands.setBoathookIdle(), this.intakeCommands.intakeL1Command());
+        this.boathookCommands.setBoathookIdle(), this.intake.intakeL1Command());
     SmartDashboard.putString("Added Command", "Cleared Commands");
   }
 

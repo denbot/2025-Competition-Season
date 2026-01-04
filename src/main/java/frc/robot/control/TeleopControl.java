@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.BoathookCommands;
-import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.control.controllers.DenbotXboxController;
@@ -18,6 +17,7 @@ import frc.robot.game.ReefBranch;
 import frc.robot.game.ReefLevel;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.led.LEDController;
 
 import java.util.Map;
@@ -39,16 +39,16 @@ public class TeleopControl {
       Drive drive,
       Boathook boathook,
       BoathookCommands boathookCommands,
-      IntakeCommands intakeCommands,
+      Intake intake,
       OnTheFlyCommands onTheFlyCommands,
       LEDController ledController
   ) {
     SelectCommand<ReefLevel> scorePrepCommand = new SelectCommand<>(
         Map.ofEntries(
-            Map.entry(ReefLevel.L1, intakeCommands.intakeL1Command()),
-            Map.entry(ReefLevel.L2, boathookCommands.handoffCommand(intakeCommands)),
-            Map.entry(ReefLevel.L3, boathookCommands.handoffCommand(intakeCommands)),
-            Map.entry(ReefLevel.L4, boathookCommands.handoffCommand(intakeCommands))
+            Map.entry(ReefLevel.L1, intake.intakeL1Command()),
+            Map.entry(ReefLevel.L2, boathookCommands.handoffCommand(intake)),
+            Map.entry(ReefLevel.L3, boathookCommands.handoffCommand(intake)),
+            Map.entry(ReefLevel.L4, boathookCommands.handoffCommand(intake))
         ),
         () -> targetReefLevel
     );
@@ -126,15 +126,15 @@ public class TeleopControl {
     driverController
         .leftBumper(teleopEventLoop)
         .whileTrue(
-            intakeCommands.runRejectCommand()
+            intake.runRejectCommand()
                 .alongWith(ledController.temporary(Color.kRed, Milliseconds.of(500)))
         );
 
     driverController
         .leftTrigger(teleopEventLoop)
         .whileTrue(
-            intakeCommands.intakeDownCommand()
-                .alongWith(intakeCommands.runIntakeCommand())
+            intake.intakeDownCommand()
+                .alongWith(intake.runIntakeCommand())
                 .alongWith(ledController.temporary(Color.kGreen, Milliseconds.of(500)))
         );
 

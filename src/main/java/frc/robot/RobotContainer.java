@@ -161,7 +161,6 @@ public class RobotContainer {
   private void configureAutoRoutines() {
     var orchestraPlayer = new OrchestraPlayer(
         driverController,
-        intake,
         boathook
     );
     autoChooser.addOption("Music Player", orchestraPlayer);
@@ -199,7 +198,7 @@ public class RobotContainer {
         disabledEventLoop,
         buttonBoxController,
         boathookCommands,
-        intakeCommands,
+        intake,
         onTheFlyCommands
     );
 
@@ -216,7 +215,7 @@ public class RobotContainer {
         drive,
         boathook,
         boathookCommands,
-        intakeCommands,
+        intake,
         onTheFlyCommands,
         ledController
     );
