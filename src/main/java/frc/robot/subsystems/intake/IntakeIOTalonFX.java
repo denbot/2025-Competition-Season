@@ -73,7 +73,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rightVelocityRotPerSec = intakeRight.getVelocity();
   private final StatusSignal<Current> rightCurrentAmps = intakeRight.getSupplyCurrent();
 
-  private final StatusSignal<Angle> rotatorPositionRot = intakeRight.getPosition();
+  private final StatusSignal<Angle> rotatorPositionDeg = intakeRight.getPosition();
   private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = intakeRight.getVelocity();
 
   public IntakeIOTalonFX() {
@@ -144,7 +144,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, leftVelocityRotPerSec, leftCurrentAmps,
         rightVelocityRotPerSec, rightCurrentAmps,
-        rotatorPositionRot, rotatorVelocityRotPerSec);
+        rotatorPositionDeg, rotatorVelocityRotPerSec);
 
     intakeRight.optimizeBusUtilization();
     intakeLeft.optimizeBusUtilization();
@@ -155,7 +155,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(leftVelocityRotPerSec, leftCurrentAmps,
     rightVelocityRotPerSec, rightCurrentAmps,
-    rotatorPositionRot, rotatorVelocityRotPerSec);
+    rotatorPositionDeg, rotatorVelocityRotPerSec);
 
     inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
     inputs.leftCurrentAmps = leftCurrentAmps.getValueAsDouble();
@@ -163,7 +163,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.rightVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
     inputs.rightCurrentAmps = leftCurrentAmps.getValueAsDouble();
 
-    inputs.rotatorPositionRev = rotatorPositionRot.getValueAsDouble();
+    inputs.rotatorPositionDeg = Units.rotationsToDegrees(rotatorPositionDeg.getValueAsDouble());
     inputs.rotatorVelocityRevPerSec = rotatorVelocityRotPerSec.getValueAsDouble();
   }
 

@@ -18,7 +18,7 @@ public interface IntakeIO {
     public double rightVelocityRevPerSec = 0.0;
     public double rightCurrentAmps = 0.0;
 
-    public double rotatorPositionRev = 0.0;
+    public double rotatorPositionDeg = 0.0;
     public double rotatorVelocityRevPerSec = 0.0;
   }
 

@@ -10,6 +10,7 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class IntakeIOSim implements IntakeIO {
@@ -48,7 +49,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rightVelocityRevPerSec = intakeRightSim.getAngularVelocityRPM() / 60.0;
     inputs.rightCurrentAmps = intakeRightSim.getCurrentDrawAmps();
 
-    inputs.rotatorPositionRev = intakeRotatorSim.getAngularPositionRotations();
+    inputs.rotatorPositionDeg = Units.rotationsToDegrees(intakeRotatorSim.getAngularPositionRotations());
     inputs.rotatorVelocityRevPerSec = intakeRotatorSim.getAngularVelocityRPM() / 60.0;
   }
 
