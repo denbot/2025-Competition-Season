@@ -16,8 +16,8 @@ public class IntakeConstants {
   public static final int RIGHT_INTAKE_MOTOR_ID = 20;
 
   public static final int CANDI_ID = 18; // S1 is unused, S2 is base switch
-  public static final int INTAKE_ROTATION_MOTOR_ID = 23;
-  public static final int INTAKE_ROTATION_ENCODER_ID = 24;
+  public static final int INTAKE_ROTATOR_MOTOR_ID = 23;
+  public static final int INTAKE_ROTATOR_ENCODER_ID = 24;
 
   public static final double intakeDownAngle = 0;
   public static final double intakeSpearAngle = 0.55;

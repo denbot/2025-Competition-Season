@@ -18,21 +18,21 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 public class IntakeIOSim implements IntakeIO {
   private DCMotorSim intakeLeftSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.001, 1),
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
           DCMotor.getCIM(1));
 
-    private DCMotorSim intakeRightSim =
+  private DCMotorSim intakeRightSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.001, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
     DCMotor.getCIM(1));
 
-    private DCMotorSim intakeRotatorSim =
+  private DCMotorSim intakeRotatorSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getCIM(1), 0.001, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
     DCMotor.getCIM(1));
 
   private double intakeAppliedVolts = 0.0;
-  private double rotationAppliedVolts = 0.0;
+  private double rotatorAppliedVolts = 0.0;
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
@@ -42,7 +42,7 @@ public class IntakeIOSim implements IntakeIO {
     intakeRightSim.setInputVoltage(-intakeAppliedVolts);
     intakeRightSim.update(0.02);
 
-    intakeRotatorSim.setInputVoltage(rotationAppliedVolts);
+    intakeRotatorSim.setInputVoltage(rotatorAppliedVolts);
     intakeRotatorSim.update(0.02);
 
     inputs.leftVelocityRevPerSec = intakeLeftSim.getAngularVelocityRPM() / 60.0;
@@ -65,7 +65,7 @@ public class IntakeIOSim implements IntakeIO {
   }
 
 //   public void setAngle(double angle) {
-//     rotationSim.setControl(new PositionVoltage(angle));
+//     rotatorSim.setControl(new PositionVoltage(angle));
 //   }
 
 //   public void setIntakeSpeed(double velocity) {
@@ -74,6 +74,6 @@ public class IntakeIOSim implements IntakeIO {
 //   }
 
 //   public void setStaticBrake() {
-//     rotationSim.setControl(new StaticBrake());
+//     rotatorSim.setControl(new StaticBrake());
 //   }
 }

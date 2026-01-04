@@ -39,7 +39,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.control.controllers.ButtonBoxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -90,7 +90,7 @@ public class RobotContainer {
             new ModuleIOTalonFX(TunerConstants.BackLeft),
             new ModuleIOTalonFX(TunerConstants.BackRight)
         );
-        intake = new Intake(new IntakeIOTalonFX());
+        intake = new Intake(new IntakeIOReal());
 
         break;
 

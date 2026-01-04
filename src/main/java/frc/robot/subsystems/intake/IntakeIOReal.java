@@ -46,17 +46,17 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import frc.robot.Constants.OperatorConstants;
 
-public class IntakeIOTalonFX implements IntakeIO {
+public class IntakeIOReal implements IntakeIO {
   private final TalonFX intakeLeft =
       new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
   private final TalonFX intakeRight =
       new TalonFX(IntakeConstants.RIGHT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
-  private final TalonFX rotation =
-      new TalonFX(IntakeConstants.INTAKE_ROTATION_MOTOR_ID, OperatorConstants.canivoreSerial);
-  private final CANcoder rotationEncoder =
-      new CANcoder(IntakeConstants.INTAKE_ROTATION_ENCODER_ID, OperatorConstants.canivoreSerial);
+  private final TalonFX rotator =
+      new TalonFX(IntakeConstants.INTAKE_ROTATOR_MOTOR_ID, OperatorConstants.canivoreSerial);
+  private final CANcoder rotatorEncoder =
+      new CANcoder(IntakeConstants.INTAKE_ROTATOR_ENCODER_ID, OperatorConstants.canivoreSerial);
 
   private final CANdi intakeSensors =
       new CANdi(IntakeConstants.CANDI_ID, OperatorConstants.canivoreSerial);
@@ -70,12 +70,12 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rightVelocityRotPerSec = intakeRight.getVelocity();
   private final StatusSignal<Current> rightCurrentAmps = intakeRight.getSupplyCurrent();
 
-  private final StatusSignal<Angle> rotatorPositionRev = rotation.getPosition();
-  private final StatusSignal<Double> rotatorClosedLoopErrorRev = rotation.getClosedLoopError();
-  private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = rotation.getVelocity();
+  private final StatusSignal<Angle> rotatorPositionRev = rotator.getPosition();
+  private final StatusSignal<Double> rotatorClosedLoopErrorRev = rotator.getClosedLoopError();
+  private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = rotator.getVelocity();
 
-  public IntakeIOTalonFX() {
-    var intakeRotationConfig =
+  public IntakeIOReal() {
+    var intakeRotatorConfig =
     new TalonFXConfiguration()
         .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))
         .withCurrentLimits(
@@ -84,7 +84,7 @@ public class IntakeIOTalonFX implements IntakeIO {
                 .withStatorCurrentLimit(70))
         .withFeedback(
             new FeedbackConfigs()
-                .withFeedbackRemoteSensorID(IntakeConstants.INTAKE_ROTATION_ENCODER_ID)
+                .withFeedbackRemoteSensorID(IntakeConstants.INTAKE_ROTATOR_ENCODER_ID)
                 .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                 .withSensorToMechanismRatio(IntakeConstants.rotatorGearRatio)
                 .withRotorToSensorRatio(120))
@@ -105,7 +105,7 @@ public class IntakeIOTalonFX implements IntakeIO {
                 .withKG(0.2)
                 .withGravityType(GravityTypeValue.Arm_Cosine));
 
-    var intakeRotationSensorConfig =
+    var intakeRotatorSensorConfig =
     new CANcoderConfiguration()
         .withMagnetSensor(
             new MagnetSensorConfigs()
@@ -129,12 +129,12 @@ public class IntakeIOTalonFX implements IntakeIO {
                 .withStatorCurrentLimit(60))
         .withSlot0(new Slot0Configs().withKS(5.4).withKP(3));
 
-    rotation.setNeutralMode(NeutralModeValue.Brake);
+    rotator.setNeutralMode(NeutralModeValue.Brake);
     intakeLeft.setNeutralMode(NeutralModeValue.Coast);
     intakeRight.setNeutralMode(NeutralModeValue.Coast);
 
-    tryUntilOk(5, () -> rotation.getConfigurator().apply(intakeRotationConfig, 0.25));
-    tryUntilOk(5, () -> rotationEncoder.getConfigurator().apply(intakeRotationSensorConfig, 0.25));
+    tryUntilOk(5, () -> rotator.getConfigurator().apply(intakeRotatorConfig, 0.25));
+    tryUntilOk(5, () -> rotatorEncoder.getConfigurator().apply(intakeRotatorSensorConfig, 0.25));
     tryUntilOk(5, () -> intakeLeft.getConfigurator().apply(intakeConfig, 0.25));
     tryUntilOk(5, () -> intakeRight.getConfigurator().apply(intakeConfig, 0.25));
     tryUntilOk(5, () -> intakeSensors.getConfigurator().apply(intakeSensorsConfig,0.25));
@@ -146,7 +146,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     intakeRight.optimizeBusUtilization();
     intakeLeft.optimizeBusUtilization();
-    rotation.optimizeBusUtilization();
+    rotator.optimizeBusUtilization();
   }
 
   @Override
@@ -167,13 +167,13 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
     public void addInstruments(Orchestra orchestra) {
-      orchestra.addInstrument(rotation);
+      orchestra.addInstrument(rotator);
       orchestra.addInstrument(intakeLeft);
       orchestra.addInstrument(intakeRight);
   }
 
   public void setAngle(double angle) {
-    rotation.setControl(new PositionVoltage(Units.degreesToRotations(angle)));
+    rotator.setControl(new PositionVoltage(Units.degreesToRotations(angle)));
   }
 
   public void setIntakeSpeed(double velocity) {
@@ -182,7 +182,19 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public void setStaticBrake() {
-    rotation.setControl(new StaticBrake());
+    rotator.setControl(new StaticBrake());
+  }
+
+  public TalonFX getIntakeMotorLeft(){
+    return intakeLeft;
+  }
+
+  public TalonFX getIntakeMotorRight(){
+    return intakeRight;
+  }
+
+  public TalonFX getIntakeRotatorMotor(){
+    return rotator;
   }
 
 }
