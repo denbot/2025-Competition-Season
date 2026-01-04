@@ -29,6 +29,7 @@ import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -40,6 +41,7 @@ import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.S2FloatStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -63,6 +65,11 @@ public class IntakeIOReal implements IntakeIO {
 
   private static final VelocityTorqueCurrentFOC intakeSpin =
       new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
+
+  // Connection debouncers
+  private final Debouncer intakeLeftConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer intakeRightConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer rotatorConnectedDebounce = new Debouncer(0.5);
 
   private final StatusSignal<AngularVelocity> leftVelocityRotPerSec = intakeLeft.getVelocity();
   private final StatusSignal<Current> leftCurrentAmps = intakeLeft.getSupplyCurrent();
@@ -140,20 +147,34 @@ public class IntakeIOReal implements IntakeIO {
     tryUntilOk(5, () -> intakeSensors.getConfigurator().apply(intakeSensorsConfig,0.25));
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, leftVelocityRotPerSec, leftCurrentAmps,
-        rightVelocityRotPerSec, rightCurrentAmps,
-        rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
+        intakeLeft.getIsProLicensed().getValue() ? 200 : 50, 
+        leftVelocityRotPerSec, 
+        leftCurrentAmps
+    );
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        intakeRight.getIsProLicensed().getValue() ? 200 : 50,
+        rightVelocityRotPerSec,
+        rightCurrentAmps
+    );
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        rotator.getIsProLicensed().getValue() ? 200 : 50,
+        rotatorPositionRev,
+        rotatorClosedLoopErrorRev,
+        rotatorVelocityRotPerSec
+    );
 
-    intakeRight.optimizeBusUtilization();
-    intakeLeft.optimizeBusUtilization();
-    rotator.optimizeBusUtilization();
+    ParentDevice.optimizeBusUtilizationForAll(intakeLeft,intakeRight,rotator);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    BaseStatusSignal.refreshAll(leftVelocityRotPerSec, leftCurrentAmps,
-    rightVelocityRotPerSec, rightCurrentAmps,
-    rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
+    var intakeLeftStatus = BaseStatusSignal.refreshAll(leftVelocityRotPerSec, leftCurrentAmps);
+    var intakeRightStatus = BaseStatusSignal.refreshAll(rightVelocityRotPerSec, rightCurrentAmps);
+    var rotatorStatus = BaseStatusSignal.refreshAll(rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
+
+    inputs.intakeLeftConnected = intakeLeftConnectedDebounce.calculate(intakeLeftStatus.isOK());
+    inputs.intakeRightConnected = intakeRightConnectedDebounce.calculate(intakeRightStatus.isOK());
+    inputs.rotatorConnected = rotatorConnectedDebounce.calculate(rotatorStatus.isOK());
 
     inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValue();
     inputs.leftCurrentAmps = leftCurrentAmps.getValue();

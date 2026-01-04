@@ -49,7 +49,7 @@ public class IntakeIOSim implements IntakeIO {
 
     intakeRotatorSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 120),
     rotatorMotor);
   }
 
@@ -66,6 +66,10 @@ public class IntakeIOSim implements IntakeIO {
 
     intakeRotatorSim.setInputVoltage(MathUtil.clamp(rotatorAppliedVolts, -12.0, 12.0));
     intakeRotatorSim.update(0.02);
+
+    inputs.intakeLeftConnected = true;
+    inputs.intakeRightConnected = true;
+    inputs.rotatorConnected = true;
 
     inputs.leftVelocityRevPerSec = RevolutionsPerSecond.of(intakeLeftSim.getAngularVelocityRPM() / 60.0);
     inputs.leftCurrentAmps = Amp.of(intakeLeftSim.getCurrentDrawAmps());
