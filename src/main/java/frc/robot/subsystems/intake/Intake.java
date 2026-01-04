@@ -8,6 +8,8 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Orchestra;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,11 +32,19 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    SmartDashboard.putNumber("Intake Rotation Angle", inputs.rotatorPositionDeg);
+    SmartDashboard.putNumber("Intake/Rotator Position", getRotatorPosition().in(Degree));
   }
 
   public void addInstruments(Orchestra orchestra) {
     io.addInstruments(orchestra);
+  }
+
+  public Angle getRotatorPosition(){
+    return inputs.rotatorPositionDeg;
+  }
+
+  public AngularVelocity getRotatorVelocity(){
+    return inputs.rotatorVelocityRevPerSec;
   }
 
   /* The boathook shows an example of commands being held in a separate class.
@@ -61,20 +71,20 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   }
 
   public Command intakeDownCommand() {
-    return Commands.run(() -> io.setAngle(Degrees.of(5)))
+    return Commands.run(() -> io.setAngle(Degree.of(5)))
         .until(() -> Math.abs(inputs.rotatorClosedLoopErrorDeg) < 1);
   }
 
   public Command intakeL1Command() {
-    return Commands.run(() -> io.setAngle(Degrees.of(72)))
+    return Commands.run(() -> io.setAngle(Degree.of(72)))
         .until(() -> Math.abs(inputs.rotatorClosedLoopErrorDeg) < 1);
   }
 
   public Command intakeSpearCommand() {
-    return Commands.run(() -> io.setAngle(Degrees.of(160)))
+    return Commands.run(() -> io.setAngle(Degree.of(160)))
         .until(
             () ->
                 Math.abs(inputs.rotatorClosedLoopErrorDeg) < 20
-                    && Math.abs(inputs.rotatorVelocityRevPerSec) < 1);
+                    && Math.abs(getRotatorVelocity().in(RotationsPerSecond)) < 1);
   }
 }

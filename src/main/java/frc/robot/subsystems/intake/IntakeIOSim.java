@@ -7,6 +7,10 @@
 
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+
 import com.ctre.phoenix6.Orchestra;
 
 import edu.wpi.first.math.MathUtil;
@@ -60,14 +64,14 @@ public class IntakeIOSim implements IntakeIO {
     intakeRotatorSim.setInputVoltage(MathUtil.clamp(rotatorAppliedVolts, -12.0, 12.0));
     intakeRotatorSim.update(0.02);
 
-    inputs.leftVelocityRevPerSec = intakeLeftSim.getAngularVelocityRPM() / 60.0;
-    inputs.leftCurrentAmps = intakeLeftSim.getCurrentDrawAmps();
+    inputs.leftVelocityRevPerSec = RevolutionsPerSecond.of(intakeLeftSim.getAngularVelocityRPM() / 60.0);
+    inputs.leftCurrentAmps = Amp.of(intakeLeftSim.getCurrentDrawAmps());
 
-    inputs.rightVelocityRevPerSec = intakeRightSim.getAngularVelocityRPM() / 60.0;
-    inputs.rightCurrentAmps = intakeRightSim.getCurrentDrawAmps();
+    inputs.rightVelocityRevPerSec = RevolutionsPerSecond.of(intakeRightSim.getAngularVelocityRPM() / 60.0);
+    inputs.rightCurrentAmps = Amp.of(intakeRightSim.getCurrentDrawAmps());
 
-    inputs.rotatorPositionDeg = Units.rotationsToDegrees(intakeRotatorSim.getAngularPositionRotations());
-    inputs.rotatorVelocityRevPerSec = intakeRotatorSim.getAngularVelocityRPM() / 60.0;
+    inputs.rotatorPositionDeg = intakeRotatorSim.getAngularPosition();
+    inputs.rotatorVelocityRevPerSec = RevolutionsPerSecond.of(intakeRotatorSim.getAngularVelocityRPM() / 60.0);
   }
 
   @Override

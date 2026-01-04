@@ -7,28 +7,33 @@
 
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.Orchestra;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 
 public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
     public boolean intakeLeftConnected = false;
-    public double leftVelocityRevPerSec = 0.0;
-    public double leftCurrentAmps = 0.0;
+    public AngularVelocity leftVelocityRevPerSec = RevolutionsPerSecond.zero();
+    public Current leftCurrentAmps = Amp.zero();
 
     public boolean intakeRightConnected = false;
-    public double rightVelocityRevPerSec = 0.0;
-    public double rightCurrentAmps = 0.0;
+    public AngularVelocity rightVelocityRevPerSec = RevolutionsPerSecond.zero();
+    public Current rightCurrentAmps = Amp.zero();
 
     public boolean rotatorConnected = false;
-    public double rotatorPositionDeg = 0.0;
+    public Angle rotatorPositionDeg = Degree.zero();
     public double rotatorClosedLoopErrorDeg = 0.0;
-    public double rotatorVelocityRevPerSec = 0.0;
+    public AngularVelocity rotatorVelocityRevPerSec = RevolutionsPerSecond.zero();
   }
 
   //List of methods that each IO Layer should be accounting for
