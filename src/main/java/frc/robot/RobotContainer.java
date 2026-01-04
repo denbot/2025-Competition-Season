@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OrchestraPlayer;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.control.controllers.ButtonBoxController;
+import frc.robot.visualization.RobotVisualization;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -76,6 +78,8 @@ public class RobotContainer {
 
   // Direct control over the LEDs
   private final LEDController ledController;
+
+  private final RobotVisualization robotVisualization;
 
   /**
    * The container for the robot. Contains subsystems, IO devices, and commands.
@@ -136,6 +140,13 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    robotVisualization = new RobotVisualization(
+        boathook,
+        intake
+    );
+
+    Commands.run(robotVisualization::update).ignoringDisable(true).withName("Mechanism Update").schedule();
 
     preCheckTab = new PreCheckTab(
         driverController::isConnected,
