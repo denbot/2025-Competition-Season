@@ -73,8 +73,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rightVelocityRotPerSec = intakeRight.getVelocity();
   private final StatusSignal<Current> rightCurrentAmps = intakeRight.getSupplyCurrent();
 
-  private final StatusSignal<Angle> rotatorPositionDeg = intakeRight.getPosition();
-  private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = intakeRight.getVelocity();
+  private final StatusSignal<Angle> rotatorPositionDeg = rotation.getPosition();
+  private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = rotation.getVelocity();
 
   public IntakeIOTalonFX() {
     var intakeRotationConfig =
