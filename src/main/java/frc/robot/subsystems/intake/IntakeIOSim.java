@@ -8,7 +8,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amp;
-import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
 import com.ctre.phoenix6.Orchestra;
@@ -17,7 +17,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
@@ -39,8 +39,8 @@ public class IntakeIOSim implements IntakeIO {
   public IntakeIOSim(){
     intakeLeftSim =
     new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
-        intakeLeftMotor);
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+    intakeLeftMotor);
 
     intakeRightSim =
     new DCMotorSim(
@@ -55,6 +55,9 @@ public class IntakeIOSim implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
+    intakeAppliedVolts = intakeController.calculate(intakeLeftSim.getAngularPositionRad());
+    rotatorAppliedVolts = rotatorController.calculate(intakeRotatorSim.getAngularVelocityRPM());
+
     intakeLeftSim.setInputVoltage(MathUtil.clamp(intakeAppliedVolts, -12.0, 12.0));
     intakeLeftSim.update(0.02);
 
@@ -75,23 +78,17 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-  public void setIntakeSpeed(AngularVelocity revPerSecond) {
-  }
-
   public void addInstruments(Orchestra orchestra){
     System.out.println("Unable to add instruments in simulation.");
   }
 
-//   public void setAngle(double angle) {
-//     rotatorSim.setControl(new PositionVoltage(angle));
-//   }
+  public void setAngle(Angle angle) {
+    rotatorController.setSetpoint(angle.in(Radians));
+  }
 
-//   public void setIntakeSpeed(double velocity) {
-//     intakeLeftSim.setControl(intakeSpin.withVelocity(velocity));
-//     intakeRightSim.setControl(intakeSpin.withVelocity(-velocity));
-//   }
+  public void setIntakeSpeed(AngularVelocity velocity) {
+    intakeController.setSetpoint(velocity.in(RevolutionsPerSecond));
+  }
 
-//   public void setStaticBrake() {
-//     rotatorSim.setControl(new StaticBrake());
-//   }
+  public void setStaticBrake() {}
 }

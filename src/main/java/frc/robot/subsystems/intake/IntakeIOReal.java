@@ -155,15 +155,15 @@ public class IntakeIOReal implements IntakeIO {
     rightVelocityRotPerSec, rightCurrentAmps,
     rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
 
-    inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
-    inputs.leftCurrentAmps = leftCurrentAmps.getValueAsDouble();
+    inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValue();
+    inputs.leftCurrentAmps = leftCurrentAmps.getValue();
 
-    inputs.rightVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
-    inputs.rightCurrentAmps = leftCurrentAmps.getValueAsDouble();
+    inputs.rightVelocityRevPerSec = leftVelocityRotPerSec.getValue();
+    inputs.rightCurrentAmps = leftCurrentAmps.getValue();
 
-    inputs.rotatorPositionDeg = Units.rotationsToDegrees(rotatorPositionRev.getValueAsDouble());
+    inputs.rotatorPositionDeg = rotatorPositionRev.getValue();
     inputs.rotatorClosedLoopErrorDeg = Units.rotationsToDegrees(rotatorClosedLoopErrorRev.getValueAsDouble());
-    inputs.rotatorVelocityRevPerSec = rotatorVelocityRotPerSec.getValueAsDouble();
+    inputs.rotatorVelocityRevPerSec = rotatorVelocityRotPerSec.getValue();
   }
 
     public void addInstruments(Orchestra orchestra) {

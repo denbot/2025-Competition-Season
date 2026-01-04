@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    SmartDashboard.putNumber("Intake/Rotator Position", getRotatorPosition().in(Degree));
+    SmartDashboard.putNumber("Intake/Rotator Position", getRotatorPosition().in(Degrees));
   }
 
   public void addInstruments(Orchestra orchestra) {
