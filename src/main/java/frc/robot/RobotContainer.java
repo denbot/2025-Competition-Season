@@ -28,6 +28,9 @@ import frc.robot.control.AutoSequenceUserControl;
 import frc.robot.control.controllers.DenbotXboxController;
 import frc.robot.control.TeleopControl;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.boathook.BoathookIO;
+import frc.robot.subsystems.boathook.BoathookIOSim;
+import frc.robot.subsystems.boathook.BoathookIOTalonFX;
 import frc.robot.subsystems.led.LEDController;
 import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
@@ -90,6 +93,8 @@ public class RobotContainer {
             new ModuleIOTalonFX(TunerConstants.BackLeft),
             new ModuleIOTalonFX(TunerConstants.BackRight)
         );
+
+        boathook = new Boathook(new BoathookIOTalonFX());
         intake = new Intake(new IntakeIOReal());
 
         break;
@@ -103,6 +108,8 @@ public class RobotContainer {
             new ModuleIOSim(TunerConstants.BackLeft),
             new ModuleIOSim(TunerConstants.BackRight)
         );
+
+        boathook = new Boathook(new BoathookIOSim());
         intake = new Intake(new IntakeIOSim());
 
         break;
@@ -116,12 +123,13 @@ public class RobotContainer {
             new ModuleIO() {},
             new ModuleIO() {}
         );
+
+        boathook = new Boathook(new BoathookIO() {});
         intake = new Intake(new IntakeIO() {});
 
         break;
     }
 
-    boathook = new Boathook();
     rumbleSubsystem = new RumbleSubsystem(driverController);
     ledController = new LEDController(21);
 
