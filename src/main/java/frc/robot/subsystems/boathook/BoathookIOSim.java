@@ -80,7 +80,7 @@ public class BoathookIOSim implements BoathookIO {
   }
 
   @Override
-  public void setAnglePosition(Angle angle) {
+  public void setAngle(Angle angle) {
     angleClosedLoop = true;
     // Must be in the same units (Radians) as what's used for the PID Controller calculate
     angleController.setSetpoint(angle.in(Radians));
@@ -93,10 +93,10 @@ public class BoathookIOSim implements BoathookIO {
   }
 
   @Override
-  public void setLengthPosition(Distance length) {
+  public void setLength(Distance length) {
     extensionClosedLoop = true;
     // Must be in the same units (Radians) as what's used for the PID Controller calculate. We're treating radians as
-    // analogous to Meters in this sim, so they're still technically quivalent
+    // analogous to Meters in this sim, so they're still technically equivalent
     extensionController.setSetpoint(length.in(Meters));
 
   }
