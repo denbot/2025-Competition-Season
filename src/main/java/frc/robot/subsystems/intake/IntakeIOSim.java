@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class IntakeIOSim implements IntakeIO {
@@ -50,13 +51,13 @@ public class IntakeIOSim implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    intakeLeftSim.setInputVoltage(intakeAppliedVolts);
+    intakeLeftSim.setInputVoltage(MathUtil.clamp(intakeAppliedVolts, -12.0, 12.0));
     intakeLeftSim.update(0.02);
 
-    intakeRightSim.setInputVoltage(-intakeAppliedVolts);
+    intakeRightSim.setInputVoltage(MathUtil.clamp(-intakeAppliedVolts, -12.0, 12.0));
     intakeRightSim.update(0.02);
 
-    intakeRotatorSim.setInputVoltage(rotatorAppliedVolts);
+    intakeRotatorSim.setInputVoltage(MathUtil.clamp(rotatorAppliedVolts, -12.0, 12.0));
     intakeRotatorSim.update(0.02);
 
     inputs.leftVelocityRevPerSec = intakeLeftSim.getAngularVelocityRPM() / 60.0;
@@ -70,8 +71,7 @@ public class IntakeIOSim implements IntakeIO {
   }
 
   @Override
-  public void setIntakeSpeed(double volts) {
-    intakeAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+  public void setIntakeSpeed(AngularVelocity revPerSecond) {
   }
 
   public void addInstruments(Orchestra orchestra){

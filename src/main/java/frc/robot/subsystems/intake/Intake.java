@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CanBeAnInstrument;
 
+import static edu.wpi.first.units.Units.*;
+
 public class Intake extends SubsystemBase implements CanBeAnInstrument {
   /** Creates a new Intake. */
   private final IntakeIO io;
@@ -41,30 +43,35 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   */
 
   public Command runIntakeCommand() {
-    return Commands.runEnd(() -> io.setIntakeSpeed(60), () -> io.setIntakeSpeed(0));
+    return Commands.runEnd(
+      () -> io.setIntakeSpeed(RotationsPerSecond.of(60)), 
+      () -> io.setIntakeSpeed(RotationsPerSecond.of(0))
+    );
   }
 
   public Command runSoftIntakeCommand() {
-    return Commands.runOnce(() -> io.setIntakeSpeed(5));
+    return Commands.runOnce(() -> io.setIntakeSpeed(RotationsPerSecond.of(5)));
   }
 
   public Command runRejectCommand() {
-    return Commands.runEnd(() -> io.setIntakeSpeed(-60), () -> io.setIntakeSpeed(0))
-        .raceWith(new WaitCommand(0.5));
+    return Commands.runEnd(
+      () -> io.setIntakeSpeed(RotationsPerSecond.of(-60)),
+      () -> io.setIntakeSpeed(RotationsPerSecond.of(0))
+    ).raceWith(new WaitCommand(0.5));
   }
 
   public Command intakeDownCommand() {
-    return Commands.run(() -> io.setAngle(5))
+    return Commands.run(() -> io.setAngle(Degrees.of(5)))
         .until(() -> Math.abs(inputs.rotatorClosedLoopErrorDeg) < 1);
   }
 
   public Command intakeL1Command() {
-    return Commands.run(() -> io.setAngle(72))
+    return Commands.run(() -> io.setAngle(Degrees.of(72)))
         .until(() -> Math.abs(inputs.rotatorClosedLoopErrorDeg) < 1);
   }
 
   public Command intakeSpearCommand() {
-    return Commands.run(() -> io.setAngle(160))
+    return Commands.run(() -> io.setAngle(Degrees.of(160)))
         .until(
             () ->
                 Math.abs(inputs.rotatorClosedLoopErrorDeg) < 20

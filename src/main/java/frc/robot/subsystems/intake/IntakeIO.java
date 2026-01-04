@@ -11,6 +11,9 @@ import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.Orchestra;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+
 public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
@@ -35,11 +38,15 @@ public interface IntakeIO {
   /** Add motors to CTRE orchestra if available. */
   public default void addInstruments(Orchestra orchestra) {}
 
-  /** Set the intake rotator angle. */
-  public default void setAngle(double angle) {}
+  /* Set the intake rotator angle.
+   * Make sure units of measurement are consistent.
+   * The Boathook example in this branch uses Radians to measure angle, while this intake uses degrees.
+   * Choose what makes sense and keep it consistent throughout.
+  */
+  public default void setAngle(Angle angle) {}
   
   /** Set the intake contact wheel velocity. */
-  public default void setIntakeSpeed(double velocity) {}
+  public default void setIntakeSpeed(AngularVelocity velocity) {}
 
   /** Apply a neutral static brake to the intake rotator motor. */
   public default void setStaticBrake() {}
