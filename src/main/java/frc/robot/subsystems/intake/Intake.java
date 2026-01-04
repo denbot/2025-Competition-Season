@@ -11,7 +11,6 @@ import com.ctre.phoenix6.Orchestra;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,10 +35,10 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-    SmartDashboard.putNumber("Intake/Rotator Position", getRotatorPosition().in(Degrees));
-    SmartDashboard.putNumber("Intake/Rotator Setpoint", rotatorPositionSetpoint);
-    SmartDashboard.putNumber("Intake/Intake Velocity", getIntakeVelocity().in(RotationsPerSecond));
-    SmartDashboard.putNumber("Intake/Intake Velocity Setpoint", intakeVelocitySetpoint);
+    Logger.recordOutput("Intake/Rotator Position", inputs.rotatorPositionRot.in(Degrees));
+    Logger.recordOutput("Intake/Rotator Setpoint", rotatorPositionSetpoint);
+    Logger.recordOutput("Intake/Intake Velocity", inputs.rotatorVelocityRotPerSec.in(RotationsPerSecond));
+    Logger.recordOutput("Intake/Intake Velocity Setpoint", intakeVelocitySetpoint);
   }
 
   public void addInstruments(Orchestra orchestra) {
@@ -47,12 +46,12 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   }
 
   public void setRotationAngle(Angle angle){
-    io.setPosition(angle);
+    io.setRotationAngle(angle);
     rotatorPositionSetpoint = angle.in(Degrees);
   }
 
   public void setIntakeVelocity(AngularVelocity velocity){
-    io.setIntakeSpeed(velocity);
+    io.setIntakeVelocity(velocity);
     intakeVelocitySetpoint = velocity.in(RevolutionsPerSecond);
   }
 

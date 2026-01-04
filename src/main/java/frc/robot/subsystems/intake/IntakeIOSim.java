@@ -88,11 +88,11 @@ public class IntakeIOSim implements IntakeIO {
     System.out.println("Unable to add instruments in simulation.");
   }
 
-  public void setPosition(Angle angle) {
+  public void setRotationAngle(Angle angle) {
     rotatorController.setSetpoint(angle.in(Degrees));
   }
 
-  public void setIntakeSpeed(AngularVelocity velocity) {
+  public void setIntakeVelocity(AngularVelocity velocity) {
     intakeController.setSetpoint(velocity.in(RotationsPerSecond));
   }
 

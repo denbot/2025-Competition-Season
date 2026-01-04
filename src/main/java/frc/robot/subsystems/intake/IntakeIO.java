@@ -48,10 +48,10 @@ public interface IntakeIO {
    * The Boathook example in this branch uses Radians to measure angle, while this intake uses degrees.
    * Choose what makes sense and keep it consistent throughout.
   */
-  public default void setPosition(Angle angle) {}
+  public default void setRotationAngle(Angle angle) {}
   
   /** Set the intake contact wheel velocity. */
-  public default void setIntakeSpeed(AngularVelocity velocity) {}
+  public default void setIntakeVelocity(AngularVelocity velocity) {}
 
   /** Apply a neutral static brake to the intake rotator motor. */
   public default void setStaticBrake() {}

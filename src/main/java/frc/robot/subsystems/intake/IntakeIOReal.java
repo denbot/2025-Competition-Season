@@ -194,11 +194,11 @@ public class IntakeIOReal implements IntakeIO {
       orchestra.addInstrument(intakeRight);
   }
 
-  public void setPosition(Angle angle) {
+  public void setRotationAngle(Angle angle) {
     rotator.setControl(new PositionVoltage(angle.in(Rotations)));
   }
 
-  public void setIntakeSpeed(AngularVelocity velocity) {
+  public void setIntakeVelocity(AngularVelocity velocity) {
     intakeLeft.setControl(intakeSpin.withVelocity(velocity.in(RotationsPerSecond)));
     intakeRight.setControl(intakeSpin.withVelocity(-velocity.in(RotationsPerSecond)));
   }
