@@ -19,13 +19,12 @@ public interface IntakeIO {
     public double rightCurrentAmps = 0.0;
 
     public double rotatorPositionDeg = 0.0;
+    public double rotatorClosedLoopErrorDeg = 0.0;
     public double rotatorVelocityRevPerSec = 0.0;
   }
 
   /** Update the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
-
-  public default void setIntakeHoldingVoltage(double voltage) {}
 
   public default void setAngle(double angle) {}
 
@@ -33,5 +32,4 @@ public interface IntakeIO {
 
   public default void setStaticBrake() {}
 
-  public default void stopIntake() {}
 }

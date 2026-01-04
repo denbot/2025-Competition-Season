@@ -58,36 +58,6 @@ public class IntakeIOSim implements IntakeIO {
     intakeAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
   }
 
-//   public void setIntakeHoldingVoltage(double voltage) {
-//     intakeLeftSim.setControl(new VoltageOut(voltage));
-//     intakeRightSim.setControl(new VoltageOut(-voltage));
-//   }
-
-//   public double getrotationAngle() {
-//     return rotationSim.getPosition().getValueAsDouble();
-//   }
-
-//   public boolean getIntakeIsStalled() {
-//     boolean returnCondition =
-//         intakeRightSim.getStatorCurrent().getValueAsDouble() > 40
-//             && intakeRightSim.getVelocity().getValueAsDouble() < 1;
-//     if (returnCondition) System.out.println("Motor Is Stalled!!!");
-//     return returnCondition;
-//   }
-
-//   public double getClosedLoopError() {
-//     return rotationSim.getClosedLoopError().getValueAsDouble();
-//   }
-
-//   public double getrotationSimSetpoint() {
-//     double rotationSimReference = rotationSim.getClosedLoopReference().getValueAsDouble();
-//     return rotationSimReference;
-//   }
-
-//   public double getrotationSimVelocity() {
-//     return rotationSim.getVelocity().getValueAsDouble();
-//   }
-
 //   public void setAngle(double angle) {
 //     rotationSim.setControl(new PositionVoltage(angle));
 //   }
@@ -99,10 +69,5 @@ public class IntakeIOSim implements IntakeIO {
 
 //   public void setStaticBrake() {
 //     rotationSim.setControl(new StaticBrake());
-//   }
-
-//   public void stopIntake() {
-//     intakeLeftSim.setControl(motorStop);
-//     intakeRightSim.setControl(motorStop);
 //   }
 }

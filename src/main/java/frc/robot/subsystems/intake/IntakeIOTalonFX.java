@@ -24,11 +24,9 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -63,7 +61,6 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final CANdi intakeSensors =
       new CANdi(IntakeConstants.CANDI_ID, OperatorConstants.canivoreSerial);
 
-  private static final NeutralOut motorStop = new NeutralOut();
   private static final VelocityTorqueCurrentFOC intakeSpin =
       new VelocityTorqueCurrentFOC(0).withAcceleration(IntakeConstants.intakeAcceleration);
 
@@ -73,7 +70,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rightVelocityRotPerSec = intakeRight.getVelocity();
   private final StatusSignal<Current> rightCurrentAmps = intakeRight.getSupplyCurrent();
 
-  private final StatusSignal<Angle> rotatorPositionDeg = rotation.getPosition();
+  private final StatusSignal<Angle> rotatorPositionRev = rotation.getPosition();
+  private final StatusSignal<Double> rotatorClosedLoopErrorRev = rotation.getClosedLoopError();
   private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = rotation.getVelocity();
 
   public IntakeIOTalonFX() {
@@ -144,7 +142,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, leftVelocityRotPerSec, leftCurrentAmps,
         rightVelocityRotPerSec, rightCurrentAmps,
-        rotatorPositionDeg, rotatorVelocityRotPerSec);
+        rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
 
     intakeRight.optimizeBusUtilization();
     intakeLeft.optimizeBusUtilization();
@@ -155,7 +153,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(leftVelocityRotPerSec, leftCurrentAmps,
     rightVelocityRotPerSec, rightCurrentAmps,
-    rotatorPositionDeg, rotatorVelocityRotPerSec);
+    rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
 
     inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
     inputs.leftCurrentAmps = leftCurrentAmps.getValueAsDouble();
@@ -163,7 +161,8 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.rightVelocityRevPerSec = leftVelocityRotPerSec.getValueAsDouble();
     inputs.rightCurrentAmps = leftCurrentAmps.getValueAsDouble();
 
-    inputs.rotatorPositionDeg = Units.rotationsToDegrees(rotatorPositionDeg.getValueAsDouble());
+    inputs.rotatorPositionDeg = Units.rotationsToDegrees(rotatorPositionRev.getValueAsDouble());
+    inputs.rotatorClosedLoopErrorDeg = Units.rotationsToDegrees(rotatorClosedLoopErrorRev.getValueAsDouble());
     inputs.rotatorVelocityRevPerSec = rotatorVelocityRotPerSec.getValueAsDouble();
   }
 
@@ -171,24 +170,6 @@ public class IntakeIOTalonFX implements IntakeIO {
       orchestra.addInstrument(rotation);
       orchestra.addInstrument(intakeLeft);
       orchestra.addInstrument(intakeRight);
-  }
-
-  public void setIntakeHoldingVoltage(double voltage) {
-    intakeLeft.setControl(new VoltageOut(voltage));
-    intakeRight.setControl(new VoltageOut(-voltage));
-  }
-
-  public double getClosedLoopError() {
-    return rotation.getClosedLoopError().getValueAsDouble();
-  }
-
-  public double getRotationSetpoint() {
-    double rotationReference = rotation.getClosedLoopReference().getValueAsDouble();
-    return rotationReference;
-  }
-
-  public double getRotationVelocity() {
-    return rotation.getVelocity().getValueAsDouble();
   }
 
   public void setAngle(double angle) {
@@ -202,11 +183,6 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   public void setStaticBrake() {
     rotation.setControl(new StaticBrake());
-  }
-
-  public void stopIntake() {
-    intakeLeft.setControl(motorStop);
-    intakeRight.setControl(motorStop);
   }
 
 }
