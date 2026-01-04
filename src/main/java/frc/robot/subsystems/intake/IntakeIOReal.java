@@ -8,6 +8,8 @@
 
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.util.PhoenixUtil.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -42,7 +44,6 @@ import com.ctre.phoenix6.signals.S2FloatStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -77,8 +78,8 @@ public class IntakeIOReal implements IntakeIO {
   private final StatusSignal<AngularVelocity> rightVelocityRotPerSec = intakeRight.getVelocity();
   private final StatusSignal<Current> rightCurrentAmps = intakeRight.getSupplyCurrent();
 
-  private final StatusSignal<Angle> rotatorPositionRev = rotator.getPosition();
-  private final StatusSignal<Double> rotatorClosedLoopErrorRev = rotator.getClosedLoopError();
+  private final StatusSignal<Angle> rotatorPositionRot = rotator.getPosition();
+  private final StatusSignal<Double> rotatorClosedLoopErrorRot = rotator.getClosedLoopError();
   private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = rotator.getVelocity();
 
   public IntakeIOReal() {
@@ -158,8 +159,8 @@ public class IntakeIOReal implements IntakeIO {
     );
     BaseStatusSignal.setUpdateFrequencyForAll(
         rotator.getIsProLicensed().getValue() ? 200 : 50,
-        rotatorPositionRev,
-        rotatorClosedLoopErrorRev,
+        rotatorPositionRot,
+        rotatorClosedLoopErrorRot,
         rotatorVelocityRotPerSec
     );
 
@@ -170,21 +171,21 @@ public class IntakeIOReal implements IntakeIO {
   public void updateInputs(IntakeIOInputs inputs) {
     var intakeLeftStatus = BaseStatusSignal.refreshAll(leftVelocityRotPerSec, leftCurrentAmps);
     var intakeRightStatus = BaseStatusSignal.refreshAll(rightVelocityRotPerSec, rightCurrentAmps);
-    var rotatorStatus = BaseStatusSignal.refreshAll(rotatorPositionRev, rotatorClosedLoopErrorRev, rotatorVelocityRotPerSec);
+    var rotatorStatus = BaseStatusSignal.refreshAll(rotatorPositionRot, rotatorClosedLoopErrorRot, rotatorVelocityRotPerSec);
 
     inputs.intakeLeftConnected = intakeLeftConnectedDebounce.calculate(intakeLeftStatus.isOK());
     inputs.intakeRightConnected = intakeRightConnectedDebounce.calculate(intakeRightStatus.isOK());
     inputs.rotatorConnected = rotatorConnectedDebounce.calculate(rotatorStatus.isOK());
 
-    inputs.leftVelocityRevPerSec = leftVelocityRotPerSec.getValue();
+    inputs.leftVelocityRotPerSec = leftVelocityRotPerSec.getValue();
     inputs.leftCurrentAmps = leftCurrentAmps.getValue();
 
-    inputs.rightVelocityRevPerSec = leftVelocityRotPerSec.getValue();
+    inputs.rightVelocityRotPerSec = leftVelocityRotPerSec.getValue();
     inputs.rightCurrentAmps = leftCurrentAmps.getValue();
 
-    inputs.rotatorPositionDeg = rotatorPositionRev.getValue();
-    inputs.rotatorClosedLoopErrorDeg = Units.rotationsToDegrees(rotatorClosedLoopErrorRev.getValueAsDouble());
-    inputs.rotatorVelocityRevPerSec = rotatorVelocityRotPerSec.getValue();
+    inputs.rotatorPositionRot = rotatorPositionRot.getValue();
+    inputs.rotatorClosedLoopErrorRot = rotatorClosedLoopErrorRot.getValueAsDouble();
+    inputs.rotatorVelocityRotPerSec = rotatorVelocityRotPerSec.getValue();
   }
 
     public void addInstruments(Orchestra orchestra) {
@@ -193,29 +194,17 @@ public class IntakeIOReal implements IntakeIO {
       orchestra.addInstrument(intakeRight);
   }
 
-  public void setAngle(double angle) {
-    rotator.setControl(new PositionVoltage(Units.degreesToRotations(angle)));
+  public void setPosition(Angle angle) {
+    rotator.setControl(new PositionVoltage(angle.in(Rotations)));
   }
 
-  public void setIntakeSpeed(double velocity) {
-    intakeLeft.setControl(intakeSpin.withVelocity(velocity));
-    intakeRight.setControl(intakeSpin.withVelocity(-velocity));
+  public void setIntakeSpeed(AngularVelocity velocity) {
+    intakeLeft.setControl(intakeSpin.withVelocity(velocity.in(RotationsPerSecond)));
+    intakeRight.setControl(intakeSpin.withVelocity(-velocity.in(RotationsPerSecond)));
   }
 
   public void setStaticBrake() {
     rotator.setControl(new StaticBrake());
-  }
-
-  public TalonFX getIntakeMotorLeft(){
-    return intakeLeft;
-  }
-
-  public TalonFX getIntakeMotorRight(){
-    return intakeRight;
-  }
-
-  public TalonFX getIntakeRotatorMotor(){
-    return rotator;
   }
 
 }

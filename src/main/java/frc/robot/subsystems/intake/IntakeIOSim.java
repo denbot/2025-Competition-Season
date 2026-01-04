@@ -8,8 +8,8 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amp;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.Orchestra;
 
@@ -30,8 +30,8 @@ public class IntakeIOSim implements IntakeIO {
   private DCMotorSim intakeRightSim;
   private DCMotorSim intakeRotatorSim;
 
-  private final PIDController rotatorController = new PIDController(0.5, 0, 0);
-  private final PIDController intakeController = new PIDController(10, 0, 0);
+  private final PIDController rotatorController = new PIDController(0.1, 0, 0);
+  private final PIDController intakeController = new PIDController(1.0, 0, 0);
 
   private double intakeAppliedVolts = 0.0;
   private double rotatorAppliedVolts = 0.0;
@@ -39,24 +39,24 @@ public class IntakeIOSim implements IntakeIO {
   public IntakeIOSim(){
     intakeLeftSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.008, 1),
     intakeLeftMotor);
 
     intakeRightSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.008, 1),
     intakeRightMotor);
 
     intakeRotatorSim =
     new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 120),
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.1, 120),
     rotatorMotor);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    intakeAppliedVolts = intakeController.calculate(intakeLeftSim.getAngularPositionRad());
-    rotatorAppliedVolts = rotatorController.calculate(intakeRotatorSim.getAngularVelocityRPM());
+    intakeAppliedVolts = intakeController.calculate(intakeLeftSim.getAngularVelocity().in(RotationsPerSecond));
+    rotatorAppliedVolts = rotatorController.calculate(intakeRotatorSim.getAngularPosition().in(Degrees));
 
     intakeLeftSim.setInputVoltage(MathUtil.clamp(intakeAppliedVolts, -12.0, 12.0));
     intakeLeftSim.update(0.02);
@@ -71,14 +71,16 @@ public class IntakeIOSim implements IntakeIO {
     inputs.intakeRightConnected = true;
     inputs.rotatorConnected = true;
 
-    inputs.leftVelocityRevPerSec = RevolutionsPerSecond.of(intakeLeftSim.getAngularVelocityRPM() / 60.0);
+    //Sim Velocity defaults to Rad/sec. 60 rps = 377 Rad/sec
+    inputs.leftVelocityRotPerSec = RotationsPerSecond.of(intakeLeftSim.getAngularVelocityRPM() / 60.0);
     inputs.leftCurrentAmps = Amp.of(intakeLeftSim.getCurrentDrawAmps());
 
-    inputs.rightVelocityRevPerSec = RevolutionsPerSecond.of(intakeRightSim.getAngularVelocityRPM() / 60.0);
+    inputs.rightVelocityRotPerSec = RotationsPerSecond.of(intakeRightSim.getAngularVelocityRPM() / 60.0);
     inputs.rightCurrentAmps = Amp.of(intakeRightSim.getCurrentDrawAmps());
 
-    inputs.rotatorPositionDeg = intakeRotatorSim.getAngularPosition();
-    inputs.rotatorVelocityRevPerSec = RevolutionsPerSecond.of(intakeRotatorSim.getAngularVelocityRPM() / 60.0);
+    inputs.rotatorPositionRot = intakeRotatorSim.getAngularPosition();
+    inputs.rotatorVelocityRotPerSec = RotationsPerSecond.of(intakeRotatorSim.getAngularVelocityRPM() / 60.0);
+    inputs.rotatorClosedLoopErrorRot = rotatorController.getError();
   }
 
   @Override
@@ -86,12 +88,12 @@ public class IntakeIOSim implements IntakeIO {
     System.out.println("Unable to add instruments in simulation.");
   }
 
-  public void setAngle(Angle angle) {
-    rotatorController.setSetpoint(angle.in(Radians));
+  public void setPosition(Angle angle) {
+    rotatorController.setSetpoint(angle.in(Degrees));
   }
 
   public void setIntakeSpeed(AngularVelocity velocity) {
-    intakeController.setSetpoint(velocity.in(RevolutionsPerSecond));
+    intakeController.setSetpoint(velocity.in(RotationsPerSecond));
   }
 
   public void setStaticBrake() {}

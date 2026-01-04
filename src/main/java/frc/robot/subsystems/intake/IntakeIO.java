@@ -23,17 +23,17 @@ public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
     public boolean intakeLeftConnected = false;
-    public AngularVelocity leftVelocityRevPerSec = RevolutionsPerSecond.zero();
+    public AngularVelocity leftVelocityRotPerSec = RevolutionsPerSecond.zero();
     public Current leftCurrentAmps = Amp.zero();
 
     public boolean intakeRightConnected = false;
-    public AngularVelocity rightVelocityRevPerSec = RevolutionsPerSecond.zero();
+    public AngularVelocity rightVelocityRotPerSec = RevolutionsPerSecond.zero();
     public Current rightCurrentAmps = Amp.zero();
 
     public boolean rotatorConnected = false;
-    public Angle rotatorPositionDeg = Degree.zero();
-    public double rotatorClosedLoopErrorDeg = 0.0;
-    public AngularVelocity rotatorVelocityRevPerSec = RevolutionsPerSecond.zero();
+    public Angle rotatorPositionRot = Degree.zero();
+    public double rotatorClosedLoopErrorRot = 0.0;
+    public AngularVelocity rotatorVelocityRotPerSec = RevolutionsPerSecond.zero();
   }
 
   //List of methods that each IO Layer should be accounting for
@@ -48,7 +48,7 @@ public interface IntakeIO {
    * The Boathook example in this branch uses Radians to measure angle, while this intake uses degrees.
    * Choose what makes sense and keep it consistent throughout.
   */
-  public default void setAngle(Angle angle) {}
+  public default void setPosition(Angle angle) {}
   
   /** Set the intake contact wheel velocity. */
   public default void setIntakeSpeed(AngularVelocity velocity) {}
