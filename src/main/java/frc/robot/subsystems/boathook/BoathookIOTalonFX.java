@@ -169,7 +169,7 @@ public class BoathookIOTalonFX implements BoathookIO, CanBeAnInstrument {
   }
 
   @Override
-  public void setAnglePosition(Angle angle) {
+  public void setAngle(Angle angle) {
     rotationMotor.setControl(new PositionVoltage(angle));
   }
 
@@ -179,7 +179,7 @@ public class BoathookIOTalonFX implements BoathookIO, CanBeAnInstrument {
   }
 
   @Override
-  public void setLengthPosition(Distance length) {
+  public void setLength(Distance length) {
     double motorAngleRotations = length.div(wheelCircumference).in(Value);
     extensionMotor.setControl(new PositionVoltage(motorAngleRotations));
   }
