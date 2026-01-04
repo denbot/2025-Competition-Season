@@ -10,43 +10,29 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.Orchestra;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
-public class IntakeIOSim implements IntakeIO {
-  private static final DCMotor intakeLeftMotor = DCMotor.getKrakenX60Foc(1);
-  private static final DCMotor intakeRightMotor = DCMotor.getKrakenX60Foc(1);
-  private static final DCMotor rotatorMotor = DCMotor.getKrakenX60Foc(1);
+public class IntakeIOSimCTRE implements IntakeIO {
+  private DCMotorSim intakeLeftSim =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+          DCMotor.getCIM(1));
 
-  private DCMotorSim intakeLeftSim;
-  private DCMotorSim intakeRightSim;
-  private DCMotorSim intakeRotatorSim;
+  private DCMotorSim intakeRightSim =
+    new DCMotorSim(
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+    DCMotor.getCIM(1));
 
-  private final PIDController rotatorController = new PIDController(0.5, 0, 0);
-  private final PIDController intakeController = new PIDController(10, 0, 0);
+  private DCMotorSim intakeRotatorSim =
+    new DCMotorSim(
+    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+    DCMotor.getCIM(1));
 
   private double intakeAppliedVolts = 0.0;
   private double rotatorAppliedVolts = 0.0;
-
-  public IntakeIOSim(){
-    intakeLeftSim =
-    new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
-        intakeLeftMotor);
-
-    intakeRightSim =
-    new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
-    intakeRightMotor);
-
-    intakeRotatorSim =
-    new DCMotorSim(
-    LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
-    rotatorMotor);
-  }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {

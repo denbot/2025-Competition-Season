@@ -35,6 +35,11 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
     io.addInstruments(orchestra);
   }
 
+  /* The boathook shows an example of commands being held in a separate class.
+   * This subsystem holds its commands within the subsystem class for easy integration with our internal
+   * state machine generator later.
+  */
+
   public Command runIntakeCommand() {
     return Commands.runEnd(() -> io.setIntakeSpeed(60), () -> io.setIntakeSpeed(0));
   }
