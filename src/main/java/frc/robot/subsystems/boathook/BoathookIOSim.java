@@ -27,7 +27,7 @@ public class BoathookIOSim implements BoathookIO {
   private double angleAppliedVolts = 0.0;
   private double extensionAppliedVolts = 0.0;
 
-  BoathookIOSim() {
+  public BoathookIOSim() {
     angleSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(angleMotor, 0.001, 1),
         angleMotor
