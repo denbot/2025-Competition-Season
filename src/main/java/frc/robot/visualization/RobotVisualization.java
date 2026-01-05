@@ -163,9 +163,9 @@ public class RobotVisualization implements AutoCloseable {
 
     void update() {
       // 5 degrees, to be updated once the intake returns an Angle
-      shouldBeVisible = !target || intake.getRotationAngle() - intake.getRotationSetpoint() > 5;
+      shouldBeVisible = !target || intake.getRotatorPosition().minus(intake.getRotatorSetpoint()).abs(Degrees) > 5;
 
-      this.setAngle(Revolutions.of(target ? intake.getRotationSetpoint() : intake.getRotationAngle()).in(Degrees));
+      this.setAngle((target ? intake.getRotatorSetpoint() : intake.getRotatorPosition()).in(Degrees));
 
       boolean coralCurrentlyInIntake = intake.isCoralIntaken();
 
