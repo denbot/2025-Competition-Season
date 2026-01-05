@@ -24,8 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.*;
 
 public class TeleopControl {
   // Chosen by fair dice roll. https://xkcd.com/221/
@@ -43,6 +42,18 @@ public class TeleopControl {
       OnTheFlyCommands onTheFlyCommands,
       LEDController ledController
   ) {
+    driverController
+        .a(teleopEventLoop)
+        .onTrue(Commands.runOnce(() -> {
+          boathook.setAngle(Degrees.of(110));
+          boathook.setLength(Inches.of(30));
+        }))
+        .onFalse(Commands.runOnce(() -> {
+
+          boathook.setAngle(Degrees.of(0));
+          boathook.setLength(Inches.of(0));
+        }));
+
     SelectCommand<ReefLevel> scorePrepCommand = new SelectCommand<>(
         Map.ofEntries(
             Map.entry(ReefLevel.L1, intakeCommands.intakeL1Command()),
