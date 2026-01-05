@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.control.controllers.DenbotXboxController;
@@ -38,7 +37,6 @@ public class TeleopControl {
       ButtonBoxController buttonBoxController,
       Drive drive,
       Boathook boathook,
-      BoathookCommands boathookCommands,
       Intake intake,
       OnTheFlyCommands onTheFlyCommands,
       LEDController ledController
@@ -46,9 +44,9 @@ public class TeleopControl {
     SelectCommand<ReefLevel> scorePrepCommand = new SelectCommand<>(
         Map.ofEntries(
             Map.entry(ReefLevel.L1, intake.intakeL1Command()),
-            Map.entry(ReefLevel.L2, boathookCommands.handoffCommand(intake)),
-            Map.entry(ReefLevel.L3, boathookCommands.handoffCommand(intake)),
-            Map.entry(ReefLevel.L4, boathookCommands.handoffCommand(intake))
+            Map.entry(ReefLevel.L2, boathook.handoffCommand(intake)),
+            Map.entry(ReefLevel.L3, boathook.handoffCommand(intake)),
+            Map.entry(ReefLevel.L4, boathook.handoffCommand(intake))
         ),
         () -> targetReefLevel
     );
@@ -56,9 +54,9 @@ public class TeleopControl {
     SelectCommand<ReefLevel> extendBoathook = new SelectCommand<>(
         Map.ofEntries(
             Map.entry(ReefLevel.L1, Commands.idle(boathook)),
-            Map.entry(ReefLevel.L2, boathookCommands.extendL2()),
-            Map.entry(ReefLevel.L3, boathookCommands.extendL3()),
-            Map.entry(ReefLevel.L4, boathookCommands.extendL4())
+            Map.entry(ReefLevel.L2, boathook.extendL2()),
+            Map.entry(ReefLevel.L3, boathook.extendL3()),
+            Map.entry(ReefLevel.L4, boathook.extendL4())
         ),
         () -> targetReefLevel
     );
@@ -66,9 +64,9 @@ public class TeleopControl {
     SelectCommand<ReefLevel> retractBoathook = new SelectCommand<>(
         Map.ofEntries(
             Map.entry(ReefLevel.L1, Commands.idle(boathook)),
-            Map.entry(ReefLevel.L2, boathookCommands.retractL2()),
-            Map.entry(ReefLevel.L3, boathookCommands.retractL3()),
-            Map.entry(ReefLevel.L4, boathookCommands.retractL4())
+            Map.entry(ReefLevel.L2, boathook.retractL2()),
+            Map.entry(ReefLevel.L3, boathook.retractL3()),
+            Map.entry(ReefLevel.L4, boathook.retractL4())
         ),
         () -> targetReefLevel
     );
@@ -134,25 +132,25 @@ public class TeleopControl {
         .leftTrigger(teleopEventLoop)
         .whileTrue(
             intake.intakeDownCommand()
-                .alongWith(intake.runIntakeCommand())
                 .alongWith(ledController.temporary(Color.kGreen, Milliseconds.of(500)))
+                .andThen(intake.runIntakeCommand())
         );
 
     driverController
         .povLeft(teleopEventLoop)
-        .onTrue(boathookCommands.microAdjustAngleBackward());
+        .onTrue(boathook.microAdjustAngleBackward());
 
     driverController
         .povRight(teleopEventLoop)
-        .onTrue(boathookCommands.microAdjustAngleForward());
+        .onTrue(boathook.microAdjustAngleForward());
 
     driverController
         .povDown(teleopEventLoop)
-        .onTrue(boathookCommands.microAdjustExtensionBackward());
+        .onTrue(boathook.microAdjustExtensionBackward());
 
     driverController
         .povUp(teleopEventLoop)
-        .onTrue(boathookCommands.microAdjustExtensionForward());
+        .onTrue(boathook.microAdjustExtensionForward());
 
     buttonBoxController
         .buttonToReefBranchMap(teleopEventLoop)

@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.game.ReefBranch;
+import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 public class OnTheFlyCommands {
 
   private final Intake intake;
-  private final BoathookCommands boathookCommands;
+  private final Boathook boathook;
   private final Drive drive;
 
   private enum OnTheFlyTargetPose {
@@ -77,11 +78,11 @@ public class OnTheFlyCommands {
 
   public OnTheFlyCommands(
       Intake intake,
-      BoathookCommands boathookCommands,
+      Boathook boathook,
       Drive drive
   ) {
     this.intake = intake;
-    this.boathookCommands = boathookCommands;
+    this.boathook = boathook;
     this.drive = drive;
   }
 
@@ -160,13 +161,13 @@ public class OnTheFlyCommands {
         new ParallelCommandGroup(
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
             intake.intakeDownCommand(),
-            boathookCommands.setBoathookStab()
+            boathook.setBoathookStab()
         ),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)
         ),
-        boathookCommands.handoffCommand(intake));
+        boathook.handoffCommand(intake));
   }
 
   public Command pickupLollipopRight() {
@@ -174,11 +175,11 @@ public class OnTheFlyCommands {
         new ParallelCommandGroup(
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
             intake.intakeDownCommand(),
-            boathookCommands.setBoathookStab()),
+            boathook.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
-        boathookCommands.handoffCommand(intake));
+        boathook.handoffCommand(intake));
   }
 
   public Command pickupLollipopCenter() {
@@ -186,11 +187,11 @@ public class OnTheFlyCommands {
         new ParallelCommandGroup(
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
             intake.intakeDownCommand(),
-            boathookCommands.setBoathookStab()),
+            boathook.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
             getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
-        boathookCommands.handoffCommand(intake));
+        boathook.handoffCommand(intake));
   }
 
   private Command getFinalAlignmentCommand(OnTheFlyTargetPose targetPose) {

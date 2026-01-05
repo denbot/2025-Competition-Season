@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.wpilibj2.command.*;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Orchestra;
@@ -13,16 +14,14 @@ import com.ctre.phoenix6.signals.S2StateValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CanBeAnInstrument;
 
 import static edu.wpi.first.units.Units.*;
 
 public class Intake extends SubsystemBase implements CanBeAnInstrument {
-  /** Creates a new Intake. */
+  /**
+   * Creates a new Intake.
+   */
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
@@ -41,17 +40,17 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
     Logger.recordOutput("Intake/Rotator Setpoint", rotatorPositionSetpoint);
     Logger.recordOutput("Intake/Intake Velocity", inputs.rotatorVelocityRotPerSec.in(RotationsPerSecond));
     Logger.recordOutput("Intake/Intake Velocity Setpoint", intakeVelocitySetpoint);
-    Logger.recordOutput("Intake/S1 State",inputs.stateS1);
-    Logger.recordOutput("Intake/S2 State",inputs.stateS2);
+    Logger.recordOutput("Intake/S1 State", inputs.stateS1);
+    Logger.recordOutput("Intake/S2 State", inputs.stateS2);
   }
 
   public void addInstruments(Orchestra orchestra) {
-    if(io instanceof CanBeAnInstrument instrument) {
+    if (io instanceof CanBeAnInstrument instrument) {
       instrument.addInstruments(orchestra);
     }
   }
 
-  public void setRotationAngle(Angle angle){
+  public void setRotationAngle(Angle angle) {
     io.setRotationAngle(angle);
     rotatorPositionSetpoint = angle;
   }
@@ -60,36 +59,36 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
     return rotatorPositionSetpoint;
   }
 
-  public void setIntakeVelocity(AngularVelocity velocity){
+  public Angle getRotatorPosition() {
+    return inputs.rotatorPositionRot;
+  }
+
+  public AngularVelocity getRotatorVelocity() {
+    return inputs.rotatorVelocityRotPerSec;
+  }
+
+  public AngularVelocity getIntakeVelocity() {
+    return inputs.leftVelocityRotPerSec;
+  }
+
+  public void setIntakeVelocity(AngularVelocity velocity) {
     io.setIntakeVelocity(velocity);
     intakeVelocitySetpoint = velocity;
   }
 
-  public Angle getRotatorPosition(){
-    return inputs.rotatorPositionRot;
-  }
-
-  public AngularVelocity getRotatorVelocity(){
-    return inputs.rotatorVelocityRotPerSec;
-  }
-
-  public AngularVelocity getIntakeVelocity(){
-    return inputs.leftVelocityRotPerSec;
-  }
-
-  public boolean isCoralIntaken(){
-    return inputs.stateS1 == S1StateValue.High || inputs.stateS2 == S2StateValue.High ;
+  public boolean isCoralIntaken() {
+    return inputs.stateS1 == S1StateValue.High || inputs.stateS2 == S2StateValue.High;
   }
 
   /* The boathook shows an example of commands being held in a separate class.
    * This subsystem holds its commands within the subsystem class for easy integration with our internal
    * state machine generator later.
-  */
+   */
 
   public Command runIntakeCommand() {
-    return Commands.runEnd(
-      () -> setIntakeVelocity(RotationsPerSecond.of(60)), 
-      () -> setIntakeVelocity(RotationsPerSecond.of(0))
+    return this.runEnd(
+        () -> setIntakeVelocity(RotationsPerSecond.of(60)),
+        () -> setIntakeVelocity(RotationsPerSecond.of(0))
     );
   }
 
@@ -98,27 +97,33 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   }
 
   public Command runRejectCommand() {
-    return Commands.runEnd(
-      () -> setIntakeVelocity(RotationsPerSecond.of(-60)),
-      () -> setIntakeVelocity(RotationsPerSecond.of(0))
-    ).raceWith(new WaitCommand(0.5));
+    return this.runEnd(
+        () -> setIntakeVelocity(RotationsPerSecond.of(-60)),
+        () -> setIntakeVelocity(RotationsPerSecond.of(0))
+    ).withTimeout(Seconds.of(0.5));
   }
 
   public Command intakeDownCommand() {
-    return Commands.run(() -> setRotationAngle(Degree.of(5)))
-        .until(() -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1);
+    return this.runOnce(() -> setRotationAngle(Degree.of(5)))
+        .andThen(Commands.waitUntil(
+            () -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1
+        ));
   }
 
   public Command intakeL1Command() {
-    return Commands.run(() -> setRotationAngle(Degree.of(72)))
-        .until(() -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1);
+    return this.runOnce(() -> setRotationAngle(Degree.of(72)))
+        .andThen(Commands.waitUntil(
+            () -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1
+        ));
   }
 
   public Command intakeSpearCommand() {
-    return Commands.run(() -> setRotationAngle(Degree.of(160)))
-        .until(
+    return this.runOnce(() -> setRotationAngle(Degree.of(160)))
+        .andThen(Commands.waitUntil(
             () ->
                 Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1
-                    && Math.abs(getRotatorVelocity().in(RotationsPerSecond)) < 0.0001);
+                    && Math.abs(getRotatorVelocity().in(RotationsPerSecond)) < 0.0001
+        ))
+        .andThen(new PrintCommand("Intake Spear done"));
   }
 }
