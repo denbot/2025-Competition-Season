@@ -29,8 +29,8 @@ public class RobotVisualization {
 
   private final MechanismLigament2d boathookAngle;
   private final MechanismLigament2d boathookExtension;
-  private final MechanismLigament2d boathookCoralOffset;
-  private final MechanismLigament2d boathookCoral;
+  // private final MechanismLigament2d boathookCoralOffset;
+  // private final MechanismLigament2d boathookCoral;
 
   private final MechanismLigament2d bumper1;
   private final MechanismLigament2d bumper2;
@@ -86,11 +86,11 @@ public class RobotVisualization {
             new MechanismLigament2d("boathook-3", s(Inches.of(3)), 0, 2, orange)
         ).append(
             new MechanismLigament2d("boathook-4", s(Inches.of(3)), 41, 2, orange)
-        ).append(
-            // Now if the boathook could know if it had a coral game piece, this is how we'd display it
-            boathookCoralOffset = new MechanismLigament2d("boathook-coral-1", 0, 270, 2, white)
-        ).append(
-            boathookCoral = new MechanismLigament2d("boathook-coral-2", 0, 180, 2, white)
+        // ).append(
+        //     // Now if the boathook could know if it had a coral game piece, this is how we'd display it
+        //     boathookCoralOffset = new MechanismLigament2d("boathook-coral-1", 0, 270, 2, white)
+        // ).append(
+        //     boathookCoral = new MechanismLigament2d("boathook-coral-2", 0, 180, 2, white)
         );
 
     robot.getRoot("floor", 0, s(Inches.of(1)))
@@ -117,7 +117,7 @@ public class RobotVisualization {
   }
 
   public void update() {
-    intakeAngle.setAngle(Revolutions.of(intake.getRotationAngle()).in(Degrees));
+    intakeAngle.setAngle(intake.getRotatorPosition().in(Degrees));
     boathookAngle.setAngle(boathook.getAngle().in(Degrees));
     boathookExtension.setLength(s(boathook.getLength()));
 

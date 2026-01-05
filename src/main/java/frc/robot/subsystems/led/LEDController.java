@@ -126,6 +126,7 @@ public class LEDController {
    * @param <LED>    The type of the LED buffer or view (must implement {@link LEDReader} and {@link LEDWriter}).
    * @return A command that applies the pattern to the LED strip continuously.
    */
+  //TODO: Implement ScheduleCommand so commands ending with LED indication are not locked in infinite loop.
   public <LED extends LEDReader & LEDWriter> Command run(LED ledStrip, LEDPattern pattern) {
     return Commands.run(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
         .withName("LED Control")

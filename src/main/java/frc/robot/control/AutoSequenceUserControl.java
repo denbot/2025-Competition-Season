@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autoCommands.AutoRoutineBuilder;
 import frc.robot.commands.autoCommands.BoathookCommands;
-import frc.robot.commands.autoCommands.IntakeCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.game.ReefBranch;
+import frc.robot.subsystems.intake.Intake;
 
 import java.util.Map;
 
@@ -33,10 +33,10 @@ public class AutoSequenceUserControl {
       EventLoop disabledEventLoop,
       ButtonBoxController buttonBoxController,
       BoathookCommands boathookCommands,
-      IntakeCommands intakeCommands,
+      Intake intake,
       OnTheFlyCommands onTheFlyCommands
   ) {
-    this.autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intakeCommands);
+    this.autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intake);
 
     // Bind basic commands using our private event loop to ensure these setup actions
     // don't conflict with match-time behavior on the same buttons.
@@ -44,7 +44,7 @@ public class AutoSequenceUserControl {
     buttonBoxController.lollipopCenterTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter()));
     buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopRight()));
 
-    buttonBoxController.spearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
+    buttonBoxController.clearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
     var reefLevelTriggers = Map.ofEntries(
         // TODO L1

@@ -33,7 +33,7 @@ import frc.robot.subsystems.boathook.BoathookIO;
 import frc.robot.subsystems.boathook.BoathookIOSim;
 import frc.robot.subsystems.boathook.BoathookIOTalonFX;
 import frc.robot.subsystems.led.LEDController;
-import frc.robot.subsystems.RumbleSubsystem;
+// import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -42,6 +42,9 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.visualization.RobotVisualization;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -58,7 +61,7 @@ public class RobotContainer {
   public final PreCheckTab preCheckTab;
   private final Intake intake;
   private final Boathook boathook;
-  private final RumbleSubsystem rumbleSubsystem;
+  // private final RumbleSubsystem rumbleSubsystem;
 
   // Controller
   private final DenbotXboxController driverController = new DenbotXboxController(Constants.OperatorConstants.kDriverControllerPort);
@@ -73,7 +76,6 @@ public class RobotContainer {
 
   // Commands
   private final BoathookCommands boathookCommands;
-  private final IntakeCommands intakeCommands;
   private final OnTheFlyCommands onTheFlyCommands;
 
   // Direct control over the LEDs
@@ -97,6 +99,8 @@ public class RobotContainer {
         );
 
         boathook = new Boathook(new BoathookIOTalonFX());
+        intake = new Intake(new IntakeIOTalonFX());
+
         break;
 
       case SIM:
@@ -110,6 +114,8 @@ public class RobotContainer {
         );
 
         boathook = new Boathook(new BoathookIOSim());
+        intake = new Intake(new IntakeIOSim());
+
         break;
 
       default:
@@ -123,16 +129,16 @@ public class RobotContainer {
         );
 
         boathook = new Boathook(new BoathookIO() {});
+        intake = new Intake(new IntakeIO() {});
+
         break;
     }
 
-    intake = new Intake();
-    rumbleSubsystem = new RumbleSubsystem(driverController);
+    // rumbleSubsystem = new RumbleSubsystem(driverController);
     ledController = new LEDController(21);
 
-    intakeCommands = new IntakeCommands(intake);
     boathookCommands = new BoathookCommands(boathook, ledController);
-    onTheFlyCommands = new OnTheFlyCommands(intakeCommands, boathookCommands, drive);
+    onTheFlyCommands = new OnTheFlyCommands(intake, boathookCommands, drive);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -174,7 +180,6 @@ public class RobotContainer {
   private void configureAutoRoutines() {
     var orchestraPlayer = new OrchestraPlayer(
         driverController,
-        intake,
         boathook
     );
     autoChooser.addOption("Music Player", orchestraPlayer);
@@ -212,7 +217,7 @@ public class RobotContainer {
         disabledEventLoop,
         buttonBoxController,
         boathookCommands,
-        intakeCommands,
+        intake,
         onTheFlyCommands
     );
 
@@ -229,7 +234,7 @@ public class RobotContainer {
         drive,
         boathook,
         boathookCommands,
-        intakeCommands,
+        intake,
         onTheFlyCommands,
         ledController
     );

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.led.LEDController;
 import frc.robot.subsystems.boathook.Boathook;
+import frc.robot.subsystems.intake.Intake;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -121,15 +122,15 @@ public class BoathookCommands {
     return command;
   }
 
-  public Command handoffCommand(IntakeCommands intakeCommands) {
+  public Command handoffCommand(Intake intake) {
 
     return new SequentialCommandGroup(
         setAngleCommand(Degrees.of(93)),
         setLengthLinearCommand(Inches.of(1)),
         setAngleCommand(Degrees.of(25)),
-        intakeCommands.intakeSpearCommand(),
-        new ParallelCommandGroup(setAngleCommand(Degrees.of(93)), intakeCommands.runRejectCommand()),
-        intakeCommands.intakeL1Command(),
+        intake.intakeSpearCommand(),
+        new ParallelCommandGroup(setAngleCommand(Degrees.of(93)), intake.runRejectCommand()),
+        intake.intakeL1Command(),
         ledController.fill(Color.kYellow)
     );
   }

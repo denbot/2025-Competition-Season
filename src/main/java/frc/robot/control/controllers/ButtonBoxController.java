@@ -110,11 +110,11 @@ public class ButtonBoxController {
     return controller1.button(7, loop);
   }
 
-  public Trigger spearTrigger() {
-    return spearTrigger(CommandScheduler.getInstance().getDefaultButtonLoop());
+  public Trigger clearTrigger() {
+    return clearTrigger(CommandScheduler.getInstance().getDefaultButtonLoop());
   }
 
-  public Trigger spearTrigger(EventLoop loop) {
+  public Trigger clearTrigger(EventLoop loop) {
     return controller2.button(4, loop);
   }
 
