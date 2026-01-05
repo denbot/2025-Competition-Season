@@ -63,6 +63,8 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
     Logger.processInputs("Boathook", inputs);
 
     Logger.recordOutput("Boathook/Angle", inputs.angle);
+    Logger.recordOutput("Boathook/Angle Setpoint", angleSetpoint);
     Logger.recordOutput("Boathook/Extension", inputs.extensionLength);
+    Logger.recordOutput("Boathook/Extension Setpoint", lengthSetpoint);
   }
 }
