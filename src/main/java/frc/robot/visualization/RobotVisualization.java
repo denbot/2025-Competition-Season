@@ -1,12 +1,14 @@
 package frc.robot.visualization;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.intake.Intake;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -31,6 +33,8 @@ public class RobotVisualization implements AutoCloseable {
   private final BoathookMechanism boathookMechanism;
   private final BoathookMechanism boathookTarget;
   private final BumperMechanism bumper;
+  @AutoLogOutput
+  private final LoggedMechanism2d robot;
 
   public RobotVisualization(
       Boathook boathook,
@@ -39,27 +43,17 @@ public class RobotVisualization implements AutoCloseable {
     this.boathook = boathook;
     this.intake = intake;
 
-    var robot = new Mechanism2d(s(Inches.of(60)), s(Inches.of(80)), lightBlue);
+    robot = new LoggedMechanism2d(s(Inches.of(60)), s(Inches.of(80)), lightBlue);
 
-    var intakeRoot = robot.getRoot("intake", s(Inches.of(41.75)), s(Inches.of(9.25)));
-    intakeRoot.append(
-        intakeMechanism = new IntakeMechanism(false)
-    );
-    intakeRoot.append(
-        intakeTarget = new IntakeMechanism(true)
-    );
+    intakeMechanism = new IntakeMechanism(robot, false);
+    intakeTarget = new IntakeMechanism(robot, true);
 
-    var boathookRoot = robot.getRoot("boathook", s(Inches.of(21)), s(Inches.of(14.57)));
-    boathookRoot.append(
-        boathookMechanism = new BoathookMechanism(false)
-    );
-    boathookMechanism.append(
-        boathookTarget = new BoathookMechanism(true)
-    );
+    boathookMechanism = new BoathookMechanism(robot, false);
+    boathookTarget = new BoathookMechanism(robot, true);
 
     robot.getRoot("floor", 0, s(Inches.of(1)))
         .append(
-            new MechanismLigament2d("floor-1", s(Inches.of(60)), 0, 1, black)
+            new LoggedMechanismLigament2d("floor-1", s(Inches.of(60)), 0, 1, black)
         );
 
     robot.getRoot("bumper", s(Inches.of(17)), s(Inches.of(2.46)))
@@ -74,7 +68,7 @@ public class RobotVisualization implements AutoCloseable {
     boathookTarget.update();
 
     intakeMechanism.update();
-    intakeMechanism.update();
+    intakeTarget.update();
 
     bumper.update();
   }
@@ -85,18 +79,14 @@ public class RobotVisualization implements AutoCloseable {
 
   @Override
   public void close() {
-    intakeMechanism.close();
-    intakeTarget.close();
-    boathookMechanism.close();
-    boathookTarget.close();
-    bumper.close();
+    robot.close();
   }
 
-  static class BumperMechanism extends MechanismLigament2d {
-    private final MechanismLigament2d bumper1;
-    private final MechanismLigament2d bumper2;
-    private final MechanismLigament2d bumper3;
-    private final MechanismLigament2d bumper4;
+  static class BumperMechanism extends LoggedMechanismLigament2d {
+    private final LoggedMechanismLigament2d bumper1;
+    private final LoggedMechanismLigament2d bumper2;
+    private final LoggedMechanismLigament2d bumper3;
+    private final LoggedMechanismLigament2d bumper4;
     private Color8Bit currentAllianceColor = white;  // Start with an unknown alliance
 
     BumperMechanism() {
@@ -104,13 +94,13 @@ public class RobotVisualization implements AutoCloseable {
 
       this
           .append(
-              bumper1 = new MechanismLigament2d("bumper-1", s(Inches.of(26)), 0, 3, white)
+              bumper1 = new LoggedMechanismLigament2d("bumper-1", s(Inches.of(26)), 0, 3, white)
           ).append(
-              bumper2 = new MechanismLigament2d("bumper-2", s(Inches.of(2.5)), 90, 3, white)
+              bumper2 = new LoggedMechanismLigament2d("bumper-2", s(Inches.of(2.5)), 90, 3, white)
           ).append(
-              bumper3 = new MechanismLigament2d("bumper-3", s(Inches.of(26)), 90, 3, white)
+              bumper3 = new LoggedMechanismLigament2d("bumper-3", s(Inches.of(26)), 90, 3, white)
           ).append(
-              bumper4 = new MechanismLigament2d("bumper-4", s(Inches.of(2.5)), 90, 3, white)
+              bumper4 = new LoggedMechanismLigament2d("bumper-4", s(Inches.of(2.5)), 90, 3, white)
           );
     }
 
@@ -135,37 +125,37 @@ public class RobotVisualization implements AutoCloseable {
     }
   }
 
-  class IntakeMechanism extends MechanismLigament2d {
-
-    private final MechanismLigament2d intakeAngle;
-    private final MechanismLigament2d intake1;
-    private final MechanismLigament2d intakeCoral;
+  class IntakeMechanism extends LoggedMechanismLigament2d {
+    private final LoggedMechanismLigament2d intake1;
+    private final LoggedMechanismLigament2d intakeCoral;
     private final Color8Bit mechanismColor;
     private final boolean target;
     private boolean coralIntaken;
     private boolean visibleNow = false;
     private boolean shouldBeVisible;
 
-    IntakeMechanism(boolean target) {
-      this(target, "intake" + (target ? "-target" : ""));
+    IntakeMechanism(LoggedMechanism2d robot, boolean target) {
+      this(
+          robot,
+          target,
+          target ? 1 : 2,
+          target ? grey : orange
+      );
     }
 
-    private IntakeMechanism(boolean target, String prefix) {
-      super(prefix, 0, 0);
+    private IntakeMechanism(LoggedMechanism2d robot, boolean target, int lineWidth, Color8Bit mechanismColor) {
+      super("angle", 0, 0, lineWidth, mechanismColor);
       this.target = target;
+      this.mechanismColor = mechanismColor;
+      this.shouldBeVisible = !target;
 
-      int lineWidth = target ? 1 : 2;
-      shouldBeVisible = !target;
-
-      mechanismColor = target ? grey : orange;
-
-      this
+      robot
+          .getRoot("intake" + (target ? "-target" : ""), s(Inches.of(41.75)), s(Inches.of(9.25)))
+          .append(this)
           .append(
-              intakeAngle = new MechanismLigament2d(prefix + "-angle", 0, 0, lineWidth, mechanismColor)
+              intake1 = new LoggedMechanismLigament2d("1", 0, 270, lineWidth, mechanismColor)
           ).append(
-              intake1 = new MechanismLigament2d(prefix + "-1", 0, 270, lineWidth, mechanismColor)
-          ).append(
-              intakeCoral = new MechanismLigament2d(prefix + "-coral", 0, 90, lineWidth, mechanismColor)
+              intakeCoral = new LoggedMechanismLigament2d("coral", 0, 90, lineWidth, mechanismColor)
           );
 
       coralIntaken = intake.isCoralIntaken();
@@ -175,20 +165,20 @@ public class RobotVisualization implements AutoCloseable {
       // 5 degrees, to be updated once the intake returns an Angle
       shouldBeVisible = !target || intake.getRotationAngle() - intake.getRotationSetpoint() > 5;
 
-      intakeAngle.setAngle(Revolutions.of(target ? intake.getRotationSetpoint() : intake.getRotationAngle()).in(Degrees));
+      this.setAngle(Revolutions.of(target ? intake.getRotationSetpoint() : intake.getRotationAngle()).in(Degrees));
 
       boolean coralCurrentlyInIntake = intake.isCoralIntaken();
 
       // Update the whole visibility state
       if (shouldBeVisible && !visibleNow) {
         visibleNow = true;
-        intakeAngle.setLength(s(Inches.of(4.25)));
+        this.setLength(s(Inches.of(4.25)));
         intake1.setLength(s(Inches.of(5.35)));
         intakeCoral.setLength(s(Inches.of(2.5)));
         coralIntaken = !coralCurrentlyInIntake;  // Force an update
       } else if (!shouldBeVisible && visibleNow) {
         visibleNow = false;
-        intakeAngle.setLength(0);
+        this.setLength(0);
         intake1.setLength(0);
         intakeCoral.setLength(0);
       }
@@ -210,15 +200,14 @@ public class RobotVisualization implements AutoCloseable {
     }
   }
 
-  class BoathookMechanism extends MechanismLigament2d {
-    private final MechanismLigament2d boathookAngle;
-    private final MechanismLigament2d boathookExtension;
-    private final MechanismLigament2d boathookCoralOffset;
-    private final MechanismLigament2d boathookCoral;
-    private final MechanismLigament2d boathook1;
-    private final MechanismLigament2d boathook2;
-    private final MechanismLigament2d boathook3;
-    private final MechanismLigament2d boathook4;
+  class BoathookMechanism extends LoggedMechanismLigament2d {
+    private final LoggedMechanismLigament2d boathookExtension;
+    private final LoggedMechanismLigament2d boathookCoralOffset;
+    private final LoggedMechanismLigament2d boathookCoral;
+    private final LoggedMechanismLigament2d boathook1;
+    private final LoggedMechanismLigament2d boathook2;
+    private final LoggedMechanismLigament2d boathook3;
+    private final LoggedMechanismLigament2d boathook4;
     private final boolean target;
     // We don't have a way to know if the boathook has a coral or not
     @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
@@ -226,40 +215,40 @@ public class RobotVisualization implements AutoCloseable {
     private boolean visibleNow = false;
     private boolean shouldBeVisible;
 
-    BoathookMechanism(boolean target) {
-      this(target, "boathook" + (target ? "-target" : ""));
+
+    BoathookMechanism(LoggedMechanism2d robot, boolean target) {
+      this(
+          robot,
+          target,
+          target ? 1 : 2,
+          target ? grey : orange
+      );
     }
 
-    BoathookMechanism(boolean target, String prefix) {
-      super(prefix, 0, 0);
+    private BoathookMechanism(LoggedMechanism2d robot, boolean target, int lineWidth, Color8Bit mechanismColor) {
+      super("angle", 0, 0, lineWidth, mechanismColor);
       this.target = target;
+      this.shouldBeVisible = !target;
 
-      int lineWidth = target ? 1 : 2;
-      shouldBeVisible = !target;
-
-      Color8Bit mechanismColor = target ? grey : orange;
-
-      this
-          .append(
-              // We use a length of 0 here, so our angle lines up with the 0-degrees reference angle (to the right)
-              boathookAngle = new MechanismLigament2d(prefix + "-angle", 0, 0, lineWidth, mechanismColor)
-          ).append(
+      robot
+          .getRoot("boathook" + (target ? "-target" : ""), s(Inches.of(21)), s(Inches.of(14.57)))
+          .append(this).append(
               // Offset because our extension is not around the same axis as our rotation
-              boathook1 = new MechanismLigament2d(prefix + "-1", 0, 90, lineWidth, mechanismColor)
+              boathook1 = new LoggedMechanismLigament2d("1", 0, 90, lineWidth, mechanismColor)
           ).append(
-              boathook2 = new MechanismLigament2d(prefix + "-2", 0, 270, lineWidth, mechanismColor)
+              boathook2 = new LoggedMechanismLigament2d("2", 0, 270, lineWidth, mechanismColor)
           ).append(
-              boathookExtension = new MechanismLigament2d(prefix + "-extension", 0, 0, lineWidth, mechanismColor)
+              boathookExtension = new LoggedMechanismLigament2d("extension", 0, 0, lineWidth, mechanismColor)
           ).append(
               // Now we need the coral grabber at the end of the boathooks
-              boathook3 = new MechanismLigament2d(prefix + "-3", 0, 0, lineWidth, mechanismColor)
+              boathook3 = new LoggedMechanismLigament2d("3", 0, 0, lineWidth, mechanismColor)
           ).append(
-              boathook4 = new MechanismLigament2d(prefix + "-4", 0, 41, lineWidth, mechanismColor)
+              boathook4 = new LoggedMechanismLigament2d("4", 0, 41, lineWidth, mechanismColor)
           ).append(
               // Now if the boathook could know if it had a coral game piece, this is how we'd display it
-              boathookCoralOffset = new MechanismLigament2d(prefix + "-coral-1", 0, 270, 6, white)
+              boathookCoralOffset = new LoggedMechanismLigament2d("coral-1", 0, 270, 6, white)
           ).append(
-              boathookCoral = new MechanismLigament2d(prefix + "-coral-2", 0, 180, 6, white)
+              boathookCoral = new LoggedMechanismLigament2d("coral-2", 0, 180, 6, white)
           );
     }
 
@@ -268,13 +257,10 @@ public class RobotVisualization implements AutoCloseable {
       boolean atLengthSetpoint = boathook.getLengthSetpoint().minus(boathook.getLength()).abs(Inches) < 1;
       shouldBeVisible = !target || !atAngleSetpoint || !atLengthSetpoint;
 
-      boathookAngle.setAngle((target ? boathook.getAngleSetpoint() : boathook.getAngle()).in(Degrees));
-
       if(shouldBeVisible && !visibleNow) {
         visibleNow = true;
         boathook1.setLength(s(Inches.of(1.35)));
         boathook2.setLength(s(Inches.of(8)));
-        boathookExtension.setLength(s(target ? boathook.getLengthSetpoint() : boathook.getLength()));
         boathook3.setLength(s(Inches.of(3)));
         boathook4.setLength(s(Inches.of(3)));
       } else if(!shouldBeVisible && visibleNow) {
@@ -284,6 +270,11 @@ public class RobotVisualization implements AutoCloseable {
         boathookExtension.setLength(0);
         boathook3.setLength(0);
         boathook4.setLength(0);
+      }
+
+      this.setAngle((target ? boathook.getAngleSetpoint() : boathook.getAngle()).in(Degrees));
+      if(visibleNow) {
+        boathookExtension.setLength(s(target ? boathook.getLengthSetpoint() : boathook.getLength()));
       }
 
       // The target view should never show a coral
