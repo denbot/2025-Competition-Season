@@ -12,6 +12,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.signals.S1StateValue;
+import com.ctre.phoenix6.signals.S2StateValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -81,6 +83,9 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rotatorPositionRot = intakeRotatorSim.getAngularPosition();
     inputs.rotatorVelocityRotPerSec = RotationsPerSecond.of(intakeRotatorSim.getAngularVelocityRPM() / 60.0);
     inputs.rotatorClosedLoopErrorRot = rotatorController.getError();
+
+    inputs.stateS1 = S1StateValue.High;
+    inputs.stateS2 = S2StateValue.High;
   }
 
   @Override

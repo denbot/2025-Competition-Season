@@ -7,6 +7,8 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.signals.S1StateValue;
+import com.ctre.phoenix6.signals.S2StateValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -39,6 +41,8 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
     Logger.recordOutput("Intake/Rotator Setpoint", rotatorPositionSetpoint);
     Logger.recordOutput("Intake/Intake Velocity", inputs.rotatorVelocityRotPerSec.in(RotationsPerSecond));
     Logger.recordOutput("Intake/Intake Velocity Setpoint", intakeVelocitySetpoint);
+    Logger.recordOutput("Intake/S1 State",inputs.stateS1);
+    Logger.recordOutput("Intake/S2 State",inputs.stateS2);
   }
 
   public void addInstruments(Orchestra orchestra) {
@@ -65,6 +69,10 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
 
   public AngularVelocity getIntakeVelocity(){
     return inputs.leftVelocityRotPerSec;
+  }
+
+  public boolean isCoralIntaken(){
+    return inputs.stateS1 == S1StateValue.High || inputs.stateS2 == S2StateValue.High ;
   }
 
   /* The boathook shows an example of commands being held in a separate class.

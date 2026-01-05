@@ -39,8 +39,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
+import com.ctre.phoenix6.signals.S1StateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.S2FloatStateValue;
+import com.ctre.phoenix6.signals.S2StateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -81,6 +83,9 @@ public class IntakeIOReal implements IntakeIO {
   private final StatusSignal<Angle> rotatorPositionRot = rotator.getPosition();
   private final StatusSignal<Double> rotatorClosedLoopErrorRot = rotator.getClosedLoopError();
   private final StatusSignal<AngularVelocity> rotatorVelocityRotPerSec = rotator.getVelocity();
+
+  private final StatusSignal<S1StateValue> stateS1 = intakeSensors.getS1State();
+  private final StatusSignal<S2StateValue> stateS2 = intakeSensors.getS2State();
 
   public IntakeIOReal() {
     var intakeRotatorConfig =
@@ -152,11 +157,13 @@ public class IntakeIOReal implements IntakeIO {
         leftVelocityRotPerSec, 
         leftCurrentAmps
     );
+
     BaseStatusSignal.setUpdateFrequencyForAll(
         intakeRight.getIsProLicensed().getValue() ? 200 : 50,
         rightVelocityRotPerSec,
         rightCurrentAmps
     );
+
     BaseStatusSignal.setUpdateFrequencyForAll(
         rotator.getIsProLicensed().getValue() ? 200 : 50,
         rotatorPositionRot,
@@ -164,7 +171,13 @@ public class IntakeIOReal implements IntakeIO {
         rotatorVelocityRotPerSec
     );
 
-    ParentDevice.optimizeBusUtilizationForAll(intakeLeft,intakeRight,rotator);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        intakeSensors.getIsProLicensed().getValue() ? 200 : 50,
+        stateS1,
+        stateS2
+    );
+
+    ParentDevice.optimizeBusUtilizationForAll(intakeLeft,intakeRight,rotator,intakeSensors);
   }
 
   @Override
@@ -186,6 +199,9 @@ public class IntakeIOReal implements IntakeIO {
     inputs.rotatorPositionRot = rotatorPositionRot.getValue();
     inputs.rotatorClosedLoopErrorRot = rotatorClosedLoopErrorRot.getValueAsDouble();
     inputs.rotatorVelocityRotPerSec = rotatorVelocityRotPerSec.getValue();
+
+    inputs.stateS1 = intakeSensors.getS1State().getValue();
+    inputs.stateS2 = intakeSensors.getS2State().getValue();
   }
 
     public void addInstruments(Orchestra orchestra) {
@@ -206,5 +222,4 @@ public class IntakeIOReal implements IntakeIO {
   public void setStaticBrake() {
     rotator.setControl(new StaticBrake());
   }
-
 }

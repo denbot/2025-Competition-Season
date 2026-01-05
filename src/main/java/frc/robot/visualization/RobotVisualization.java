@@ -117,7 +117,7 @@ public class RobotVisualization {
   }
 
   public void update() {
-    intakeAngle.setAngle(Revolutions.of(intake.getRotationAngle()).in(Degrees));
+    intakeAngle.setAngle(intake.getRotatorPosition().in(Degrees));
     boathookAngle.setAngle(boathook.getAngle().in(Degrees));
     boathookExtension.setLength(s(boathook.getLength()));
 

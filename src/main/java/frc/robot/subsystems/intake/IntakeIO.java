@@ -14,6 +14,8 @@ import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.signals.S1StateValue;
+import com.ctre.phoenix6.signals.S2StateValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -34,6 +36,9 @@ public interface IntakeIO {
     public Angle rotatorPositionRot = Degree.zero();
     public double rotatorClosedLoopErrorRot = 0.0;
     public AngularVelocity rotatorVelocityRotPerSec = RevolutionsPerSecond.zero();
+
+    public S1StateValue stateS1 = S1StateValue.Low;
+    public S2StateValue stateS2 = S2StateValue.Low;
   }
 
   //List of methods that each IO Layer should be accounting for
