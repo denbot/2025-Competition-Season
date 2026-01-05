@@ -50,8 +50,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.CanBeAnInstrument;
 
-public class IntakeIOTalonFX implements IntakeIO {
+public class IntakeIOTalonFX implements IntakeIO, CanBeAnInstrument {
   private final TalonFX intakeLeft =
       new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
@@ -73,6 +74,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final Debouncer intakeLeftConnectedDebounce = new Debouncer(0.5);
   private final Debouncer intakeRightConnectedDebounce = new Debouncer(0.5);
   private final Debouncer rotatorConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer coralSwitchesDebounce = new Debouncer(0.5);
 
   private final StatusSignal<AngularVelocity> leftVelocityRotPerSec = intakeLeft.getVelocity();
   private final StatusSignal<Current> leftCurrentAmps = intakeLeft.getSupplyCurrent();
@@ -172,7 +174,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     );
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        intakeSensors.getIsProLicensed().getValue() ? 200 : 50,
+        50,
         stateS1,
         stateS2
     );
@@ -185,10 +187,12 @@ public class IntakeIOTalonFX implements IntakeIO {
     var intakeLeftStatus = BaseStatusSignal.refreshAll(leftVelocityRotPerSec, leftCurrentAmps);
     var intakeRightStatus = BaseStatusSignal.refreshAll(rightVelocityRotPerSec, rightCurrentAmps);
     var rotatorStatus = BaseStatusSignal.refreshAll(rotatorPositionRot, rotatorClosedLoopErrorRot, rotatorVelocityRotPerSec);
+    var intakeSensorsStatus = BaseStatusSignal.refreshAll(stateS1, stateS2);
 
     inputs.intakeLeftConnected = intakeLeftConnectedDebounce.calculate(intakeLeftStatus.isOK());
     inputs.intakeRightConnected = intakeRightConnectedDebounce.calculate(intakeRightStatus.isOK());
     inputs.rotatorConnected = rotatorConnectedDebounce.calculate(rotatorStatus.isOK());
+    inputs.coralSensorConnected = coralSwitchesDebounce.calculate(intakeSensorsStatus.isOK());
 
     inputs.leftVelocityRotPerSec = leftVelocityRotPerSec.getValue();
     inputs.leftCurrentAmps = leftCurrentAmps.getValue();
@@ -200,8 +204,8 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.rotatorClosedLoopErrorRot = rotatorClosedLoopErrorRot.getValueAsDouble();
     inputs.rotatorVelocityRotPerSec = rotatorVelocityRotPerSec.getValue();
 
-    inputs.stateS1 = intakeSensors.getS1State().getValue();
-    inputs.stateS2 = intakeSensors.getS2State().getValue();
+    inputs.stateS1 = stateS1.getValue();
+    inputs.stateS2 = stateS2.getValue();
   }
 
     public void addInstruments(Orchestra orchestra) {
