@@ -46,7 +46,9 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   }
 
   public void addInstruments(Orchestra orchestra) {
-    io.addInstruments(orchestra);
+    if(io instanceof CanBeAnInstrument instrument) {
+      instrument.addInstruments(orchestra);
+    }
   }
 
   public void setRotationAngle(Angle angle){

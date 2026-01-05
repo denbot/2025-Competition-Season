@@ -37,6 +37,7 @@ public interface IntakeIO {
     public double rotatorClosedLoopErrorRot = 0.0;
     public AngularVelocity rotatorVelocityRotPerSec = RevolutionsPerSecond.zero();
 
+    public boolean coralSensorConnected = false;
     public S1StateValue stateS1 = S1StateValue.Low;
     public S2StateValue stateS2 = S2StateValue.Low;
   }
@@ -44,9 +45,6 @@ public interface IntakeIO {
   //List of methods that each IO Layer should be accounting for
   /** Update the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
-
-  /** Add motors to CTRE orchestra if available. */
-  public default void addInstruments(Orchestra orchestra) {}
 
   /* Set the intake rotator angle.
    * Make sure units of measurement are consistent.

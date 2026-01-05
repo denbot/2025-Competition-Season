@@ -72,6 +72,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.intakeLeftConnected = true;
     inputs.intakeRightConnected = true;
     inputs.rotatorConnected = true;
+    inputs.coralSensorConnected = true;
 
     //Sim Velocity defaults to Rad/sec. 60 rps = 377 Rad/sec
     inputs.leftVelocityRotPerSec = RotationsPerSecond.of(intakeLeftSim.getAngularVelocityRPM() / 60.0);
@@ -86,11 +87,6 @@ public class IntakeIOSim implements IntakeIO {
 
     inputs.stateS1 = S1StateValue.High;
     inputs.stateS2 = S2StateValue.High;
-  }
-
-  @Override
-  public void addInstruments(Orchestra orchestra){
-    System.out.println("Unable to add instruments in simulation.");
   }
 
   public void setRotationAngle(Angle angle) {
