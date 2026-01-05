@@ -26,8 +26,8 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  private double rotatorPositionSetpoint = 0.0;
-  private double intakeVelocitySetpoint = 0.0;
+  private Angle rotatorPositionSetpoint = Radians.zero();
+  private AngularVelocity intakeVelocitySetpoint = RadiansPerSecond.zero();
 
   public Intake(IntakeIO io) {
     this.io = io;
@@ -53,12 +53,16 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
 
   public void setRotationAngle(Angle angle){
     io.setRotationAngle(angle);
-    rotatorPositionSetpoint = angle.in(Degrees);
+    rotatorPositionSetpoint = angle;
+  }
+
+  public Angle getRotatorSetpoint() {
+    return rotatorPositionSetpoint;
   }
 
   public void setIntakeVelocity(AngularVelocity velocity){
     io.setIntakeVelocity(velocity);
-    intakeVelocitySetpoint = velocity.in(RevolutionsPerSecond);
+    intakeVelocitySetpoint = velocity;
   }
 
   public Angle getRotatorPosition(){
