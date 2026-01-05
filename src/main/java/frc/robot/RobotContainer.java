@@ -75,7 +75,6 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   // Commands
-  private final BoathookCommands boathookCommands;
   private final OnTheFlyCommands onTheFlyCommands;
 
   // Direct control over the LEDs
@@ -87,6 +86,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, IO devices, and commands.
    */
   public RobotContainer() {
+    ledController = new LEDController(21);
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -98,7 +99,7 @@ public class RobotContainer {
             new ModuleIOTalonFX(TunerConstants.BackRight)
         );
 
-        boathook = new Boathook(new BoathookIOTalonFX());
+        boathook = new Boathook(new BoathookIOTalonFX(), ledController);
         intake = new Intake(new IntakeIOTalonFX());
 
         break;
@@ -113,7 +114,7 @@ public class RobotContainer {
             new ModuleIOSim(TunerConstants.BackRight)
         );
 
-        boathook = new Boathook(new BoathookIOSim());
+        boathook = new Boathook(new BoathookIOSim(), ledController);
         intake = new Intake(new IntakeIOSim());
 
         break;
@@ -128,17 +129,15 @@ public class RobotContainer {
             new ModuleIO() {}
         );
 
-        boathook = new Boathook(new BoathookIO() {});
+        boathook = new Boathook(new BoathookIO() {}, ledController);
         intake = new Intake(new IntakeIO() {});
 
         break;
     }
 
     // rumbleSubsystem = new RumbleSubsystem(driverController);
-    ledController = new LEDController(21);
 
-    boathookCommands = new BoathookCommands(boathook, ledController);
-    onTheFlyCommands = new OnTheFlyCommands(intake, boathookCommands, drive);
+    onTheFlyCommands = new OnTheFlyCommands(intake, boathook, drive);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -216,7 +215,7 @@ public class RobotContainer {
     var autoSequenceUserSetup = new AutoSequenceUserControl(
         disabledEventLoop,
         buttonBoxController,
-        boathookCommands,
+        boathook,
         intake,
         onTheFlyCommands
     );
@@ -233,7 +232,6 @@ public class RobotContainer {
         buttonBoxController,
         drive,
         boathook,
-        boathookCommands,
         intake,
         onTheFlyCommands,
         ledController

@@ -5,10 +5,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.autoCommands.AutoRoutineBuilder;
-import frc.robot.commands.autoCommands.BoathookCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.game.ReefBranch;
+import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.intake.Intake;
 
 import java.util.Map;
@@ -32,11 +32,11 @@ public class AutoSequenceUserControl {
   public AutoSequenceUserControl(
       EventLoop disabledEventLoop,
       ButtonBoxController buttonBoxController,
-      BoathookCommands boathookCommands,
+      Boathook boathook,
       Intake intake,
       OnTheFlyCommands onTheFlyCommands
   ) {
-    this.autoRoutineBuilder = new AutoRoutineBuilder(boathookCommands, intake);
+    this.autoRoutineBuilder = new AutoRoutineBuilder(boathook, intake);
 
     // Bind basic commands using our private event loop to ensure these setup actions
     // don't conflict with match-time behavior on the same buttons.
@@ -48,9 +48,9 @@ public class AutoSequenceUserControl {
 
     var reefLevelTriggers = Map.ofEntries(
         // TODO L1
-        Map.entry(buttonBoxController.L4Trigger(disabledEventLoop), boathookCommands.scoreL4()),
-        Map.entry(buttonBoxController.L3Trigger(disabledEventLoop), boathookCommands.scoreL3()),
-        Map.entry(buttonBoxController.L2Trigger(disabledEventLoop), boathookCommands.scoreL2())
+        Map.entry(buttonBoxController.L4Trigger(disabledEventLoop), boathook.scoreL4()),
+        Map.entry(buttonBoxController.L3Trigger(disabledEventLoop), boathook.scoreL3()),
+        Map.entry(buttonBoxController.L2Trigger(disabledEventLoop), boathook.scoreL2())
     );
 
     var buttonToReefBranchMap = buttonBoxController.buttonToReefBranchMap(disabledEventLoop);
