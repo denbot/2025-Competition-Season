@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 
 import java.util.Arrays;
 import java.util.IdentityHashMap;
@@ -119,18 +120,20 @@ public class LEDController {
   }
 
   /**
-   * Runs a specific {@link LEDPattern} on a given LED buffer or view.
+   * Runs a specific {@link LEDPattern} on a given LED buffer or view. The command is forked from any command groups
+   * that it may be part of.
    *
    * @param ledStrip The LED buffer or view to apply this pattern to.
    * @param pattern  The specific pattern to apply.
    * @param <LED>    The type of the LED buffer or view (must implement {@link LEDReader} and {@link LEDWriter}).
    * @return A command that applies the pattern to the LED strip continuously.
    */
-  //TODO: Implement ScheduleCommand so commands ending with LED indication are not locked in infinite loop.
   public <LED extends LEDReader & LEDWriter> Command run(LED ledStrip, LEDPattern pattern) {
-    return Commands.run(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
+    var runCommand = Commands.run(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
         .withName("LED Control")
         .ignoringDisable(true);
+
+    return new ScheduleCommand(runCommand);
   }
 
   /**
@@ -261,7 +264,8 @@ public class LEDController {
   }
 
   /**
-   * Helper method to blink a color on two specific sections for a set duration.
+   * Helper method to blink a color on two specific sections for a set duration. The command is forked from any command
+   * groups that it may be part of.
    *
    * @param left  The left buffer view.
    * @param right The right buffer view.
@@ -283,7 +287,7 @@ public class LEDController {
         )
         .toArray(LEDSubsystem[]::new);
 
-    return Commands.run(() -> {
+    var runCommand = Commands.run(() -> {
               pattern.applyTo(left);
               pattern.applyTo(right);
             },
@@ -293,6 +297,8 @@ public class LEDController {
         .withName("LED Scoring Level")
         .withTimeout(Milliseconds.of(500))
         .andThen(fill(Color.kBlack));
+
+    return new ScheduleCommand(runCommand);
   }
 
   /**
