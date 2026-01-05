@@ -51,7 +51,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import frc.robot.Constants.OperatorConstants;
 
-public class IntakeIOReal implements IntakeIO {
+public class IntakeIOTalonFX implements IntakeIO {
   private final TalonFX intakeLeft =
       new TalonFX(IntakeConstants.LEFT_INTAKE_MOTOR_ID, OperatorConstants.canivoreSerial);
 
@@ -87,7 +87,7 @@ public class IntakeIOReal implements IntakeIO {
   private final StatusSignal<S1StateValue> stateS1 = intakeSensors.getS1State();
   private final StatusSignal<S2StateValue> stateS2 = intakeSensors.getS2State();
 
-  public IntakeIOReal() {
+  public IntakeIOTalonFX() {
     var intakeRotatorConfig =
     new TalonFXConfiguration()
         .withMotorOutput(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive))

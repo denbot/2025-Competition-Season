@@ -33,7 +33,7 @@ import frc.robot.subsystems.boathook.BoathookIO;
 import frc.robot.subsystems.boathook.BoathookIOSim;
 import frc.robot.subsystems.boathook.BoathookIOTalonFX;
 import frc.robot.subsystems.led.LEDController;
-import frc.robot.subsystems.RumbleSubsystem;
+// import frc.robot.subsystems.RumbleSubsystem;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -43,7 +43,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.visualization.RobotVisualization;
@@ -61,7 +61,7 @@ public class RobotContainer {
   public final PreCheckTab preCheckTab;
   private final Intake intake;
   private final Boathook boathook;
-  private final RumbleSubsystem rumbleSubsystem;
+  // private final RumbleSubsystem rumbleSubsystem;
 
   // Controller
   private final DenbotXboxController driverController = new DenbotXboxController(Constants.OperatorConstants.kDriverControllerPort);
@@ -99,7 +99,7 @@ public class RobotContainer {
         );
 
         boathook = new Boathook(new BoathookIOTalonFX());
-        intake = new Intake(new IntakeIOReal());
+        intake = new Intake(new IntakeIOTalonFX());
 
         break;
 
@@ -134,7 +134,7 @@ public class RobotContainer {
         break;
     }
 
-    rumbleSubsystem = new RumbleSubsystem(driverController);
+    // rumbleSubsystem = new RumbleSubsystem(driverController);
     ledController = new LEDController(21);
 
     boathookCommands = new BoathookCommands(boathook, ledController);
