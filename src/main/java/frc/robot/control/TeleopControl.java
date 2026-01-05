@@ -111,7 +111,7 @@ public class TeleopControl {
         );
 
     // We don't want to accidentally trigger until we're at the correct location around the reef
-    BooleanSupplier onTheFlyIsNotRunning = onTheFlyCommand::isScheduled;
+    BooleanSupplier onTheFlyIsNotRunning = () -> !onTheFlyCommand.isScheduled();
 
     driverController
         .rightBumper(teleopEventLoop)

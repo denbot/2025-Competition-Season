@@ -100,19 +100,19 @@ public class Intake extends SubsystemBase implements CanBeAnInstrument {
 
   public Command intakeDownCommand() {
     return Commands.run(() -> setRotationAngle(Degree.of(5)))
-        .until(() -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 1);
+        .until(() -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1);
   }
 
   public Command intakeL1Command() {
     return Commands.run(() -> setRotationAngle(Degree.of(72)))
-        .until(() -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 1);
+        .until(() -> Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1);
   }
 
   public Command intakeSpearCommand() {
     return Commands.run(() -> setRotationAngle(Degree.of(160)))
         .until(
             () ->
-                Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 20
-                    && Math.abs(getRotatorVelocity().in(RotationsPerSecond)) < 1);
+                Math.abs(Units.rotationsToDegrees(inputs.rotatorClosedLoopErrorRot)) < 0.1
+                    && Math.abs(getRotatorVelocity().in(RotationsPerSecond)) < 0.0001);
   }
 }

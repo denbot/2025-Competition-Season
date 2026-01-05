@@ -127,7 +127,7 @@ public class LEDController {
    * @return A command that applies the pattern to the LED strip continuously.
    */
   public <LED extends LEDReader & LEDWriter> Command run(LED ledStrip, LEDPattern pattern) {
-    return Commands.run(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
+    return Commands.runOnce(() -> pattern.applyTo(ledStrip), stripToSubsystems.get(ledStrip))
         .withName("LED Control")
         .ignoringDisable(true);
   }

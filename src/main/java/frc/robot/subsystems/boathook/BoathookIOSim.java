@@ -15,8 +15,8 @@ public class BoathookIOSim implements BoathookIO {
   private static final DCMotor extensionMotor = DCMotor.getKrakenX60Foc(1);
 
   // I'm pretty sure these values are just whatever makes the sim be responsive in the way you want
-  private final PIDController angleController = new PIDController(0.5, 0, 0);
-  private final PIDController extensionController = new PIDController(10, 0, 0);
+  private final PIDController angleController = new PIDController(0.1, 0, 0);
+  private final PIDController extensionController = new PIDController(0.1, 0, 0);
 
   private final DCMotorSim angleSim;
   private final DCMotorSim extensionSim;
