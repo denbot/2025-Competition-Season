@@ -40,9 +40,9 @@ public class AutoSequenceUserControl {
 
     // Bind basic commands using our private event loop to ensure these setup actions
     // don't conflict with match-time behavior on the same buttons.
-    // buttonBoxController.lollipopLeftTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopLeft()));
-    // buttonBoxController.lollipopCenterTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter()));
-    // buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopRight()));
+    buttonBoxController.lollipopLeftTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopLeft()));
+    buttonBoxController.lollipopCenterTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter()));
+    buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopRight()));
 
     buttonBoxController.clearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
@@ -69,7 +69,10 @@ public class AutoSequenceUserControl {
 
         faceButton
             .and(levelButton)
-            .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addBuildingBlock(faceCommand, levelCommand)));
+            .onTrue(Commands.runOnce(() -> {
+              System.out.println("BLOCK ADDED");
+              autoRoutineBuilder.addBuildingBlock(faceCommand, levelCommand);
+            }).ignoringDisable(true));
       }
     }
   }
