@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
@@ -105,11 +106,14 @@ public class TeleopControl {
         .x(teleopEventLoop)
         .onTrue(
             Commands.runOnce(() -> onTheFlyCommand.schedule())
-                .andThen(Commands.runEnd(
-                    () -> ledController.fill(Color.kOrange).schedule(),
-                    () -> ledController.temporary(Color.kGreen, Milliseconds.of(1000)).schedule()
+                .andThen(Commands.repeatingSequence(
+                    ledController.fill(Color.kOrange),
+                    new WaitCommand(0.5),
+                    ledController.fill(Color.kWhite),
+                    new WaitCommand(0.5)
                 ))
                 .until(onTheFlyIsNotRunning)
+                .andThen(ledController.temporary(Color.kGreen, Milliseconds.of(500)))
         );
 
     driverController
@@ -135,6 +139,11 @@ public class TeleopControl {
             intake.intakeDownCommand()
                 .alongWith(ledController.temporary(Color.kGreen, Milliseconds.of(500)))
                 .andThen(intake.runIntakeCommand())
+                .alongWith(Commands.repeatingSequence(
+                    ledController.fill(Color.kBlue),
+                    new WaitCommand(0.5),
+                    ledController.fill(Color.kWhite),
+                    new WaitCommand(0.5)))
         );
 
     driverController

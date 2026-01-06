@@ -74,11 +74,11 @@ public class ButtonBoxControllerSim {
   }
 
   public void setTwelveLeftTrigger(boolean value) {
-    controller1Sim.setRawButton(1, value);
+    controller2Sim.setRawButton(1, value);
   }
 
   public void setTwelveRightTrigger(boolean value) {
-    controller2Sim.setRawButton(1, value);
+    controller1Sim.setRawButton(1, value);
   }
 
   public void setLollipopUpTrigger(boolean value) {
