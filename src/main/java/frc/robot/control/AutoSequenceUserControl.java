@@ -36,13 +36,13 @@ public class AutoSequenceUserControl {
       Intake intake,
       OnTheFlyCommands onTheFlyCommands
   ) {
-    this.autoRoutineBuilder = new AutoRoutineBuilder(boathook, intake);
+    this.autoRoutineBuilder = new AutoRoutineBuilder(boathook, intake, onTheFlyCommands);
 
     // Bind basic commands using our private event loop to ensure these setup actions
     // don't conflict with match-time behavior on the same buttons.
-    buttonBoxController.lollipopLeftTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopLeft()));
+    buttonBoxController.lollipopLeftTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopUp()));
     buttonBoxController.lollipopCenterTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter()));
-    buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopRight()));
+    buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopDown()));
 
     buttonBoxController.clearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
@@ -54,24 +54,22 @@ public class AutoSequenceUserControl {
     );
 
     var buttonToReefBranchMap = buttonBoxController.buttonToReefBranchMap(disabledEventLoop);
-    var reefBranchToAlignCommandMap = onTheFlyCommands.branchToAlignmentCommands();
 
     // Cross-join the face and level triggers. This binds every combination of 
     // [Face Button] + [Level Button] so that pressing both simultaneously 
     // adds a specific "Building Block" (align + score) to our autonomous sequence.
     for (Map.Entry<Trigger, ReefBranch> face : buttonToReefBranchMap.entrySet()) {
       Trigger faceButton = face.getKey();
-      Command faceCommand = reefBranchToAlignCommandMap.get(face.getValue());
+      ReefBranch targetBranch = face.getValue();
 
       for (Map.Entry<Trigger, Command> level : reefLevelTriggers.entrySet()) {
         Trigger levelButton = face.getKey();
         Command levelCommand = level.getValue();
 
         faceButton
-            .and(levelButton)
+          .and(levelButton)
             .onTrue(Commands.runOnce(() -> {
-              System.out.println("BLOCK ADDED");
-              autoRoutineBuilder.addBuildingBlock(faceCommand, levelCommand);
+              autoRoutineBuilder.addBuildingBlock(targetBranch, levelCommand);
             }).ignoringDisable(true));
       }
     }
