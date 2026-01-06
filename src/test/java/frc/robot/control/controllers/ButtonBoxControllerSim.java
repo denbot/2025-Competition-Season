@@ -81,7 +81,7 @@ public class ButtonBoxControllerSim {
     controller2Sim.setRawButton(1, value);
   }
 
-  public void setLollipopLeftTrigger(boolean value) {
+  public void setLollipopUpTrigger(boolean value) {
     controller2Sim.setRawButton(5, value);
   }
 
@@ -89,7 +89,7 @@ public class ButtonBoxControllerSim {
     controller2Sim.setRawButton(6, value);
   }
 
-  public void setLollipopRightTrigger(boolean value) {
+  public void setLollipopDownTrigger(boolean value) {
     controller2Sim.setRawButton(7, value);
   }
 

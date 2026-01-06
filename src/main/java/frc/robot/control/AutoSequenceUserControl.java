@@ -40,9 +40,24 @@ public class AutoSequenceUserControl {
 
     // Bind basic commands using our private event loop to ensure these setup actions
     // don't conflict with match-time behavior on the same buttons.
-    buttonBoxController.lollipopLeftTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopUp()));
-    buttonBoxController.lollipopCenterTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopCenter()));
-    buttonBoxController.lollipopRightTrigger(disabledEventLoop).onTrue(addPickupPieceBlock(onTheFlyCommands.pickupLollipopDown()));
+    buttonBoxController.lollipopUpTrigger(disabledEventLoop)
+      .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addPickupPieceBlock(
+        onTheFlyCommands.pickupLollipop(
+          ReefBranch.LOLLIPOP_UP_SETUP, 
+          ReefBranch.LOLLIPOP_UP))
+        ).ignoringDisable(true));
+    buttonBoxController.lollipopCenterTrigger(disabledEventLoop)
+      .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addPickupPieceBlock(
+        onTheFlyCommands.pickupLollipop(
+          ReefBranch.LOLLIPOP_CENTER_SETUP, 
+          ReefBranch.LOLLIPOP_CENTER))
+        ).ignoringDisable(true));
+    buttonBoxController.lollipopDownTrigger(disabledEventLoop)
+      .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addPickupPieceBlock(
+        onTheFlyCommands.pickupLollipop(
+          ReefBranch.LOLLIPOP_DOWN_SETUP, 
+          ReefBranch.LOLLIPOP_DOWN))
+      ).ignoringDisable(true));
 
     buttonBoxController.clearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
@@ -63,20 +78,14 @@ public class AutoSequenceUserControl {
       ReefBranch targetBranch = face.getValue();
 
       for (Map.Entry<Trigger, Command> level : reefLevelTriggers.entrySet()) {
-        Trigger levelButton = face.getKey();
+        Trigger levelButton = level.getKey();
         Command levelCommand = level.getValue();
 
-        faceButton
-          .and(levelButton)
-            .onTrue(Commands.runOnce(() -> {
-              autoRoutineBuilder.addBuildingBlock(targetBranch, levelCommand);
-            }).ignoringDisable(true));
+        faceButton.and(levelButton)
+            .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addBuildingBlock(targetBranch, levelCommand))
+            .ignoringDisable(true));
       }
     }
-  }
-
-  private Command addPickupPieceBlock(Command pickupPieceCommand) {
-    return Commands.runOnce(() -> autoRoutineBuilder.addPickupPieceBlock(pickupPieceCommand));
   }
 
   // TODO No execute anymore, but we will eventually need to give the user an indication for the auto routine's state
