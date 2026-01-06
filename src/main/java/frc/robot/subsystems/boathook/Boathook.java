@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.game.ReefLevel;
 import frc.robot.subsystems.CanBeAnInstrument;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.led.LEDController;
@@ -134,6 +135,21 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
 
   public Command scoreL4() {
     return new SequentialCommandGroup(extendL4(), new WaitCommand(2), retractL4()).withName("Score_L4");
+  }
+
+  public Command getLevelCommand(ReefLevel targetLevel){
+    switch (targetLevel) {
+      case L1 : 
+      return ledController.fill(Color.kRed);
+      case L2 : 
+      return scoreL2();
+      case L3 : 
+      return scoreL3();
+      case L4 : 
+      return scoreL4();
+      default :
+      return scoreL4();
+    }
   }
 
   public Command setBoathookIdle() {
