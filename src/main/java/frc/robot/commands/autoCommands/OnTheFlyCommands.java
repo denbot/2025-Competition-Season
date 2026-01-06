@@ -28,46 +28,69 @@ public class OnTheFlyCommands {
   private static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   private enum OnTheFlyTargetPose {
-    // all defined as x/y locations on the field
-    // the relative (0, 0) is the right corner of the blue driver station
     TWO_LEFT(
-      fieldLayout.getTagPose(ReefBranch.TWO_LEFT.redTag).get().toPose2d(), 
-      fieldLayout.getTagPose(ReefBranch.TWO_LEFT.blueTag).get().toPose2d()
-    );
-    //TWO_LEFT(5.05, 2.72, 120),
-    // FOUR_LEFT(3.64, 2.89, 60),
-    // SIX_LEFT(3.08, 4.20, 0),
-    // EIGHT_LEFT(3.93, 5.33, -60),
-    // TEN_LEFT(5.06, 5.32, -120),
-    // TWELVE_LEFT(5.9, 3.86, 180),
-    // TWO_RIGHT(5.33, 2.88, 120),
-    // FOUR_RIGHT(3.92, 2.73, 60),
-    // SIX_RIGHT(3.08, 3.87, 0),
-    // EIGHT_RIGHT(3.65, 5.17, -60),
-    // TEN_RIGHT(5.34, 5.16, -120),
-    // TWELVE_RIGHT(5.9, 4.18, 180),
-    // // Human Player Locations
-    // HUMAN_LEFT(1.3, 1.0, -130),
-    // HUMAN_RIGHT(1.3, 6.6, 130),
-    // // Climb positions
-    // BLUE_CLIMB_ONE(8.8, 7.25, 180),
-    // BLUE_CLIMB_TWO(8.8, 6.18, 180),
-    // BLUE_CLIMB_THREE(8.8, 5.1, 180),
-    // RED_CLIMB_ONE(8.8, 0.8, 180),
-    // RED_CLIMB_TWO(8.8, 1.9, 180),
-    // RED_CLIMB_THREE(8.8, 2.95, 180),
-    // // "Lolipop" or coral with algea on top of it positions
-    // LOLLIPOP_RIGHT_SETUP(2.5, 5.8, 0),
-    // LOLLIPOP_CENTER_SETUP(2.5, 4.0, 0),
-    // LOLLIPOP_LEFT_SETUP(2.5, 2.2, 0),
-    // LOLLIPOP_RIGHT(1.227, 5.8, 0),
-    // LOLLIPOP_CENTER(1.227, 4.0, 0),
-    // LOLLIPOP_LEFT(1.227, 2.2, 0);
+      generateTargetPose(ReefBranch.TWO_LEFT.redTag, ReefBranchOffset.LEFT), 
+      generateTargetPose(ReefBranch.TWO_LEFT.blueTag, ReefBranchOffset.LEFT)),
+    FOUR_LEFT(
+      generateTargetPose(ReefBranch.FOUR_LEFT.redTag, ReefBranchOffset.LEFT), 
+      generateTargetPose(ReefBranch.FOUR_LEFT.blueTag, ReefBranchOffset.LEFT)),
+    SIX_LEFT(
+      generateTargetPose(ReefBranch.SIX_LEFT.redTag, ReefBranchOffset.LEFT), 
+      generateTargetPose(ReefBranch.SIX_LEFT.blueTag, ReefBranchOffset.LEFT)),
+    EIGHT_LEFT(
+      generateTargetPose(ReefBranch.EIGHT_LEFT.redTag, ReefBranchOffset.LEFT), 
+      generateTargetPose(ReefBranch.EIGHT_LEFT.blueTag, ReefBranchOffset.LEFT)),
+    TEN_LEFT(
+      generateTargetPose(ReefBranch.TEN_LEFT.redTag, ReefBranchOffset.LEFT), 
+      generateTargetPose(ReefBranch.TEN_LEFT.blueTag, ReefBranchOffset.LEFT)),
+    TWELVE_LEFT(
+      generateTargetPose(ReefBranch.TWELVE_LEFT.redTag, ReefBranchOffset.LEFT), 
+      generateTargetPose(ReefBranch.TWELVE_LEFT.blueTag, ReefBranchOffset.LEFT)),
+    TWO_RIGHT(
+      generateTargetPose(ReefBranch.TWO_RIGHT.redTag, ReefBranchOffset.RIGHT), 
+      generateTargetPose(ReefBranch.TWO_RIGHT.blueTag, ReefBranchOffset.RIGHT)),
+    FOUR_RIGHT(
+      generateTargetPose(ReefBranch.FOUR_RIGHT.redTag, ReefBranchOffset.RIGHT), 
+      generateTargetPose(ReefBranch.FOUR_RIGHT.blueTag, ReefBranchOffset.RIGHT)),
+    SIX_RIGHT(
+      generateTargetPose(ReefBranch.SIX_RIGHT.redTag, ReefBranchOffset.RIGHT), 
+      generateTargetPose(ReefBranch.SIX_RIGHT.blueTag, ReefBranchOffset.RIGHT)),
+    EIGHT_RIGHT(
+      generateTargetPose(ReefBranch.EIGHT_RIGHT.redTag, ReefBranchOffset.RIGHT), 
+      generateTargetPose(ReefBranch.EIGHT_RIGHT.blueTag, ReefBranchOffset.RIGHT)),
+    TEN_RIGHT(
+      generateTargetPose(ReefBranch.TEN_RIGHT.redTag, ReefBranchOffset.RIGHT), 
+      generateTargetPose(ReefBranch.TEN_RIGHT.blueTag, ReefBranchOffset.RIGHT)),
+    TWELVE_RIGHT(
+      generateTargetPose(ReefBranch.TWELVE_RIGHT.redTag, ReefBranchOffset.RIGHT), 
+      generateTargetPose(ReefBranch.TWELVE_RIGHT.blueTag, ReefBranchOffset.RIGHT)),//,
 
-    // OTF variables
-    // public final double x;
-    // public final double y;
-    // public final double angle;
+    // // "Lolipop" or coral with algea on top of it positions
+    LOLLIPOP_RIGHT_SETUP(
+      new Pose2d(2.5, 2.2, new Rotation2d(180)),
+      new Pose2d(15, 5.8, new Rotation2d(0))
+      ),
+    LOLLIPOP_CENTER_SETUP(
+      new Pose2d(2.5, 4.0, new Rotation2d(180)),
+      new Pose2d(15, 4.0, new Rotation2d(0))
+      ),
+    LOLLIPOP_LEFT_SETUP(
+      new Pose2d(2.5, 5.8, new Rotation2d(180)),
+      new Pose2d(15, 2.2, new Rotation2d(0))
+      ),
+    LOLLIPOP_RIGHT(
+      new Pose2d(16.8, 2.2, new Rotation2d(180)),
+      new Pose2d(1.227, 5.8, new Rotation2d(0))
+      ),
+    LOLLIPOP_CENTER(
+      new Pose2d(16.8, 4.0, new Rotation2d(180)),
+      new Pose2d(1.227, 4.0, new Rotation2d(0))
+      ),
+    LOLLIPOP_LEFT(
+      new Pose2d(16.8, 5.8, new Rotation2d(180)),
+      new Pose2d(1.227, 2.2, new Rotation2d(0))
+      );
+
     public Pose2d redTagPose;
     public Pose2d blueTagPose;
 
@@ -104,19 +127,23 @@ public class OnTheFlyCommands {
    */
   public Map<ReefBranch, Command> branchToAlignmentCommands() {
     return Map.ofEntries(
-        Map.entry(ReefBranch.TWO_LEFT, alignTwoLeft())//,
-        // Map.entry(ReefBranch.TWO_RIGHT, alignTwoRight()),
-        // Map.entry(ReefBranch.FOUR_LEFT, alignFourLeft()),
-        // Map.entry(ReefBranch.FOUR_RIGHT, alignFourRight()),
-        // Map.entry(ReefBranch.SIX_LEFT, alignSixLeft()),
-        // Map.entry(ReefBranch.SIX_RIGHT, alignSixRight()),
-        // Map.entry(ReefBranch.EIGHT_LEFT, alignEightLeft()),
-        // Map.entry(ReefBranch.EIGHT_RIGHT, alignEightRight()),
-        // Map.entry(ReefBranch.TEN_LEFT, alignTenLeft()),
-        // Map.entry(ReefBranch.TEN_RIGHT, alignTenRight()),
-        // Map.entry(ReefBranch.TWELVE_LEFT, alignTwelveLeft()),
-        // Map.entry(ReefBranch.TWELVE_RIGHT, alignTwelveRight())
+        Map.entry(ReefBranch.TWO_LEFT, alignTwoLeft()),
+        Map.entry(ReefBranch.TWO_RIGHT, alignTwoRight()),
+        Map.entry(ReefBranch.FOUR_LEFT, alignFourLeft()),
+        Map.entry(ReefBranch.FOUR_RIGHT, alignFourRight()),
+        Map.entry(ReefBranch.SIX_LEFT, alignSixLeft()),
+        Map.entry(ReefBranch.SIX_RIGHT, alignSixRight()),
+        Map.entry(ReefBranch.EIGHT_LEFT, alignEightLeft()),
+        Map.entry(ReefBranch.EIGHT_RIGHT, alignEightRight()),
+        Map.entry(ReefBranch.TEN_LEFT, alignTenLeft()),
+        Map.entry(ReefBranch.TEN_RIGHT, alignTenRight()),
+        Map.entry(ReefBranch.TWELVE_LEFT, alignTwelveLeft()),
+        Map.entry(ReefBranch.TWELVE_RIGHT, alignTwelveRight())
     );
+  }
+
+  private static Pose2d generateTargetPose(int targetTag, ReefBranchOffset offset){
+    return fieldLayout.getTagPose(targetTag).get().toPose2d();
   }
 
   private Boolean isRed(){
@@ -129,87 +156,98 @@ public class OnTheFlyCommands {
       .withName("Align Two Left");
   }
 
-  // public Command alignTwoRight() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT).withName("Align Two Right");
-  // }
+  public Command alignTwoRight() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWO_RIGHT).withName("Align Two Right");
+  }
 
-  // public Command alignFourLeft() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT).withName("Align Four Left");
-  // }
+  public Command alignFourLeft() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_LEFT).withName("Align Four Left");
+  }
 
-  // public Command alignFourRight() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT).withName("Align Four Right");
-  // }
+  public Command alignFourRight() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.FOUR_RIGHT).withName("Align Four Right");
+  }
 
-  // public Command alignSixLeft() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT).withName("Align Six Left");
-  // }
+  public Command alignSixLeft() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_LEFT).withName("Align Six Left");
+  }
 
-  // public Command alignSixRight() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT).withName("Align Six Right");
-  // }
+  public Command alignSixRight() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.SIX_RIGHT).withName("Align Six Right");
+  }
 
-  // public Command alignEightLeft() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT).withName("Align Eight Left");
-  // }
+  public Command alignEightLeft() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_LEFT).withName("Align Eight Left");
+  }
 
-  // public Command alignEightRight() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT).withName("Align Eight Right");
-  // }
+  public Command alignEightRight() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.EIGHT_RIGHT).withName("Align Eight Right");
+  }
 
-  // public Command alignTenLeft() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT).withName("Align Ten Left");
-  // }
+  public Command alignTenLeft() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_LEFT).withName("Align Ten Left");
+  }
 
-  // public Command alignTenRight() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT).withName("Align Ten Right");
-  // }
+  public Command alignTenRight() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.TEN_RIGHT).withName("Align Ten Right");
+  }
 
-  // public Command alignTwelveLeft() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT).withName("Align Twelve Left");
-  // }
+  public Command alignTwelveLeft() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_LEFT).withName("Align Twelve Left");
+  }
 
-  // public Command alignTwelveRight() {
-  //   return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT).withName("Align Twelve Right");
-  // }
+  public Command alignTwelveRight() {
+    return getAutoAlignCommand(OnTheFlyTargetPose.TWELVE_RIGHT).withName("Align Twelve Right");
+  }
 
-  // public Command pickupLollipopLeft() {
-  //   return new SequentialCommandGroup(
-  //       new ParallelCommandGroup(
-  //           getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
-  //           intake.intakeDownCommand(),
-  //           boathook.setBoathookStab()
-  //       ),
-  //       new ParallelCommandGroup(
-  //           intake.runIntakeCommand().withTimeout(2),
-  //           getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)
-  //       ),
-  //       boathook.handoffCommand(intake));
-  // }
+  public Command pickupLollipopLeft() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT_SETUP),
+            intake.intakeDownCommand(),
+            boathook.setBoathookStab()
+        ),
+        new ParallelCommandGroup(
+            intake.runIntakeCommand().withTimeout(2),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_LEFT)
+        ),
+        boathook.handoffCommand(intake));
+  }
 
-  // public Command pickupLollipopRight() {
-  //   return new SequentialCommandGroup(
-  //       new ParallelCommandGroup(
-  //           getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
-  //           intake.intakeDownCommand(),
-  //           boathook.setBoathookStab()),
-  //       new ParallelCommandGroup(
-  //           intake.runIntakeCommand().withTimeout(2),
-  //           getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
-  //       boathook.handoffCommand(intake));
-  // }
+  public Command pickupLollipopRight() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT_SETUP),
+            intake.intakeDownCommand(),
+            boathook.setBoathookStab()),
+        new ParallelCommandGroup(
+            intake.runIntakeCommand().withTimeout(2),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_RIGHT)),
+        boathook.handoffCommand(intake));
+  }
 
-  // public Command pickupLollipopCenter() {
-  //   return new SequentialCommandGroup(
-  //       new ParallelCommandGroup(
-  //           getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
-  //           intake.intakeDownCommand(),
-  //           boathook.setBoathookStab()),
-  //       new ParallelCommandGroup(
-  //           intake.runIntakeCommand().withTimeout(2),
-  //           getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
-  //       boathook.handoffCommand(intake));
-  // }
+  public Command pickupLollipopCenter() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER_SETUP),
+            intake.intakeDownCommand(),
+            boathook.setBoathookStab()),
+        new ParallelCommandGroup(
+            intake.runIntakeCommand().withTimeout(2),
+            getAutoAlignCommand(OnTheFlyTargetPose.LOLLIPOP_CENTER)),
+        boathook.handoffCommand(intake));
+  }
+
+  private Command getAutoAlignCommand(OnTheFlyTargetPose targetTag) {
+    // initializes new pathFindToPose command which both create a path and has the robot follow said
+    // path
+    Pose2d targetPose = isRed() ? targetTag.redTagPose : targetTag.blueTagPose;
+    return AutoBuilder.pathfindToPose(
+            targetPose,
+            new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720))
+        )
+        .andThen(getFinalAlignmentCommand(targetPose));
+  }
 
   private Command getFinalAlignmentCommand(Pose2d targetPose) {
     return Commands.run(
@@ -236,17 +274,5 @@ public class OnTheFlyCommands {
         .until(
             () ->
                 Math.abs(offsetX) < 0.02 && Math.abs(offsetY) < 0.02 && Math.abs(offsetAngle) < 1);
-  }
-
-  private Command getAutoAlignCommand(OnTheFlyTargetPose targetTag) {
-    // initializes new pathFindToPose command which both create a path and has the robot follow said
-    // path
-    System.out.println(targetTag + " " + isRed());
-    Pose2d targetPose = isRed() ? targetTag.redTagPose : targetTag.blueTagPose;
-    return AutoBuilder.pathfindToPose(
-            targetPose,
-            new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720))
-        )
-        .andThen(getFinalAlignmentCommand(targetPose));
   }
 }
