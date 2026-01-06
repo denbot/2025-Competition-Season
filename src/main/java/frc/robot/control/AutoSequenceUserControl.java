@@ -8,6 +8,7 @@ import frc.robot.commands.autoCommands.AutoRoutineBuilder;
 import frc.robot.commands.autoCommands.OnTheFlyCommands;
 import frc.robot.control.controllers.ButtonBoxController;
 import frc.robot.game.ReefBranch;
+import frc.robot.game.ReefLevel;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.intake.Intake;
 
@@ -61,14 +62,8 @@ public class AutoSequenceUserControl {
 
     buttonBoxController.clearTrigger(disabledEventLoop).onTrue(Commands.runOnce(autoRoutineBuilder::clearCommands));
 
-    var reefLevelTriggers = Map.ofEntries(
-        // TODO L1
-        Map.entry(buttonBoxController.L4Trigger(disabledEventLoop), boathook.scoreL4()),
-        Map.entry(buttonBoxController.L3Trigger(disabledEventLoop), boathook.scoreL3()),
-        Map.entry(buttonBoxController.L2Trigger(disabledEventLoop), boathook.scoreL2())
-    );
-
     var buttonToReefBranchMap = buttonBoxController.buttonToReefBranchMap(disabledEventLoop);
+    var buttonToReefLevelMap = buttonBoxController.buttonToReefLevelMap(disabledEventLoop);
 
     // Cross-join the face and level triggers. This binds every combination of 
     // [Face Button] + [Level Button] so that pressing both simultaneously 
@@ -77,12 +72,12 @@ public class AutoSequenceUserControl {
       Trigger faceButton = face.getKey();
       ReefBranch targetBranch = face.getValue();
 
-      for (Map.Entry<Trigger, Command> level : reefLevelTriggers.entrySet()) {
+      for (Map.Entry<Trigger, ReefLevel> level : buttonToReefLevelMap.entrySet()) {
         Trigger levelButton = level.getKey();
-        Command levelCommand = level.getValue();
+        ReefLevel targetLevel = level.getValue();
 
         faceButton.and(levelButton)
-            .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addBuildingBlock(targetBranch, levelCommand))
+            .onTrue(Commands.runOnce(() -> autoRoutineBuilder.addBuildingBlock(targetBranch, targetLevel))
             .ignoringDisable(true));
       }
     }
