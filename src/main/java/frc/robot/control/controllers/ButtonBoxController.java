@@ -203,7 +203,7 @@ public class ButtonBoxController {
   }
 
   public Trigger twelveLeftTrigger(EventLoop loop) {
-    return controller1.button(1, loop);
+    return controller2.button(1, loop);
   }
 
   public Trigger twelveRightTrigger() {
@@ -211,7 +211,7 @@ public class ButtonBoxController {
   }
 
   public Trigger twelveRightTrigger(EventLoop loop) {
-    return controller2.button(1, loop);
+    return controller1.button(1, loop);
   }
 
   public Trigger lollipopUpTrigger() {

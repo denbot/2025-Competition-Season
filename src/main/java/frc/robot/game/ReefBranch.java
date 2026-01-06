@@ -5,8 +5,13 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public enum ReefBranch {
-  TWO_LEFT(9, 22, ReefBranchOffset.LEFT),
-  TWO_RIGHT(9, 22, ReefBranchOffset.RIGHT),
+  /*Right and left refers to the operator's point of view
+  * Faces facing the operator will have their offsets flipped 
+  * as the robot pose is transformed relative to the april tag, 
+  * not the operator POV*/
+
+  TWO_LEFT(9, 22, ReefBranchOffset.RIGHT),
+  TWO_RIGHT(9, 22, ReefBranchOffset.LEFT),
   TWO_L1(9, 22, ReefBranchOffset.L1),
   FOUR_LEFT(8, 17, ReefBranchOffset.LEFT),
   FOUR_RIGHT(8, 17, ReefBranchOffset.RIGHT),
@@ -17,11 +22,11 @@ public enum ReefBranch {
   EIGHT_LEFT(6, 19, ReefBranchOffset.LEFT),
   EIGHT_RIGHT(6, 19, ReefBranchOffset.RIGHT),
   EIGHT_L1(6, 19, ReefBranchOffset.L1),
-  TEN_LEFT(11, 20, ReefBranchOffset.LEFT),
-  TEN_RIGHT(11, 20, ReefBranchOffset.RIGHT),
+  TEN_LEFT(11, 20, ReefBranchOffset.RIGHT),
+  TEN_RIGHT(11, 20, ReefBranchOffset.LEFT),
   TEN_L1(11, 20, ReefBranchOffset.L1),
-  TWELVE_LEFT(10, 21, ReefBranchOffset.LEFT),
-  TWELVE_RIGHT(10, 21, ReefBranchOffset.RIGHT),
+  TWELVE_LEFT(10, 21, ReefBranchOffset.RIGHT),
+  TWELVE_RIGHT(10, 21, ReefBranchOffset.LEFT),
   TWELVE_L1(10, 21, ReefBranchOffset.L1),
   LOLLIPOP_DOWN_SETUP(7,18,ReefBranchOffset.PRESET_DOWN_SETUP),
   LOLLIPOP_CENTER_SETUP(7,18,ReefBranchOffset.PRESET_CENTER_SETUP),

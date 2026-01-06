@@ -9,8 +9,8 @@ public enum ReefBranchOffset {
   /*  Offsets from April tags for Left Branch, Right Branch, L1 between branches,
       Setup locations and intaking locations for lollipops
   */
-  LEFT(new Transform2d(0.5,0.17,new Rotation2d(Degree.of(180)))),
-  RIGHT(new Transform2d(0.5,-0.17,new Rotation2d(Degree.of(180)))),
+  LEFT(new Transform2d(0.5,-0.17,new Rotation2d(Degree.of(180)))),
+  RIGHT(new Transform2d(0.5,0.17,new Rotation2d(Degree.of(180)))),
   L1((new Transform2d(0.5,0.0,new Rotation2d(0.0)))),
   PRESET_UP_SETUP((new Transform2d(1.1, 1.8,new Rotation2d(Degree.of(180))))),
   PRESET_CENTER_SETUP((new Transform2d(1.1,0,new Rotation2d(Degree.of(180))))),
