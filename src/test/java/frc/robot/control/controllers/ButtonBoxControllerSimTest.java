@@ -53,9 +53,9 @@ public class ButtonBoxControllerSimTest {
         Map.entry(buttonBoxControllerSim::setTwelveLeftTrigger, buttonBoxController.twelveLeftTrigger()),
         Map.entry(buttonBoxControllerSim::setTwelveRightTrigger, buttonBoxController.twelveRightTrigger()),
         Map.entry(buttonBoxControllerSim::setSpearTrigger, buttonBoxController.clearTrigger()),
-        Map.entry(buttonBoxControllerSim::setLollipopLeftTrigger, buttonBoxController.lollipopLeftTrigger()),
+        Map.entry(buttonBoxControllerSim::setLollipopUpTrigger, buttonBoxController.lollipopUpTrigger()),
         Map.entry(buttonBoxControllerSim::setLollipopCenterTrigger, buttonBoxController.lollipopCenterTrigger()),
-        Map.entry(buttonBoxControllerSim::setLollipopRightTrigger, buttonBoxController.lollipopRightTrigger())
+        Map.entry(buttonBoxControllerSim::setLollipopDownTrigger, buttonBoxController.lollipopDownTrigger())
     );
 
     /*

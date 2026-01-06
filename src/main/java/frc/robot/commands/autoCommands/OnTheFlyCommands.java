@@ -118,41 +118,15 @@ public class OnTheFlyCommands {
     return getAutoAlignCommand(ReefBranch.TWELVE_RIGHT).withName("Align Twelve Right");
   }
 
-  public Command pickupLollipopUp() {
+  public Command pickupLollipop(ReefBranch setupTarget, ReefBranch intakeTarget) {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(
-            getAutoAlignCommand(ReefBranch.LOLLIPOP_UP_SETUP),
-            intake.intakeDownCommand(),
-            boathook.setBoathookStab()
-        ),
-        new ParallelCommandGroup(
-            intake.runIntakeCommand().withTimeout(2),
-            getAutoAlignCommand(ReefBranch.LOLLIPOP_UP)
-        ),
-        boathook.handoffCommand(intake));
-  }
-
-  public Command pickupLollipopDown() {
-    return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            getAutoAlignCommand(ReefBranch.LOLLIPOP_DOWN_SETUP),
+            getAutoAlignCommand(setupTarget),
             intake.intakeDownCommand(),
             boathook.setBoathookStab()),
         new ParallelCommandGroup(
             intake.runIntakeCommand().withTimeout(2),
-            getAutoAlignCommand(ReefBranch.LOLLIPOP_DOWN)),
-        boathook.handoffCommand(intake));
-  }
-
-  public Command pickupLollipopCenter() {
-    return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-            getAutoAlignCommand(ReefBranch.LOLLIPOP_CENTER_SETUP),
-            intake.intakeDownCommand(),
-            boathook.setBoathookStab()),
-        new ParallelCommandGroup(
-            intake.runIntakeCommand().withTimeout(2),
-            getAutoAlignCommand(ReefBranch.LOLLIPOP_CENTER)),
+            getAutoAlignCommand(intakeTarget)),
         boathook.handoffCommand(intake));
   }
 

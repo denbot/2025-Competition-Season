@@ -214,11 +214,11 @@ public class ButtonBoxController {
     return controller2.button(1, loop);
   }
 
-  public Trigger lollipopLeftTrigger() {
-    return lollipopLeftTrigger(CommandScheduler.getInstance().getDefaultButtonLoop());
+  public Trigger lollipopUpTrigger() {
+    return lollipopUpTrigger(CommandScheduler.getInstance().getDefaultButtonLoop());
   }
 
-  public Trigger lollipopLeftTrigger(EventLoop loop) {
+  public Trigger lollipopUpTrigger(EventLoop loop) {
     return controller2.button(5, loop);
   }
 
@@ -230,11 +230,11 @@ public class ButtonBoxController {
     return controller2.button(6, loop);
   }
 
-  public Trigger lollipopRightTrigger() {
-    return lollipopRightTrigger(CommandScheduler.getInstance().getDefaultButtonLoop());
+  public Trigger lollipopDownTrigger() {
+    return lollipopDownTrigger(CommandScheduler.getInstance().getDefaultButtonLoop());
   }
 
-  public Trigger lollipopRightTrigger(EventLoop loop) {
+  public Trigger lollipopDownTrigger(EventLoop loop) {
     return controller2.button(7, loop);
   }
 }

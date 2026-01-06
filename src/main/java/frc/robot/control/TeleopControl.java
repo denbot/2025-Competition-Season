@@ -30,6 +30,7 @@ public class TeleopControl {
   // Chosen by fair dice roll. https://xkcd.com/221/
   private ReefLevel targetReefLevel = ReefLevel.L2;
   private ReefBranch targetReefBranch = ReefBranch.SIX_RIGHT;
+  private Command onTheFlyCommand;
 
   public TeleopControl(
       EventLoop teleopEventLoop,
@@ -71,10 +72,7 @@ public class TeleopControl {
         () -> targetReefLevel
     );
 
-    SelectCommand<ReefBranch> onTheFlyCommand = new SelectCommand<>(
-        onTheFlyCommands.branchToAlignmentCommands(),
-        () -> targetReefBranch
-    );
+    onTheFlyCommand = onTheFlyCommands.getAutoAlignCommand(ReefBranch.TWELVE_LEFT);
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -100,16 +98,19 @@ public class TeleopControl {
         .start(teleopEventLoop)
         .onTrue(Commands.runOnce(() -> resetGyro(drive), drive).ignoringDisable(true));
 
+    // We don't want to accidentally trigger until we're at the correct location around the reef
+    BooleanSupplier onTheFlyIsNotRunning = () -> !onTheFlyCommand.isScheduled();
+
     driverController
         .x(teleopEventLoop)
         .onTrue(
-            onTheFlyCommand
-                .alongWith(ledController.rainbow())
-                .andThen(ledController.temporary(Color.kYellow, Milliseconds.of(500)))
+            Commands.runOnce(() -> onTheFlyCommand.schedule())
+                .andThen(Commands.runEnd(
+                    () -> ledController.fill(Color.kOrange).schedule(),
+                    () -> ledController.temporary(Color.kGreen, Milliseconds.of(1000)).schedule()
+                ))
+                .until(onTheFlyIsNotRunning)
         );
-
-    // We don't want to accidentally trigger until we're at the correct location around the reef
-    BooleanSupplier onTheFlyIsNotRunning = () -> !onTheFlyCommand.isScheduled();
 
     driverController
         .rightBumper(teleopEventLoop)
@@ -156,7 +157,10 @@ public class TeleopControl {
         .buttonToReefBranchMap(teleopEventLoop)
         .forEach(
             (trigger, branch) -> trigger.onTrue(
-                Commands.runOnce(() -> targetReefBranch = branch)
+                Commands.runOnce(() -> {
+                    targetReefBranch = branch;
+                    System.out.println("Target Changed");
+                    onTheFlyCommand = onTheFlyCommands.getAutoAlignCommand(targetReefBranch);})
                     .alongWith(
                         ledController.temporary(Color.kRed, Milliseconds.of(250))
                     )
