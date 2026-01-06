@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.game.ReefBranch;
 import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.intake.Intake;
 
@@ -15,11 +16,13 @@ public class AutoRoutineBuilder {
   private ArrayList<String> commandStrings = new ArrayList<>();
   private Boathook boathook;
   private Intake intake;
+  private OnTheFlyCommands onTheFlyCommands;
 
-  public AutoRoutineBuilder(Boathook boathook, Intake intake) {
+  public AutoRoutineBuilder(Boathook boathook, Intake intake, OnTheFlyCommands onTheFlyCommands) {
     autoRoutine = new SequentialCommandGroup();
     this.boathook = boathook;
     this.intake = intake;
+    this.onTheFlyCommands = onTheFlyCommands;
   }
 
   public AutoRoutineBuilder addPickupPieceBlock(Command pickupPieceCommand) {
@@ -35,11 +38,12 @@ public class AutoRoutineBuilder {
     return arr;
   }
 
-  public AutoRoutineBuilder addBuildingBlock(Command autoAlign, Command scoreCommand) {
+  public AutoRoutineBuilder addBuildingBlock(ReefBranch targetBranch, Command scoreCommand) {
+    Command autoAlign = onTheFlyCommands.getAutoAlignCommand(targetBranch);
     autoRoutine.addCommands(
-        new ParallelCommandGroup(
-            autoAlign, boathook.setBoathookIdle(), intake.intakeL1Command()),
-        scoreCommand);
+      new ParallelCommandGroup(
+        onTheFlyCommands.getAutoAlignCommand(targetBranch), boathook.setBoathookIdle(), intake.intakeL1Command()),scoreCommand
+    );
     SmartDashboard.putString("Added Command", autoAlign.getName() + ", " + scoreCommand.getName());
     commandStrings.add(autoAlign.getName() + ", " + scoreCommand.getName());
     return this;
