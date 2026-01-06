@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.Amp;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.signals.S1StateValue;
 import com.ctre.phoenix6.signals.S2StateValue;
 

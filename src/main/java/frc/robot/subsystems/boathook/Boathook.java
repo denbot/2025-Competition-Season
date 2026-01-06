@@ -227,14 +227,12 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
       public void initialize() {
         startLength = Boathook.this.getLength().in(Meters);
         iterations = 0;
-        System.out.println(startLength + ", " + targetLength);
       }
 
       @Override
       public void execute() {
         double targetDiff = targetLength.in(Meters) - startLength;
         double setPoint = startLength + (targetDiff / (1 + Math.exp(-gain * (iterations / 100 - offset - scaling * targetDiff))));
-        System.out.println(iterations + " Stepoint: " + setPoint);
         SmartDashboard.putNumber("Boathook Setpoint", setPoint);
         iterations++;
         Boathook.this.setLength(Meters.of(setPoint));

@@ -13,7 +13,6 @@ import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.signals.S1StateValue;
 import com.ctre.phoenix6.signals.S2StateValue;
 
