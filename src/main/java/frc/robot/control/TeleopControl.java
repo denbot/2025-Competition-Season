@@ -159,7 +159,6 @@ public class TeleopControl {
             (trigger, branch) -> trigger.onTrue(
                 Commands.runOnce(() -> {
                     targetReefBranch = branch;
-                    System.out.println("Target Changed");
                     onTheFlyCommand = onTheFlyCommands.getAutoAlignCommand(targetReefBranch);})
                     .alongWith(
                         ledController.temporary(Color.kRed, Milliseconds.of(250))
