@@ -7,7 +7,6 @@ package frc.robot.subsystems.boathook;
 import com.ctre.phoenix6.Orchestra;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.game.ReefLevel;
@@ -249,7 +248,7 @@ public class Boathook extends SubsystemBase implements CanBeAnInstrument {
       public void execute() {
         double targetDiff = targetLength.in(Meters) - startLength;
         double setPoint = startLength + (targetDiff / (1 + Math.exp(-gain * (iterations / 100 - offset - scaling * targetDiff))));
-        SmartDashboard.putNumber("Boathook Setpoint", setPoint);
+        Logger.recordOutput("Boathook/Setpoint", setPoint);
         iterations++;
         Boathook.this.setLength(Meters.of(setPoint));
       }

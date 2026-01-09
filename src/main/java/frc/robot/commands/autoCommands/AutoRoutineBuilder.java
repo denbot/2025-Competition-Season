@@ -1,6 +1,5 @@
 package frc.robot.commands.autoCommands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -55,9 +54,6 @@ public class AutoRoutineBuilder {
 
   public void clearCommands() {
     this.autoRoutine = new SequentialCommandGroup();
-    this.autoRoutine.addCommands(
-        this.boathook.setBoathookIdle(), this.intake.intakeL1Command());
-    SmartDashboard.putString("Added Command", "Cleared Commands");
   }
 
   public SequentialCommandGroup build() {

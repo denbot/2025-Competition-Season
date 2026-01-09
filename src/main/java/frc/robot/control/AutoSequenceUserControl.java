@@ -83,12 +83,6 @@ public class AutoSequenceUserControl {
     }
   }
 
-  // TODO No execute anymore, but we will eventually need to give the user an indication for the auto routine's state
-//  @Override
-//  public void execute() {
-//    SmartDashboard.putStringArray("Auto Routine List", autoRoutineBuilder.getCommandStrings());
-//  }
-
   public Command runProgrammedSequence() {
     return Commands.run(() -> autoRoutineBuilder.build().schedule());
   }
