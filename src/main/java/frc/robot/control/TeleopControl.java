@@ -82,18 +82,22 @@ public class TeleopControl {
             () -> -driverController.getLeftY() * (driverController.rightStick().getAsBoolean() ? 1 : 0.8),
             () -> -driverController.getLeftX() * (driverController.rightStick().getAsBoolean() ? 1 : 0.8),
             () -> -driverController.getRightX() * 0.8)
-        .alongWith(onTheFlyCommands.orbitReef()));
+    );
 
-    // Lock to 0° when A button is held
-    // TODO Lock this into rotating around the reef
+    // Orbit the reef when A button is held
     driverController
         .a(teleopEventLoop)
         .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                Rotation2d::new));
+            onTheFlyCommands.orbitReef(
+                () -> driverController.getLeftY(),
+                () -> driverController.getLeftX()
+            )
+            .alongWith(Commands.repeatingSequence(
+                ledController.fill(Color.kRed),
+                new WaitCommand(0.25),
+                ledController.fill(Color.kBlue),
+                new WaitCommand(0.25)
+            )));
 
     // Reset gyro to 0° when the Start button is pressed
     driverController
