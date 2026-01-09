@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.game.ReefBranch;
 import frc.robot.subsystems.boathook.Boathook;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.intake.Intake;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 public class OnTheFlyCommands {
 
@@ -133,7 +135,7 @@ public class OnTheFlyCommands {
   public Command getAutoAlignCommand(ReefBranch targetTag) {
     // initializes new pathFindToPose command which both create a path and has the robot follow said
     // path
-    Pose2d targetPose = isRed() ? targetTag.redPose : targetTag.bluePose;
+    Pose2d targetPose = isRed() ? targetTag.redScoringPose : targetTag.blueScoringPose;
     return AutoBuilder.pathfindToPose(
             targetPose,
             new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720))
@@ -167,5 +169,32 @@ public class OnTheFlyCommands {
             () ->
                 Math.abs(offsetX) < 0.02 && Math.abs(offsetY) < 0.02 && Math.abs(offsetAngle) < 1)
         .andThen(Commands.runOnce(() -> drive.stop()));
+  }
+
+  public Command orbitReef(
+    // DoubleSupplier xSupplier,
+    // DoubleSupplier ySupplier
+  ) {
+    return Commands.run(
+            () -> {
+              if(isRed()){
+                for (ReefBranch branch : ReefBranch.values()) {
+                  if(branch.orbitEnabled){
+                    double dX = drive.getPose().getX() - branch.redScoringPose.getX();
+                    double dY = drive.getPose().getY() - branch.redScoringPose.getY();
+                    SmartDashboard.putNumber("Tag: " + branch.name(), Math.sqrt(dX*dX + dY*dY));
+                  }
+                }
+              } else {
+                for (ReefBranch branch : ReefBranch.values()) {
+                  if(branch.orbitEnabled){
+                    double dX = drive.getPose().getX() - branch.blueScoringPose.getX();
+                    double dY = drive.getPose().getY() - branch.blueScoringPose.getY();
+                    SmartDashboard.putNumber("Tag: " + branch.name(), Math.sqrt(dX*dX + dY*dY));
+                  }
+                }
+              }
+            })
+        .alongWith();
   }
 }
