@@ -92,11 +92,10 @@ public class TeleopControl {
                 () -> driverController.getLeftY(),
                 () -> driverController.getLeftX()
             )
-            .alongWith(Commands.repeatingSequence(
+            .alongWith(Commands.either(
+                ledController.fill(Color.kGreen),
                 ledController.fill(Color.kRed),
-                new WaitCommand(0.25),
-                ledController.fill(Color.kBlue),
-                new WaitCommand(0.25)
+                () -> drive.isAligned(drive.getNearestBranch())
             )));
 
     // Reset gyro to 0° when the Start button is pressed

@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.game.ReefBranch;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.limelight.LimelightHelpers;
@@ -110,6 +111,8 @@ public class Drive extends SubsystemBase {
 
   @AutoLogOutput private Pose2d leftPose;
   @AutoLogOutput public Pose2d rightPose;
+
+  private double[] branchDistances = new double[12];
 
   public Drive(
       GyroIO gyroIO,
@@ -269,6 +272,42 @@ public class Drive extends SubsystemBase {
     }
     kinematics.resetHeadings(headings);
     stop();
+  }
+
+    public Pose2d getNearestBranch(){
+    int i = 0;
+        for (ReefBranch branch : ReefBranch.values()) {
+          if(branch.orbitEnabled){
+            double dX = getPose().getX() - (ReefBranch.isRed() ? branch.redScoringPose.getX() : branch.blueScoringPose.getX());
+            double dY = getPose().getY() - (ReefBranch.isRed() ? branch.redScoringPose.getY() : branch.blueScoringPose.getY());
+            branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
+            i++;
+          }
+        }
+
+        Logger.recordOutput("Odometry/Nearest Tag", minDistance(branchDistances).name());
+
+        return ReefBranch.isRed() ? minDistance(branchDistances).redScoringPose : minDistance(branchDistances).blueScoringPose;
+  }
+
+  private ReefBranch minDistance (double[] distances){
+    double minValue = 100;
+    int minIndex = 0;
+    for (int i = 0; i < distances.length; i++) {
+      // If the current element is smaller than the current minimum value
+      if (distances[i] < minValue) {
+          minValue = distances[i]; // Update the minimum value
+          minIndex = i; // Update the index of the minimum value
+      }
+    }
+    return ReefBranch.values()[minIndex];
+  }
+
+  public boolean isAligned(Pose2d targetPose){
+      double offsetX = targetPose.getX() - getPose().getX();
+      double offsetY = targetPose.getY() - getPose().getY();
+      double offsetAngle = targetPose.getRotation().getDegrees() - getPose().getRotation().getDegrees();
+    return Math.abs(offsetX) < 0.02 && Math.abs(offsetY) < 0.02 && Math.abs(offsetAngle) < 1;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
