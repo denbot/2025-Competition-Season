@@ -14,7 +14,6 @@ import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -174,41 +173,52 @@ public class OnTheFlyCommands {
   }
 
   public Command orbitReef(
-    // DoubleSupplier xSupplier,
-    // DoubleSupplier ySupplier
-  ) {
-    return Commands.run(
-            () -> {
-              int i = 0;
-              if(isRed()){
-                for (ReefBranch branch : ReefBranch.values()) {
-                  if(branch.orbitEnabled){
-                    double dX = drive.getPose().getX() - branch.redScoringPose.getX();
-                    double dY = drive.getPose().getY() - branch.redScoringPose.getY();
-                    branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
-                    i++;
-                  }
-                }
-              } else {
-                for (ReefBranch branch : ReefBranch.values()) {
-                  if(branch.orbitEnabled){
-                    double dX = drive.getPose().getX() - branch.blueScoringPose.getX();
-                    double dY = drive.getPose().getY() - branch.blueScoringPose.getY();
-                    branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
-                    i++;
-                  }
-                }
-              }
-              for(int j = 0; j < branchDistances.length; j++){
-                SmartDashboard.putNumber("Tag: " + ReefBranch.values()[j].name(), branchDistances[j]);
-              }
+    DoubleSupplier xSupplier,
+    DoubleSupplier ySupplier
+  ) { return Commands.run(
+      () -> {
+        currentRobotX = drive.getPose().getX();
+        currentRobotY = drive.getPose().getY();
+        currentRobotAngle = drive.getPose().getRotation().getDegrees();
+        offsetX = getNearestBranch().getX() - currentRobotX;
+        offsetY = getNearestBranch().getY() - currentRobotY;
+        offsetAngle = getNearestBranch().getRotation().getDegrees() - currentRobotAngle;
+        offsetAngle =
+            offsetAngle > 180
+                ? offsetAngle - 360
+                : offsetAngle < -180 ? offsetAngle + 360 : offsetAngle;
+        ChassisSpeeds newSpeeds =
+            new ChassisSpeeds(
+                Math.abs(xSupplier.getAsDouble()) > 0.1 ? xSupplier.getAsDouble() * translationalKP : offsetX * translationalKP,
+                Math.abs(ySupplier.getAsDouble()) > 0.1 ? ySupplier.getAsDouble() * translationalKP : offsetY * translationalKP,
+                offsetAngle * angularKP);
+        drive.runVelocity(
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                newSpeeds, drive.getRotation()));
+      });
+    }
 
-              SmartDashboard.putString(
-                "Shortest Distance: ", 
-                minDistance(branchDistances).name()
-              );
-            })
-        .alongWith();
+  public Pose2d getNearestBranch(){
+    int i = 0;
+        for (ReefBranch branch : ReefBranch.values()) {
+          if(branch.orbitEnabled){
+            double dX = drive.getPose().getX() - (isRed() ? branch.redScoringPose.getX() : branch.blueScoringPose.getX());
+            double dY = drive.getPose().getY() - (isRed() ? branch.redScoringPose.getY() : branch.blueScoringPose.getY());
+            branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
+            i++;
+          }
+        }
+
+        for(int j = 0; j < branchDistances.length; j++){
+          SmartDashboard.putNumber("Tag: " + ReefBranch.values()[j].name(), branchDistances[j]);
+        }
+
+        SmartDashboard.putString(
+          "Shortest Distance: ", 
+          minDistance(branchDistances).name()
+        );
+
+        return isRed() ? minDistance(branchDistances).redScoringPose : minDistance(branchDistances).blueScoringPose;
   }
 
   private ReefBranch minDistance (double[] distances){
