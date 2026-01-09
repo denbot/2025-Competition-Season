@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.game.ReefBranch;
 import frc.robot.subsystems.boathook.Boathook;
@@ -17,6 +16,8 @@ import frc.robot.subsystems.intake.Intake;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
 
 public class OnTheFlyCommands {
 
@@ -209,14 +210,7 @@ public class OnTheFlyCommands {
           }
         }
 
-        for(int j = 0; j < branchDistances.length; j++){
-          SmartDashboard.putNumber("Tag: " + ReefBranch.values()[j].name(), branchDistances[j]);
-        }
-
-        SmartDashboard.putString(
-          "Shortest Distance: ", 
-          minDistance(branchDistances).name()
-        );
+        Logger.recordOutput("Odometry/Nearest Tag", minDistance(branchDistances).name());
 
         return isRed() ? minDistance(branchDistances).redScoringPose : minDistance(branchDistances).blueScoringPose;
   }

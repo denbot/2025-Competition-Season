@@ -145,22 +145,16 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putData(CommandScheduler.getInstance());
-    // SmartDashboard.putNumber("Target X", RobotContainer.currentTargetPose.x);
-    // SmartDashboard.putNumber("Target Y", RobotContainer.currentTargetPose.y);
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
     maybeAddVisionMeasurement(Limelights.LEFT.name);
     maybeAddVisionMeasurement(Limelights.RIGHT.name);
     field.setRobotPose(robotContainer.drive.getPose());
-
-    SmartDashboard.putNumberArray(
-        "Pose", LimelightHelpers.getTargetPose_RobotSpace(Limelights.LEFT.name));
   }
 
   protected void maybeAddVisionMeasurement(String limelightName) {
-    SmartDashboard.putNumber("Time Since Last ", timer.get());
+    Logger.recordOutput("Odometry/Time Since Last Vision Measure", timer.get());
 
     LimelightHelpers.PoseEstimate botPoseEstimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
@@ -259,12 +253,7 @@ public class Robot extends LoggedRobot {
    * This function is called periodically during operator control.
    */
   @Override
-  public void teleopPeriodic() {
-    SmartDashboard.putNumber("Gyro", robotContainer.drive.getRotation().getDegrees());
-    // SmartDashboard.putString(
-    //     "Direction", String.valueOf(RobotContainer.currentTargetPose.direction));
-    // SmartDashboard.putNumber("Angle", RobotContainer.currentTargetPose.angle);
-  }
+  public void teleopPeriodic() {}
 
   /**
    * This function is called once when test mode is enabled.
@@ -282,8 +271,7 @@ public class Robot extends LoggedRobot {
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {
-  }
+  public void testPeriodic() {}
 
   /**
    * This function is called once when the robot is first started up.
@@ -298,6 +286,5 @@ public class Robot extends LoggedRobot {
    * This function is called periodically whilst in simulation.
    */
   @Override
-  public void simulationPeriodic() {
-  }
+  public void simulationPeriodic() {}
 }
