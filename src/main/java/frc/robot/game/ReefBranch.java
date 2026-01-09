@@ -1,8 +1,11 @@
 package frc.robot.game;
 
+import java.util.Optional;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public enum ReefBranch {
   /*Right and left refers to the operator's point of view
@@ -60,5 +63,10 @@ public enum ReefBranch {
 
   private Pose2d generateTargetScoringPose(int targetTag, ReefBranchOffset targetOffset){
     return this.fieldLayout.getTagPose(targetTag).get().toPose2d().transformBy(targetOffset.offset);
+  }
+
+  public static Boolean isRed(){
+    var alliance = DriverStation.getAlliance();
+    return alliance.equals(Optional.of(DriverStation.Alliance.Red));
   }
 }

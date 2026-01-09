@@ -6,7 +6,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.game.ReefBranch;
 import frc.robot.subsystems.boathook.Boathook;
@@ -14,10 +13,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
-
-import org.littletonrobotics.junction.Logger;
 
 public class OnTheFlyCommands {
 
@@ -31,7 +27,6 @@ public class OnTheFlyCommands {
   private double offsetX;
   private double offsetY;
   private double offsetAngle;
-  private double[] branchDistances = new double[12];
 
   private final double translationalKP = 5;
   private final double angularKP = 0.5;
@@ -68,14 +63,8 @@ public class OnTheFlyCommands {
     );
   }
 
-  private Boolean isRed(){
-    var alliance = DriverStation.getAlliance();
-    return alliance.equals(Optional.of(DriverStation.Alliance.Red));
-  }
-
   public Command alignTwoLeft() {
-    return getAutoAlignCommand(ReefBranch.TWO_LEFT)
-      .withName("Align Two Left");
+    return getAutoAlignCommand(ReefBranch.TWO_LEFT).withName("Align Two Left");
   }
 
   public Command alignTwoRight() {
@@ -137,7 +126,7 @@ public class OnTheFlyCommands {
   public Command getAutoAlignCommand(ReefBranch targetTag) {
     // initializes new pathFindToPose command which both create a path and has the robot follow said
     // path
-    Pose2d targetPose = isRed() ? targetTag.redScoringPose : targetTag.blueScoringPose;
+    Pose2d targetPose = ReefBranch.isRed() ? targetTag.redScoringPose : targetTag.blueScoringPose;
     return AutoBuilder.pathfindToPose(
             targetPose,
             new PathConstraints(4.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720))
@@ -167,9 +156,7 @@ public class OnTheFlyCommands {
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       newSpeeds, drive.getRotation()));
             })
-        .until(
-            () ->
-                Math.abs(offsetX) < 0.02 && Math.abs(offsetY) < 0.02 && Math.abs(offsetAngle) < 1)
+        .until(() -> drive.isAligned(targetPose))
         .andThen(Commands.runOnce(() -> drive.stop()));
   }
 
@@ -178,12 +165,13 @@ public class OnTheFlyCommands {
     DoubleSupplier ySupplier
   ) { return Commands.run(
       () -> {
+        System.out.println(drive.isAligned(drive.getNearestBranch()));
         currentRobotX = drive.getPose().getX();
         currentRobotY = drive.getPose().getY();
         currentRobotAngle = drive.getPose().getRotation().getDegrees();
-        offsetX = getNearestBranch().getX() - currentRobotX;
-        offsetY = getNearestBranch().getY() - currentRobotY;
-        offsetAngle = getNearestBranch().getRotation().getDegrees() - currentRobotAngle;
+        offsetX = drive.getNearestBranch().getX() - currentRobotX;
+        offsetY = drive.getNearestBranch().getY() - currentRobotY;
+        offsetAngle = drive.getNearestBranch().getRotation().getDegrees() - currentRobotAngle;
         offsetAngle =
             offsetAngle > 180
                 ? offsetAngle - 360
@@ -198,33 +186,4 @@ public class OnTheFlyCommands {
                 newSpeeds, drive.getRotation()));
       });
     }
-
-  public Pose2d getNearestBranch(){
-    int i = 0;
-        for (ReefBranch branch : ReefBranch.values()) {
-          if(branch.orbitEnabled){
-            double dX = drive.getPose().getX() - (isRed() ? branch.redScoringPose.getX() : branch.blueScoringPose.getX());
-            double dY = drive.getPose().getY() - (isRed() ? branch.redScoringPose.getY() : branch.blueScoringPose.getY());
-            branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
-            i++;
-          }
-        }
-
-        Logger.recordOutput("Odometry/Nearest Tag", minDistance(branchDistances).name());
-
-        return isRed() ? minDistance(branchDistances).redScoringPose : minDistance(branchDistances).blueScoringPose;
-  }
-
-  private ReefBranch minDistance (double[] distances){
-    double minValue = 100;
-    int minIndex = 0;
-    for (int i = 0; i < distances.length; i++) {
-      // If the current element is smaller than the current minimum value
-      if (distances[i] < minValue) {
-          minValue = distances[i]; // Update the minimum value
-          minIndex = i; // Update the index of the minimum value
-      }
-    }
-    return ReefBranch.values()[minIndex];
-  }
 }
