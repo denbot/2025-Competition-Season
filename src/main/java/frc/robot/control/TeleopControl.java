@@ -81,7 +81,8 @@ public class TeleopControl {
             drive,
             () -> -driverController.getLeftY() * (driverController.rightStick().getAsBoolean() ? 1 : 0.8),
             () -> -driverController.getLeftX() * (driverController.rightStick().getAsBoolean() ? 1 : 0.8),
-            () -> -driverController.getRightX() * 0.8));
+            () -> -driverController.getRightX() * 0.8)
+        .alongWith(onTheFlyCommands.orbitReef()));
 
     // Lock to 0° when A button is held
     // TODO Lock this into rotating around the reef
