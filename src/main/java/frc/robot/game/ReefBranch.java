@@ -10,24 +10,29 @@ public enum ReefBranch {
   * as the robot pose is transformed relative to the april tag, 
   * not the operator POV*/
 
+  //Orbittable locations
   TWO_LEFT(9, 22, ReefBranchOffset.RIGHT, true),
   TWO_RIGHT(9, 22, ReefBranchOffset.LEFT, true),
-  TWO_L1(9, 22, ReefBranchOffset.L1,false),
   FOUR_LEFT(8, 17, ReefBranchOffset.LEFT, true),
   FOUR_RIGHT(8, 17, ReefBranchOffset.RIGHT, true),
-  FOUR_L1(8, 17, ReefBranchOffset.L1,false),
   SIX_LEFT(7, 18, ReefBranchOffset.LEFT, true),
   SIX_RIGHT(7, 18, ReefBranchOffset.RIGHT, true),
-  SIX_L1(7, 18, ReefBranchOffset.L1,false),
   EIGHT_LEFT(6, 19, ReefBranchOffset.LEFT, true),
   EIGHT_RIGHT(6, 19, ReefBranchOffset.RIGHT, true),
-  EIGHT_L1(6, 19, ReefBranchOffset.L1,false),
   TEN_LEFT(11, 20, ReefBranchOffset.RIGHT, true),
   TEN_RIGHT(11, 20, ReefBranchOffset.LEFT, true),
-  TEN_L1(11, 20, ReefBranchOffset.L1,false),
   TWELVE_LEFT(10, 21, ReefBranchOffset.RIGHT, true),
   TWELVE_RIGHT(10, 21, ReefBranchOffset.LEFT, true),
+
+  //L1 Locations
+  TWO_L1(9, 22, ReefBranchOffset.L1,false),
+  FOUR_L1(8, 17, ReefBranchOffset.L1,false),
+  SIX_L1(7, 18, ReefBranchOffset.L1,false),
+  EIGHT_L1(6, 19, ReefBranchOffset.L1,false),
+  TEN_L1(11, 20, ReefBranchOffset.L1,false),
   TWELVE_L1(10, 21, ReefBranchOffset.L1,false),
+
+  //Preset Lollipop Locations
   LOLLIPOP_DOWN_SETUP(7,18,ReefBranchOffset.PRESET_DOWN_SETUP,false),
   LOLLIPOP_CENTER_SETUP(7,18,ReefBranchOffset.PRESET_CENTER_SETUP,false),
   LOLLIPOP_UP_SETUP(7,18,ReefBranchOffset.PRESET_UP_SETUP,false),
