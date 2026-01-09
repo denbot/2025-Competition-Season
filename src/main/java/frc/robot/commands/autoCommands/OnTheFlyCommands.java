@@ -14,6 +14,7 @@ import frc.robot.subsystems.boathook.Boathook;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -30,6 +31,7 @@ public class OnTheFlyCommands {
   private double offsetX;
   private double offsetY;
   private double offsetAngle;
+  private double[] branchDistances = new double[12];
 
   private final double translationalKP = 5;
   private final double angularKP = 0.5;
@@ -177,12 +179,14 @@ public class OnTheFlyCommands {
   ) {
     return Commands.run(
             () -> {
+              int i = 0;
               if(isRed()){
                 for (ReefBranch branch : ReefBranch.values()) {
                   if(branch.orbitEnabled){
                     double dX = drive.getPose().getX() - branch.redScoringPose.getX();
                     double dY = drive.getPose().getY() - branch.redScoringPose.getY();
-                    SmartDashboard.putNumber("Tag: " + branch.name(), Math.sqrt(dX*dX + dY*dY));
+                    branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
+                    i++;
                   }
                 }
               } else {
@@ -190,11 +194,33 @@ public class OnTheFlyCommands {
                   if(branch.orbitEnabled){
                     double dX = drive.getPose().getX() - branch.blueScoringPose.getX();
                     double dY = drive.getPose().getY() - branch.blueScoringPose.getY();
-                    SmartDashboard.putNumber("Tag: " + branch.name(), Math.sqrt(dX*dX + dY*dY));
+                    branchDistances[i] = Math.sqrt(dX*dX + dY*dY);
+                    i++;
                   }
                 }
               }
+              for(int j = 0; j < branchDistances.length; j++){
+                SmartDashboard.putNumber("Tag: " + ReefBranch.values()[j].name(), branchDistances[j]);
+              }
+
+              SmartDashboard.putString(
+                "Shortest Distance: ", 
+                minDistance(branchDistances).name()
+              );
             })
         .alongWith();
+  }
+
+  private ReefBranch minDistance (double[] distances){
+    double minValue = 100;
+    int minIndex = 0;
+    for (int i = 0; i < distances.length; i++) {
+      // If the current element is smaller than the current minimum value
+      if (distances[i] < minValue) {
+          minValue = distances[i]; // Update the minimum value
+          minIndex = i; // Update the index of the minimum value
+      }
+    }
+    return ReefBranch.values()[minIndex];
   }
 }
